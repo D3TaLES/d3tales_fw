@@ -1,0 +1,17 @@
+ab9cfbd4a0043920972749af7583a1f5, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/mol_opt
+ab9cfbd4a0043920972749af7583a1f5, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/mol_opt
+39fd01b3e517f2bf8b2f38118e9d053d, /scratch/rdu230/d3tales/high_throughput/runfiles//05UIWG/gaussian/wtuning
+df0d331d776788a235b3cde296e29447, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+df0d331d776788a235b3cde296e29447, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+6c3a029770f5fa14dd656dd840dc5d3c, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+6c3a029770f5fa14dd656dd840dc5d3c, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+3afa88e211adfdca7a2ab747f46e9b88, /scratch/rdu230/d3tales/high_throughput/runfiles/05XJXO/gaussian/mol_opt
+3afa88e211adfdca7a2ab747f46e9b88, /scratch/rdu230/d3tales/high_throughput/runfiles/05XJXO/gaussian/mol_opt
+61b77e80648ab3a5505b43e97b581ffe, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/energy
+7023783303c149f92b4dd9ee9a07bc60, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/energy
+0c4b84f7c97b0a2477d75e7d5bf7953a, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/solv_acetonitrile/energy/groundState
+7cb32da0e44c0a09559f1622d0bb3702, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/solv_acetonitrile/energy/cation1
+6246130fc95bfb7f3cb53b9ff861693f, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/tddft/energy
+1690190d5b97c8adf80487edd3e9fd24, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+1690190d5b97c8adf80487edd3e9fd24, /scratch/rdu230/d3tales/high_throughput/runfiles/05UIWG/gaussian/gas_phase/opt
+7456fa9ff27c2d93c318b23ae9faf4b2, /scratch/rdu230/d3tales/high_throughput/runfiles/05WOBI/gaussian/mol_opt

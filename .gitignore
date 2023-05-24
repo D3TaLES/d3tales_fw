@@ -1,0 +1,5 @@
+**/__pycache__
+**/migrations
+D3database/insertions/add_rss
+managment/structure_data/*
+
