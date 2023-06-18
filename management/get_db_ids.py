@@ -7,6 +7,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Get unfinished IDs in the D3TaLES FireWorks workflow.')
     parser.add_argument('-m', '--mol_characterization', type=str, help='mol_characterization query for finding mol IDs')
     parser.add_argument('-sp', '--special', action='store_true', help='use special query for finding mol IDs')
+    parser.add_argument('-fw_sp', '--fw_special', action='store_true', help='use special Fireworks query for finding mol IDs')
     parser.add_argument('-s', '--state', type=str, help='recover FW IDs of a specific type')
     parser.add_argument('-u', '--unfinsihed', action='store_true', help='recover database IDs for molecules with unfinished workflows')
     parser.add_argument('-w', '--workflows', action='store_true', help='search workflow database instead of fireworks database')
@@ -41,6 +42,9 @@ if __name__ == "__main__":
     elif args.mol_characterization:
         search = "mol_characterization." + args.mol_characterization
         query_cursor = frontend_db.coll.find({search: {'$exists': False}}).distinct("_id")
+    elif args.fw_special:
+        query_cursor = fireworks_db.coll.find({}).distinct("spec.identifier")
+        print(query_cursor)
     elif args.state:
         query_cursor = fireworks_db.coll.find({"state": args.state}).distinct("spec.identifier")
     elif args.unfinsihed:

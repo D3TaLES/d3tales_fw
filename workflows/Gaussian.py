@@ -11,7 +11,7 @@ from fireworks import FiretaskBase, explicit_serialize, FWAction
 from pymatgen.core.structure import IMolecule
 from pymatgen.io.gaussian import GaussianInput
 from ocelot.task.confgen import ConfGen
-from ocelot.routines.conformerparser import pmgmol_to_rdmol
+from d3tales_api.Calculators.ocelot_transform import pmgmol_to_rdmol
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.rdMolTransforms import SetDihedralDeg
