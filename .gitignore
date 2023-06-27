@@ -2,4 +2,6 @@
 **/migrations
 D3database/insertions/add_rss
 management/structure_data/*
+management/nlp_data/*
+management/logs
 
