@@ -60,6 +60,25 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
+def d3tales_md_wf(paramset, identifier=None, smiles=None, solvent='acetonitrile',
+                  email=None, username=None, wf_tag="", **kwargs):
+    f10 = InitializeMD(identifier=identifier, smiles=smiles, **kwargs)
+
+    # TODO more fws
+
+    # Establish fireworks in workflow
+    fws = [f10, ]
+
+    if email:
+        fws.append(EmailStart(identifier=identifier, email=email, username=username, parents=[f10]))
+        fws.append(
+            EmailEnd(identifier=identifier, email=email, username=username, parents=[]))
+
+    wf = Workflow(fws, name="{}md_{}".format(wf_tag, identifier or smiles))
+
+    return wf
+
+
 def just_anion(paramset, identifier=None, smiles=None, wtune=False, solvent='acetonitrile',
                hf_mol_opt=False, email=None, username=None, **kwargs):
     f10 = InitializeMolecule(identifier=identifier, smiles=smiles, **kwargs)

@@ -1,4 +1,5 @@
 from fireworks import Firework
+from d3tales_fw.workflows.Gromacs import *
 from d3tales_fw.workflows.Gaussian import *
 from d3tales_fw.workflows.Initialize import *
 from d3tales_fw.workflows.envwf import G16_CMD, PATH, PROC_VM_KEY, RUNFILE_LOG
@@ -94,5 +95,15 @@ class EmailEnd(Firework):
         spec = {'_category': 'processing', '_priority': priority} if priority else {'_category': 'processing'}
         t = [EmailFinished(identifier=identifier, email=email, username=username)]
         super(EmailEnd, self).__init__(t, parents=parents, spec=spec, name="{}email_finished".format(name_tag))
+
+
+# ---------------- Molecular Dynamics FWs ----------------
+class InitializeMD(Firework):
+    def __init__(self, name="initial_MD_data", parents=None, priority=None, name_tag='', **kwargs):
+        spec = {'_category': 'processing', '_priority': priority} if priority else {'_category': 'processing'}
+        t = [MDInit(**kwargs)]
+        super(InitializeMD, self).__init__(t, parents=parents, spec=spec, name="{}{}".format(name_tag, name))
+
+
 
 
