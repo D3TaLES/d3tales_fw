@@ -60,7 +60,7 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
-def d3tales_md_wf(paramset, identifier=None, smiles=None, solvent='acetonitrile',
+def d3tales_md_wf(identifier=None, smiles=None, solvent='acetonitrile',
                   email=None, username=None, wf_tag="", **kwargs):
     f10 = InitializeMD(identifier=identifier, smiles=smiles, **kwargs)
 

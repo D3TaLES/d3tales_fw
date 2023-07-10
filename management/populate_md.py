@@ -2,13 +2,9 @@
 Parse and push data from NLP parsing and submit calculations for extracted molecules
 """
 import argparse
-import os.path
 
-from monty.serialization import loadfn, dumpfn
-from d3tales_api.D3database.d3database import *
-from d3tales_api.Processors.back2front import *
-from d3tales_api.Processors.d3tales_parser import *
-from d3tales_fw.management.populate_lpad import populate_d3tales_lpad
+from monty.serialization import dumpfn
+from d3tales_fw.workflows.wf_writer import *
 
 parser = argparse.ArgumentParser(description='Launch MD calculations')
 parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON nlp data file', default="")
@@ -16,8 +12,10 @@ parser.add_argument('-p', '--priority', type=int, help='jobs priority', default=
 args = parser.parse_args()
 
 if os.path.isfile(args.filename):
-    md_kwargs = {}
+    md_kwargs = {
 
+    }
+    d3tales_md_wf(**md_kwargs)
 
 else:
     all_md_data = loadfn(args.filename)
