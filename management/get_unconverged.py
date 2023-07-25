@@ -30,18 +30,21 @@ if __name__ == "__main__":
                 fizzled_ids.append(fw_id)
 
     else:
-        launch_cursor = launch_db.coll.find(
-            {"state": FW_STATE,
-             '$or': [
-                 # {}
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW1}},
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW2}},
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW3}},
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW4}},
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW5}},
-                 {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW6}},
-             ]
-             })
+        if FW_STATE == "FIZZLED":
+            query_txt = {"state": FW_STATE,
+                         '$or': [
+                             # {}
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW1}},
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW2}},
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW3}},
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW4}},
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW5}},
+                             {"action.stored_data._exception._stacktrace": {'$regex': ERROR_KW6}},
+                         ]
+                         }
+        else:
+            query_txt = {"state": FW_STATE}
+        launch_cursor = launch_db.coll.find(query_txt)
 
         uncoverged_fw_ids = set([l.get("fw_id") for l in launch_cursor])
 
