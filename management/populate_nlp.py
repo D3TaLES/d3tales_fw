@@ -18,10 +18,14 @@ args = parser.parse_args()
 all_nlp_data = loadfn(args.filename)
 all_ids = {}
 for doi, html_str in all_nlp_data.items():
+    # Process html string and produce backend data
     instance = ProcessNlp.from_html(html_str, args.nlp_model, doi=doi).data_dict
+    # Inserts backend data
     back_id = BackDB(collection_name='nlp', instance=instance, last_updated=True).id
+    # Process backend data to frontend data and insert frontend data
     mol_ids = DOI2Front(doi=back_id, insert=True).mol_ids
-    fw_ids = ["" for _ in mol_ids]
+
+    # Initiate high-throughput DFT calculations
     if args.no_calculations:
         fw_ids = ["" for _ in mol_ids]
     else:
