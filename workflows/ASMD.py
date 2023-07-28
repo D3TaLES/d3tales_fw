@@ -1,9 +1,12 @@
 import subprocess
 import re
 import os
-import gromacs
-import MDAnalysis as mda
-import MDAnalysis.analysis.rdf as rdf
+try:
+    import gromacs
+    import MDAnalysis as mda
+    import MDAnalysis.analysis.rdf as rdf
+except:
+    pass
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np

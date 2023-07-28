@@ -10,7 +10,7 @@ from d3tales_fw.workflows.wf_writer import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 parser = argparse.ArgumentParser(description='Launch MD calculations')
-parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON nlp data file', default="")
+parser.add_argument('-f', '--filename', type=str, help='filepath for a JSON nlp data file', default="")
 parser.add_argument('-p', '--priority', type=int, help='jobs priority', default=5)
 args = parser.parse_args()
 
@@ -25,7 +25,8 @@ def populate_md_wf(**kwargs):
 
 if not os.path.isfile(args.filename):
     md_kwargs = {
-
+        "smiles_list": ["test1", "test2"],
+        "concentration": "",
     }
     all_ids = {"test_md_fw": populate_md_wf(**md_kwargs)}
 
@@ -35,4 +36,4 @@ else:
     for mol_name, md_kwargs in all_md_data.items():
         all_ids[mol_name] = populate_md_wf(**md_kwargs)
 
-dumpfn(all_ids, "md_data/md_{}_molIDs.json".format(args.filename.split("/")[-1]), indent=2)
+# dumpfn(all_ids, "md_data/md_{}_molIDs.json".format(args.filename.split("/")[-1]), indent=2)

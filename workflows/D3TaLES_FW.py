@@ -1,7 +1,7 @@
 from fireworks import Firework
 from d3tales_fw.workflows.Gromacs import *
-from d3tales_fw.workflows.Gaussian import *
-from d3tales_fw.workflows.Initialize import *
+# from d3tales_fw.workflows.Gaussian import *
+# from d3tales_fw.workflows.Initialize import *
 from d3tales_fw.workflows.envwf import G16_CMD, PATH, PROC_VM_KEY, RUNFILE_LOG
 
 # Copyright 2021-2022, University of Kentucky
@@ -103,6 +103,14 @@ class InitializeMD(Firework):
         spec = {'_category': 'processing', '_priority': priority} if priority else {'_category': 'processing'}
         t = [MDInit(**kwargs)]
         super(InitializeMD, self).__init__(t, parents=parents, spec=spec, name="{}{}".format(name_tag, name))
+
+
+class Ligpargen_FW(Firework):
+    def __init__(self, name="ligpargen", parents=None, priority=None, name_tag='', smiles=None, concentration=None, **kwargs):
+        spec = {'_category': 'processing', '_priority': priority} if priority else {'_category': 'gromacs'}
+        t = [Ligpargen(smiles=smiles, concentration=concentration, **kwargs)]
+        super(Ligpargen_FW, self).__init__(t, parents=parents, spec=spec, name="{}{}_{}".format(name_tag, name, smiles))
+
 
 
 

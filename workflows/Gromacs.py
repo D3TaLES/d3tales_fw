@@ -5,7 +5,7 @@ import multiprocessing
 import time
 from rdkit import Chem
 from rdkit.Chem import AllChem
-import ASMD as run
+import d3tales_fw.workflows.ASMD as run
 
 from atomate.utils.utils import get_logger, env_chk
 from fireworks import FiretaskBase, explicit_serialize, FWAction
@@ -17,6 +17,14 @@ nprocs = str(cpus[0])
 
 
 # Copyright 2021, University of Kentucky
+
+
+@explicit_serialize
+class MDInit(FiretaskBase):
+
+    def run_task(self, fw_spec):
+        # get parameter
+        return FWAction()
 
 
 @explicit_serialize
@@ -37,7 +45,7 @@ class Ligpargen(FiretaskBase):
         self.smiles = fw_spec.get("smiles") or self.get("smiles")
         subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
         conda_activate = f"source {self.dir}/miniconda3/bin/activate && conda activate ligpg"
-        export_bossdir = f"export BOSSdir={self.BOSS}'
+        export_bossdir = f"export BOSSdir={self.BOSS}"
         ligpargen_cmd = f"ligpargen -s '{self.smiles}' -n {self.mol} -p {self.mol} -r {self.mol} -c 0 -o 0 -cgen CM1A"
         self.singularity_container = self.get("singu") or fw_spec.get("singu")
 
