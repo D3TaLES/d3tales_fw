@@ -258,7 +258,7 @@ class cord(FiretaskBase):
         return FWAction(update_spec={})
 
 
-explicit_serialize
+@explicit_serialize
 
 
 class key_gen(FiretaskBase):
