@@ -76,7 +76,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Launch D3TaLES FireWorks workflow.')
     parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON molecule file', default=False)
     parser.add_argument('-p', '--priority', type=int, help='jobs priority', default=2)
-    parser.add_argument('-l', '--id_list', action='store_true', help='denotes that filename argument is actually a'
+    parser.add_argument('-l', '--id_list', action='store_true', help='denotes that the filename argument is actually a'
                                                                      'comma seperated list of molecule IDs to submit')
     args = parser.parse_args()
 

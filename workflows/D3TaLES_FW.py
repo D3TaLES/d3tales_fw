@@ -1,6 +1,7 @@
 from fireworks import Firework
-from d3tales_fw.workflows.Gaussian import *
-from d3tales_fw.workflows.Initialize import *
+from d3tales_fw.workflows.Gromacs import *
+# from d3tales_fw.workflows.Gaussian import *
+# from d3tales_fw.workflows.Initialize import *
 from d3tales_fw.workflows.envwf import G16_CMD, PATH, PROC_VM_KEY, RUNFILE_LOG
 
 # Copyright 2021-2022, University of Kentucky
@@ -95,4 +96,90 @@ class EmailEnd(Firework):
         t = [EmailFinished(identifier=identifier, email=email, username=username)]
         super(EmailEnd, self).__init__(t, parents=parents, spec=spec, name="{}email_finished".format(name_tag))
 
+
+# ---------------- Molecular Dynamics FWs ----------------
+class InitializeMD(Firework):
+    def __init__(self, name="initial_MD_data", parents=None, priority=None, name_tag='', **kwargs):
+        spec = {'_category': 'processing', '_priority': priority} if priority else {'_category': 'processing'}
+        t = [MDInit(**kwargs)]
+        super(InitializeMD, self).__init__(t, parents=parents, spec=spec, name="{}{}".format(name_tag, name))
+
+
+class Ligpargen_FW(Firework):
+    def __init__(self, name=None, parents=None, priority=None, name_tag='', smiles=None, con=None,Type=None, di=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority, 'smiles':smiles, 'name':name, 'charge':con, "Type":Type} if priority else {'_category': 'gromacs','smiles':smiles, 'name':name, 'charge':con, "Type":Type, "dir":di, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [Ligpargen(name=name[:3],smile=smiles, charge=con,Type=Type,**kwargs)] ## this is passed for self, self.get() gets this
+        super(Ligpargen_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class Pack_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [MDPrep(solute_name=solute_name, solvent_name=solvent_name, x=x,y=y,z=z,di=di,conmatrix=conmatrix,den=den,key=key )] ## this is passed for self, self.get() gets this
+        super(Pack_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class EM_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [EnergyMinimization(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(EM_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class NVT_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [NVT(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(NVT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class NPT_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [NPT(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(NPT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class Density_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [Density(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(Density_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class TR_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [trj_corrector(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(TR_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class Index_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [Index(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(Index_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class RES_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [residue(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(RES_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class RDF_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [rdf(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(RDF_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class CORD_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [cord(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(CORD_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class Check_FW(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,mm=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"MM":mm, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [Den_checker(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        super(Check_FW, self).__init__(t, parents=parents, spec=spec, name=name)
+
+class key_GEN(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [key_gen(**kwargs)] ## this is passed for self, self.get() gets this
+        super(key_GEN, self).__init__(t, parents=parents, spec=spec, name="key_gen")
 

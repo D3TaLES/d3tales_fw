@@ -60,6 +60,127 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
+def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None, z=None, **kwargs):
+    # f10 = InitializeMD(identifier=this, **kwargs)
+    # f11 = InitializeMD(identifier=identifier, parents=ligpargen_fws, **kwargs)
+    # Establish fireworks in workflow
+    # fws = [f10, f11] + ligpargen_fws
+    # f10 =Ligpargen_FW(name="TEST",smiles="C", con=0, Type="Solute", **kwargs)
+    key_dic = kwargs.get("key_dic")
+    key_mat = []
+    for i, j in key_dic.items():
+        key_mat.append(j)
+
+    number_of_systems = int(kwargs.get("num_systems"))
+    name_dic = {}
+    for i in range(number_of_systems):
+        name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
+
+    ligpargen_fws = []
+
+    for typ, name, smiles, con in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list"),
+                                      kwargs.get("con_list")):
+        ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=con, Type=typ, di=kwargs.get("dir"), **kwargs))
+        for i in range(number_of_systems):
+            if str((i + 1)) in name:
+                name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
+    fire_workdic = {}
+    for i in range(number_of_systems):
+        fw_pack_key = f"fw_pack{i + 1}"
+        fire_workdic[fw_pack_key] = Pack_FW(
+            name=name_dic[f"names{i + 1}"] + 'pack',
+            parents=ligpargen_fws,
+            solute_name=kwargs.get(f"solute_name{i + 1}"),
+            solvent_name=kwargs.get(f"solvent_name{i + 1}"),
+            x=kwargs.get(f"x{i + 1}"),
+            y=kwargs.get(f"y{i + 1}"),
+            z=kwargs.get(f"z{i + 1}"),
+            di=kwargs.get("dir"),
+            conmatrix=kwargs.get(f"conmatrix{i + 1}"),
+            den=kwargs.get(f"den{i + 1}"), key=key_mat[i]
+        )
+
+        fw_em_key = f"fw_em{i + 1}"
+        fire_workdic[fw_em_key] = EM_FW(
+            name=name_dic[f"names{i + 1}"] + "EM",
+            parents=fire_workdic[fw_pack_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_nvt_key = f"fw_nvt{i + 1}"
+        fire_workdic[fw_nvt_key] = NVT_FW(
+            name=name_dic[f"names{i + 1}"] + "NVT",
+            parents=fire_workdic[fw_em_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_npt_key = f"fw_npt{i + 1}"
+        fire_workdic[fw_npt_key] = NPT_FW(
+            name=name_dic[f"names{i + 1}"] + "NPT",
+            parents=fire_workdic[fw_nvt_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_den_key = f"fw_den{i + 1}"
+        fire_workdic[fw_den_key] = Density_FW(
+            name=name_dic[f"names{i + 1}"] + "DEN",
+            parents=fire_workdic[fw_npt_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_prod_key = f"fw_prod{i + 1}"
+        fire_workdic[fw_prod_key] = Check_FW(
+            name=name_dic[f"names{i + 1}"] + "prod",
+            parents=fire_workdic[fw_den_key], key=key_mat[i], den=kwargs.get(f"den{i + 1}"),
+            mm=kwargs.get(f"MM{i + 1}"),
+            **kwargs
+        )
+
+        fw_trj_key = f"fw_trj{i + 1}"
+        fire_workdic[fw_trj_key] = TR_FW(
+            name=name_dic[f"names{i + 1}"] + "TRJ",
+            parents=fire_workdic[fw_prod_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_index_key = f"fw_index{i + 1}"
+        fire_workdic[fw_index_key] = Index_FW(
+            name=name_dic[f"names{i + 1}"] + "Index",
+            parents=fire_workdic[fw_trj_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_resi_key = f"fw_resi{i + 1}"
+        fire_workdic[fw_resi_key] = RES_FW(
+            name=name_dic[f"names{i + 1}"] + "RESI",
+            parents=fire_workdic[fw_index_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_rdf_key = f"fw_rdf{i + 1}"
+        fire_workdic[fw_rdf_key] = RDF_FW(
+            name=name_dic[f"names{i + 1}"] + "RDF",
+            parents=fire_workdic[fw_resi_key], key=key_mat[i],
+            **kwargs
+        )
+
+        fw_cord_key = f"fw_cord{i + 1}"
+        fire_workdic[fw_cord_key] = CORD_FW(
+            name=name_dic[f"names{i + 1}"] + "CORD",
+            parents=fire_workdic[fw_rdf_key], key=key_mat[i],
+            **kwargs
+        )
+    key_fw = key_GEN(**kwargs)
+    fws = [] + ligpargen_fws
+    for fw, values in fire_workdic.items():
+        globals()[fw] = values
+        fws.append(globals().get(fw))
+
+    wf = Workflow(fws, name=kwargs.get("populate_name"))
+
+    return wf
+
+
 def just_anion(paramset, identifier=None, smiles=None, wtune=False, solvent='acetonitrile',
                hf_mol_opt=False, email=None, username=None, **kwargs):
     f10 = InitializeMolecule(identifier=identifier, smiles=smiles, **kwargs)
