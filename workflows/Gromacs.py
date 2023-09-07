@@ -15,7 +15,6 @@ import d3tales_fw.Fast.make_gro as gro
 
 from atomate.utils.utils import get_logger, env_chk
 from fireworks import FiretaskBase, explicit_serialize, FWAction
-
 logger = get_logger(__name__)
 cpus = [multiprocessing.cpu_count() if multiprocessing.cpu_count() < 16 else 16]
 nprocs = str(cpus[0])
