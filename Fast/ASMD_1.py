@@ -13,20 +13,20 @@ import pandas as pd
 
 
 class ASMD:
-    def __init__(self):
+    def __init__(self,key):
         self.current_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/"
-        self.input_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles"
-        self.output_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/"
-        self.mdp_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/py/d3tales_fw/Fast/MDP"
-        self.topology_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles/topol.top"
-        self.initial_coordinates = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles/solvated.gro'
-        self.xtc_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/production.xtc"
-        self.tpr_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/production.tpr"
-        self.eqtpr_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/equilibration.tpr"
-        self.trr_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/production.trr"
-        self.nmol_itp = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles/nmol.itp"
-        self.gro_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/production.gro"
-        self.edr_file = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output/equilibration.edr"
+        self.input_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}"
+        self.output_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/"
+        self.mdp_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/MDP"
+        self.topology_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/topol.top"
+        self.initial_coordinates = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/solvated.gro"
+        self.xtc_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.xtc"
+        self.tpr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.tpr"
+        self.eqtpr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/equilibration.tpr"
+        self.trr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.trr"
+        self.nmol_itp =f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/nmol.itp"
+        self.gro_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.gro"
+        self.edr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/equilibration.edr"
         
 
         # Copy MDP files to output directory
@@ -199,7 +199,7 @@ class ASMD:
         mean_density = sum(densities) / len(densities)
         lower_limit = 0.7 * mean_density
         upper_limit = 1.3 * mean_density
-
+        self.production_run(self.topology_file, self.output_dir)
         if lower_limit <= x <= upper_limit:
             print(f"The given value x = {x} is within 10% accuracy of the mean density y = {mean_density:.2f}.")
             self.production_run(self.topology_file, self.output_dir)

@@ -11,9 +11,9 @@ class lig:
         self.charge=int(charge)
         subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
         conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
-        export_bossdir = f" export BOSSdir=/mnt/gpfs2_4m/scratch/sla296/test_run/py/d3tales_fw/boss"
+        export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
         ligpargen_cmd = f"ligpargen -s '{self.smiles}' -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {self.mol} -c {self.charge} -o 0 -cgen CM1A"
-        singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/Desktop/scratch/test_run/py/d3tales_fw/Fast/f.sif"
+        singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
 
         cmd = ["singularity", "exec", singularity_container, "bash", "-c",
                f'{conda_activate} && {export_bossdir} && {ligpargen_cmd}']

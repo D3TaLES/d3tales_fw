@@ -17,7 +17,7 @@ args = parser.parse_args()
 
 
 def populate_md_wf(**kwargs):
-    lpad_file = os.path.join(BASE_DIR.parent, 'config', 'md_launchpad.yaml')
+    lpad_file = os.path.join(BASE_DIR.parent, 'launch', 'md_launchpad.yaml')
     wf = d3tales_md_wf(**kwargs)
     info = LaunchPad().from_file(lpad_file).add_wf(wf)
     fw_id = list(info.values())[0]

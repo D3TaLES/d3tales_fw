@@ -4,7 +4,7 @@ import multiprocessing
 import time
 from rdkit import Chem
 from rdkit.Chem import AllChem
-import d3tales_fw.workflows.ASMD as run
+import d3tales_fw.Fast.ASMD_1 as run
 import d3tales_fw.Fast.scriptMaker as m
 import d3tales_fw.Fast.lig as l
 import d3tales_fw.Fast.dft as dft

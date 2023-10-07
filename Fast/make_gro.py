@@ -23,7 +23,7 @@ class gro:
 
         command8 = f'mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.pdb {self.dir}/InputGrofiles && mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.gmx.itp {self.dir}/InputGrofiles{key} && mv {self.dir}/{solvent2}_Solvent2script {self.dir}/InputGrofiles{key}'
         command10 = f'rm -r {self.dir}/{solvent2}_Solvent2'
-        command12 = f'cp -r /project/cmri235_uksr/shasanka_conda_boss/sla296/Desktop/scratch/test_run/py/d3tales_fw/Fast/MDP {self.dir}/InputGrofiles{key}'
+        command12 = f'cp -r /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/MDP {self.dir}/InputGrofiles{key}'
         print("cleaning up")
 
         

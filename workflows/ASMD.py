@@ -204,7 +204,7 @@ class ASMD:
         mean_density = sum(densities) / len(densities)
         lower_limit = 0.7 * mean_density
         upper_limit = 1.3 * mean_density
-
+            self.production_run(self.topology_file, self.output_dir)
         if lower_limit <= x <= upper_limit:
             print(f"The given value x = {x} is within 10% accuracy of the mean density y = {mean_density:.2f}.")
             self.production_run(self.topology_file, self.output_dir)
