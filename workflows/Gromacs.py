@@ -60,7 +60,6 @@ class LigParGenInit(FiretaskBase):
         self.paramset = self["paramset"]
         self.identifier = fw_spec.get("identifier", ) or self.get("identifier")
         self.gaussian_file_name = fw_spec.get("ligpargen_fn") or self.get("ligpargen_fn") or "ligpargen"
-        ##Not sure what this is
         return FWAction(update_spec={})
 
 
