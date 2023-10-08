@@ -135,6 +135,8 @@ class MDPrep(FiretaskBase):
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
         self.Solname = self.solvent_name[0]
+        self.solute_smiles= self.get("solute_smiles")
+        self.solvent_smiles= self.get("solvent_smiles")
         self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
         self.xdim = float(self.get("x") or fw_spec.get("x"))
         self.ydim = float(self.get("y") or fw_spec.get("y"))
@@ -148,6 +150,24 @@ class MDPrep(FiretaskBase):
         self.Density = self.get("den") or fw_spec.get("den")
         pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                      self.zdim, self.dir, None, key)
+        names=[]+ self.solvent_name+self.solute_name 
+        smiles=[] + self.solvent_smiles + self.solute_smiles
+        key=self.get("key")
+        dft_folder="/project/cmri235_uksr/shasanka_conda_boss/dft_folder"
+        i = 0
+        for iteams, name in zip(smiles,names):
+            i+=1
+            print(f'{dft_folder}/{iteams}')
+            if os.path.isfile(f'{dft_folder}/{iteams}'):
+                if i >1:
+                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder)
+                else:
+                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder)
+            else:
+                if i >1:
+                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder)
+                else:
+                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder)
         gro.gro(self.Solname[:3], self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
         return FWAction(update_spec={})
 
@@ -266,11 +286,28 @@ class key_gen(FiretaskBase):
     def run_task(self, fw_spec):
         key = fw_spec.get("key_dic")
         self.dir = self.get("dir") or fw_spec.get("dir")
-        with open(f"{self.dir}/key", a) as k:
+        with open(f"{self.dir}/key", 'a') as k:
             for i, j in key.items():
                 k.writelines(f'{i}: {j}')
 
         return FWAction(update_spec={})
+
+@explicit_serialize
+
+class dft_checker(FiretaskBase):
+    def run_task(self, fw_spec):
+        smiles= fw_spec.get("smiles_list")
+        names=fw_spec.get("name_list")
+        key=self.get("key")
+        dft_folder="/project/cmri235_uksr/shasanka_conda_boss/dft_folder"
+        for iteams, name in zip(smiles,names):
+            if os.path.isfile(dft_folder+iteams):
+                transfer.trans(name[:3],iteams,key,1)
+            else:
+                transfer.trans(name[:3], iteams, key, 0)
+
+        return FWAction(update_spec={})
+
 
 
 

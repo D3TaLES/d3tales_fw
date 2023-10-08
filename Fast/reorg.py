@@ -5,7 +5,7 @@ class reorg:
         self.dir = dir
         subprocess.run(f"touch {self.dir}/{self.moleclue}.itp", shell=True)
         subprocess.run(f'touch {self.dir}/{self.moleclue}_atomtype.itp', shell=True)
-        with open (f"{self.dir}/{self.moleclue}.gmx.itp", 'r') as org, open(f"{self.dir}/{self.moleclue}.itp", 'a') as itp, open(f'{self.dir}/{self.moleclue}_atomtype.itp', 'a') as type:
+        with open (f"{self.dir}/{self.moleclue}f.itp", 'r') as org, open(f"{self.dir}/{self.moleclue}.itp", 'a') as itp, open(f'{self.dir}/{self.moleclue}_atomtype.itp', 'a') as type:
             lines=org.readlines()
             atomtype=10
             atomtype_lastline=0

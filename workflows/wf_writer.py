@@ -92,6 +92,8 @@ def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None,
             parents=ligpargen_fws,
             solute_name=kwargs.get(f"solute_name{i + 1}"),
             solvent_name=kwargs.get(f"solvent_name{i + 1}"),
+            solute_smiles=kwargs.get(f"solute_smiles{i + 1}"),
+            solvent_smiles=kwargs.get(f"solvent_smiles{i + 1}"),
             x=kwargs.get(f"x{i + 1}"),
             y=kwargs.get(f"y{i + 1}"),
             z=kwargs.get(f"z{i + 1}"),
@@ -171,7 +173,7 @@ def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None,
             **kwargs
         )
     key_fw = key_GEN(**kwargs)
-    fws = [] + ligpargen_fws
+    fws = [key_fw] + ligpargen_fws
     for fw, values in fire_workdic.items():
         globals()[fw] = values
         fws.append(globals().get(fw))
