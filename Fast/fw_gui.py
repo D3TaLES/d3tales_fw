@@ -13,6 +13,9 @@ class GUI:
         self.window.title('ASMD')
         self.window.geometry('850x650')
         self.nameMatrix=[]
+        self.systemNamemat=[]
+        self.systemsmilesmat=[]
+        self.entries={}
         self.smilesMatrix=[]
         self.canvas = tk.Canvas(self.window)
         self.canvas.grid(row=0, column=0, sticky=tk.W + tk.E + tk.N + tk.S)
@@ -54,7 +57,6 @@ class GUI:
         self.numsysL.grid(row=0, column=0)
         self.numsys.grid(row=0, column=1)
         self.numsysB.grid(row=1, column=0)
-        self.entries=[]
 
     def make(self):
         global number
@@ -127,48 +129,54 @@ class GUI:
                     self.system.grid(row=5+(13*i), column=0, padx=50)
                     self.labelSolvent.grid(row=6+(13*i), column=0)
                     self.Solname.grid(row=6+(13*i), column=1)
-                    self.entries.append(self.Solname)
+                    self.entries[f"solventname{i+1}"]=self.Solname
 
                     self.lableSolventSmiles.grid(row=7+(13*i), column=0)
                     self.SolventSmiles.grid(row=7+(13*i), column=1)
-                    self.entries.append( self.SolventSmiles)
+                    self.entries[f"solvetsmiles{i+1}"]=self.SolventSmiles
 
                     self.labelSolute.grid(row=8+(13*i), column=0)
                     self.SoluteName.grid(row=8+(13*i), column=1)
+                    self.entries[f"solutename{i + 1}"]=self.SoluteName
 
-                    self.entries.append(self.SoluteName)
 
                     self.labelSoluteSmiles.grid(row=9+(13*i), column=0)
                     self.SoluteSmiles.grid(row=9+(13*i), column=1)
-                    self.entries.append( self.SoluteSmiles)
+                    self.entries[f"solutesmiles{i + 1}"]= self.SoluteSmiles
 
                     self.labelConcentration.grid(row=10+(13*i), column=0)
                     self.Concentrations.grid(row=10+(13*i), column=1)
-                    self.entries.append( self.Concentrations)
+                    self.entries[f"concentration{i + 1}"] = self.Concentrations
+
 
                     self.labelDensity.grid(row=12+(13*i), column=0)
                     self.Density.grid(row=12+(13*i), column=1)
-                    self.entries.append( self.Density)
+                    self.entries[f"Density{i + 1}"] = self.Density
+
 
                     self.xdimLabel.grid(row=13+(13*i), column=0)
                     self.xdim.grid(row=13+(13*i), column=1)
-                    self.entries.append( self.xdim)
+                    self.entries[f"xdim{i + 1}"] = self.xdim
 
                     self.ydimLabel.grid(row=14+(13*i), column=0)
                     self.ydim.grid(row=14+(13*i), column=1)
-                    self.entries.append( self.ydim)
+                    self.entries[f"ydim{i + 1}"] = self.ydim
+
 
                     self.zdimLabel.grid(row=15+(13*i), column=0)
                     self.zdim.grid(row=15+(13*i), column=1)
-                    self.entries.append( self.zdim)
+                    self.entries[f"zdim{i + 1}"] = self.zdim
+
 
                     self.chargeCheck.grid(row=16+(13*i), column=0)
                     self.chargeMatrix.grid(row=16+(13*i), column=1)
-                    self.entries.append( self.chargeMatrix)
+                    self.entries[f"charges{i + 1}"] = self.chargeMatrix
+
 
                     self.molarMass.grid(row=17+(13*i), column=1)
                     self.molarlabel.grid(row=17+(13*i), column=0)
-                    self.entries.append(  self.molarMass)
+                    self.entries[f"molarmass{i + 1}"] = self.molarMass
+
 
 
 
@@ -181,6 +189,7 @@ class GUI:
         args = parser.parse_args()
 
         def populate_md_wf(**kwargs):
+
             lpad_file = os.path.join(BASE_DIR.parent, 'launch', 'md_launchpad.yaml')
             wf = d3tales_md_wf(**kwargs)
             info = LaunchPad().from_file(lpad_file).add_wf(wf)
@@ -188,50 +197,72 @@ class GUI:
             return fw_id
 
         if not os.path.isfile(args.filename):
-            sub_mat=[]
-            subs_mat=[]
-            sub_mat.append(self.entries[0].get())    ## it works!!!!!!!!!
-            solutes=self.entries[2].get().split(",")
-            print(solutes)
-            for s in solutes:
-                sub_mat.append(s.strip())
-            sub_mat.append(self.entries[1].get())
-            solutesS = self.entries[3].get().split(",")
-            for s in solutesS:
-                subs_mat.append(s.strip())
-            print(sub_mat)
-            print(subs_mat)
+            self.systems = []
+
+            for _ in range (number):
+                self.subnamemat = []
+
+                string_to_append=""
+                a=self.entries[f"solventname{_+1}"].get().strip()
+                self.subnamemat.append(a)
+                self.nameMatrix.append(a)
+                string_to_append+=f'{a}'
+                b=self.entries[f"solutename{_ + 1}"].get().split(",")
+                for iteams in b:
+                    self.subnamemat.append(iteams.strip())
+                    string_to_append += f'_{iteams}'
+                    self.nameMatrix.append(iteams.strip())
+                self.systems.append(string_to_append)
+                self.systemNamemat.append(self.subnamemat)
+            for _ in range(number):
+                self.submatsmiles = []
+                a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
+                self.submatsmiles.append(a)
+                self.smilesMatrix.append(a)
+                b=self.entries[f"solutesmiles{_ + 1}"].get().split(",")
+                for iteams in b:
+                    self.submatsmiles.append(iteams.strip())
+                    self.smilesMatrix.append(iteams.strip())
+                self.systemsmilesmat.append(self.submatsmiles)
+
             number_sys=number
-            self.systems = ["a","b"] ##change this as well
-            for i,row in enumerate(self.nameMatrix):
-                sysname=""
-                for j, val in enumerate(row):
-                   sysname+= str(self.nameMatrix[i][j])
-                self.systems.append(sysname)
-            print(f"systems: {self.systems}")
-            print(f"namemat: {self.nameMatrix}")
-            print(f"smilesmat: {self.smilesMatrix}")
-            print(f'entries; {self.entries}')
-
-
-
-
-
 
             key_dic = {}
-            for i in range(2):  ###chnage this later to a var
-                key_dic[self.systems[i]] = random.randint(1, 30000000)
+            for _ in range(number_sys):  ###chnage this later to a var
+                key_dic[self.systems[_]] = random.randint(1, 30000000)
+
             md_kwargs = {
-                "smiles_list": ["CO", "CO", "CCO", "CCO"],
-                "con_list": [0, 0, 0, 0], "WF_name1": "Test_run1", "WF_name2": "Test_run2",
-                "name_list": ["wa1ter", "wa2ter", "methane1", "ethane2"], "cons": 0,
-                "type_list": ["Solvent", "Solvent", "Solute1", "Solute1"],
+                "smiles_list": self.smilesMatrix,
+                "con_list": [0, 0, 0, 0],
+                "name_list": self.nameMatrix, "cons": 0,
+                "type_list": ["Solvent", "Solute1", "Solvent", "Solute1"],
                 "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1": ["wa1ter"],
                 "solute_name1": ["methane"], "solvent_name2": ["wa2ter"], "solute_name2": ["ethane"],
                 "solvent_smiles1": ["CO"], "solute_smiles1": ["CCO"], "solvent_smiles2": ["CO"],
-                "solute_smiles2": ["CCO"], "x1": 10, "y1": 10, "z1": 10, "conmatrix1": ["0.1"], "den1": "10",
-                "MM1": "5", "x2": 10, "y2": 10, "z2": 10, "conmatrix2": ["0.1"], "den2": "10", "MM2": "5",
-                "num_systems": "2", "populate_name": "test", "key_dic": key_dic}
+                "solute_smiles2": ["CCO"], "conmatrix1": ["0.1"],
+               "conmatrix2": ["0.1"],
+                "num_systems": f"{number_sys}", "populate_name": "test", "key_dic": key_dic}
+            for _ in range(number_sys):
+                md_kwargs[f"WF_name{_+1}"]= self.systems[_]
+            for _ in range(number_sys):
+                md_kwargs[f"den{_+1}"] = float(self.entries[f'Density{_+1}'].get().strip())
+            for _ in range(number_sys):
+                md_kwargs[f'MM{_+1}']=float(self.entries[f'molarmass{_ + 1}'].get().strip())
+            for _ in range(number_sys):
+                md_kwargs[f'x{_+1}']=float(self.entries[f'x{_ + 1}'].get().strip())
+                md_kwargs[f'y{_ + 1}'] = float(self.entries[f'y{_ + 1}'].get().strip())
+                md_kwargs[f'z{_ + 1}'] = float(self.entries[f'z{_ + 1}'].get().strip())
+            # md_kwargs = {
+            #     "smiles_list": ["CO", "CO", "CCO", "CCO"],
+            #     "con_list": [0, 0, 0, 0], "WF_name1": "Test_run1", "WF_name2": "Test_run2",
+            #     "name_list": ["wa1ter", "wa2ter", "methane1", "ethane2"], "cons": 0,
+            #     "type_list": ["Solvent", "Solvent", "Solute1", "Solute1"],
+            #     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1": ["wa1ter"],
+            #     "solute_name1": ["methane"], "solvent_name2": ["wa2ter"], "solute_name2": ["ethane"],
+            #     "solvent_smiles1": ["CO"], "solute_smiles1": ["CCO"], "solvent_smiles2": ["CO"],
+            #     "solute_smiles2": ["CCO"], "x1": 10, "y1": 10, "z1": 10, "conmatrix1": ["0.1"], "den1": "10",
+            #     "MM1": "5", "x2": 10, "y2": 10, "z2": 10, "conmatrix2": ["0.1"], "den2": "10", "MM2": "5",
+            #     "num_systems": "2", "populate_name": "test", "key_dic": key_dic}
             # md_kwargs = {
             # "smiles_list": ["O","C"],
             # "con_list": [0,0], "WF_name1":"Test_run1","WF_name2":"Test_run2",  "name_list":["water","methane1"], "cons":0, "type_list":["Solvent","Solute1"], "dir":"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1":["water"], "solute_name1":["methane"],"solvent_name2":["wa2ter"], "solute_name2":["ethane"], "x1":10, "y1":10, "z1":10, "conmatrix1":["0.1"], "den1":"10", "MM1":"10", "x2":10, "y2":10, "z2":10, "conmatrix2":["0.1"], "den2":"10", "MM2":"18.012","num_systems":"1", "populate_name":"test","key_dic":key_dic}
