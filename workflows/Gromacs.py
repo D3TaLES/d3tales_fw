@@ -287,7 +287,7 @@ class key_gen(FiretaskBase):
         self.dir = self.get("dir") or fw_spec.get("dir")
         with open(f"{self.dir}/key", 'a') as k:
             for i, j in key.items():
-                k.writelines(f'{i}: {j}')
+                k.write(f'{i}: {j} \n')
 
         return FWAction(update_spec={})
 
