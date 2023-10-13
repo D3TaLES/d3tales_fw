@@ -17,6 +17,7 @@ class GUI:
         self.systemsmilesmat=[]
         self.entries={}
         self.smilesMatrix=[]
+        self.typematrix=[]
         self.canvas = tk.Canvas(self.window)
         self.canvas.grid(row=0, column=0, sticky=tk.W + tk.E + tk.N + tk.S)
 
@@ -204,6 +205,7 @@ class GUI:
 
                 string_to_append=""
                 a=self.entries[f"solventname{_+1}"].get().strip()
+                self.typematrix.append("Solvent")
                 self.subnamemat.append(a)
                 self.nameMatrix.append(a)
                 string_to_append+=f'{a}'
@@ -211,6 +213,7 @@ class GUI:
                 for iteams in b:
                     self.subnamemat.append(iteams.strip())
                     string_to_append += f'_{iteams}'
+                    self.typematrix.append("Solute1")
                     self.nameMatrix.append(iteams.strip())
                 self.systems.append(string_to_append)
                 self.systemNamemat.append(self.subnamemat)
@@ -235,13 +238,9 @@ class GUI:
                 "smiles_list": self.smilesMatrix,
                 "con_list": [0, 0, 0, 0],
                 "name_list": self.nameMatrix, "cons": 0,
-                "type_list": ["Solvent", "Solute1", "Solvent", "Solute1"],
-                "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1": ["wa1ter"],
-                "solute_name1": ["methane"], "solvent_name2": ["wa2ter"], "solute_name2": ["ethane"],
-                "solvent_smiles1": ["CO"], "solute_smiles1": ["CCO"], "solvent_smiles2": ["CO"],
-                "solute_smiles2": ["CCO"], "conmatrix1": ["0.1"],
-               "conmatrix2": ["0.1"],
-                "num_systems": f"{number_sys}", "populate_name": "test", "key_dic": key_dic}
+                "type_list": self.typematrix,
+                "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
+                "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic}
             for _ in range(number_sys):
                 md_kwargs[f"WF_name{_+1}"]= self.systems[_]
             for _ in range(number_sys):
@@ -249,9 +248,36 @@ class GUI:
             for _ in range(number_sys):
                 md_kwargs[f'MM{_+1}']=float(self.entries[f'molarmass{_ + 1}'].get().strip())
             for _ in range(number_sys):
-                md_kwargs[f'x{_+1}']=float(self.entries[f'x{_ + 1}'].get().strip())
-                md_kwargs[f'y{_ + 1}'] = float(self.entries[f'y{_ + 1}'].get().strip())
-                md_kwargs[f'z{_ + 1}'] = float(self.entries[f'z{_ + 1}'].get().strip())
+                md_kwargs[f'x{_+1}']=float(self.entries[f'xdim{_ + 1}'].get().strip())
+                md_kwargs[f'y{_ + 1}'] = float(self.entries[f'ydim{_ + 1}'].get().strip())
+                md_kwargs[f'z{_ + 1}'] = float(self.entries[f'zdim{_ + 1}'].get().strip())
+            for _ in range(number_sys):
+                conamt=[]
+                preprocessd=self.entries[f'concentration{_ + 1}'].get().split(",")
+                for iteams in preprocessd:
+                    conamt.append(iteams.strip())
+                md_kwargs[f'conmatrix{_ + 1}'] = conamt
+            index=0
+            for j in self.systemNamemat:
+                print(self.systemNamemat)
+                print(j[0])
+
+                solventmat=[]
+                solutemat=[j[:1]]
+                solventmat.append(j[0])
+                md_kwargs[f'"solvent_name{index + 1}'] = solventmat
+                md_kwargs[f'""solute_name{index + 1}'] = solutemat
+                index += 1
+            for j in self.systemsmilesmat:
+                solventmat=[]
+                solutemat=[j.pop(0)]
+                solventmat.append(j[0])
+                md_kwargs[f'"solvent_smiles{index + 1}'] = solventmat
+                md_kwargs[f'""solute_smiles{index + 1}'] = solutemat
+
+
+
+
             # md_kwargs = {
             #     "smiles_list": ["CO", "CO", "CCO", "CCO"],
             #     "con_list": [0, 0, 0, 0], "WF_name1": "Test_run1", "WF_name2": "Test_run2",
