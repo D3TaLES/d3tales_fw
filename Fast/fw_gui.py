@@ -263,20 +263,20 @@ class GUI:
                 print(j[0])
 
                 solventmat=[]
-                solutemat=[j[:1]]
+                solutemat=j[:1]
                 solventmat.append(j[0])
-                md_kwargs[f'"solvent_name{index + 1}'] = solventmat
-                md_kwargs[f'""solute_name{index + 1}'] = solutemat
+                md_kwargs[f'solvent_name{index + 1}'] = solventmat
+                md_kwargs[f'solute_name{index + 1}'] = solutemat
                 index += 1
             for j in self.systemsmilesmat:
                 solventmat=[]
-                solutemat=[j.pop(0)]
+                solutemat=j.pop(0)
                 solventmat.append(j[0])
-                md_kwargs[f'"solvent_smiles{index + 1}'] = solventmat
-                md_kwargs[f'""solute_smiles{index + 1}'] = solutemat
+                md_kwargs[f'solvent_smiles{index + 1}'] = solventmat
+                md_kwargs[f'solute_smiles{index + 1}'] = solutemat
 
 
-
+            print(md_kwargs)
 
             # md_kwargs = {
             #     "smiles_list": ["CO", "CO", "CCO", "CCO"],
