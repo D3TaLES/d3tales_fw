@@ -229,6 +229,7 @@ class RunGaussianEnergy(GaussianBase):
 class RunGaussianOpt(GaussianBase):
 
     def run_task(self, fw_spec):
+
         setup_obj = self.setup_calc(fw_spec, calc_type='opt')
         if isinstance(setup_obj, FWAction):
             return setup_obj

@@ -36,7 +36,7 @@ def populate_d3tales_lpad(
     Function to initiate a series of D3TaLES workflows for a given set of molecules.
     """
     gaussian_file_name = 'gaussian_ur' if not restricted else 'gaussian_noTune' if not use_iop else 'gaussian_hf' if hf_mol_opt else 'gaussian'
-    lpad_file = os.path.join(BASE_DIR.parent, 'config', 'my_launchpad.yaml')
+    lpad_file = os.path.join(BASE_DIR.parent, 'launch', 'md_launchpad.yaml')
     param_file = os.path.join(BASE_DIR, 'parameters', param_tag + 'parameter_file.json')
 
     smiles_dict = {}

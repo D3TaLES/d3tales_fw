@@ -28,101 +28,19 @@ class Ligpargen(FiretaskBase):
 
     def run_task(self, fw_spec):
         # get parameter
-
-        return FWAction()
-
-
-@explicit_serialize
-class Ligpargen(FiretaskBase):
-
-    def run_task(self, fw_spec):
-        # get parameter
         self.dir = fw_spec.get("dir")
         self.smiles = self.get("smile") or fw_spec.get("smile")
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.names = self.get("name") or fw_spec.get("name")
-        self.type = self.get("Type") or fw_spec.get("TYPE") or ""
+        self.type = self.get("Type") or fw_spec.get("TYPE","")
 
         l.lig(self.smiles, self.names + f"_{self.type}", self.charge, self.dir)
 
         return FWAction(update_spec={})
 
 
-@explicit_serialize
-class LigParGenInit(FiretaskBase):
-
-    def run_task(self, fw_spec):
-        # get parameters
-        self.ligpargen_cmd = env_chk(self.get("ligpargen_cmd"), fw_spec)
-        name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
-        self.full_name = name_tag + self['name']
-        self.calc_name = self['name']
-        self.paramset = self["paramset"]
-        self.identifier = fw_spec.get("identifier", ) or self.get("identifier")
-        self.gaussian_file_name = fw_spec.get("ligpargen_fn") or self.get("ligpargen_fn") or "ligpargen"
-        return FWAction(update_spec={})
-
 
 ##we need to run the dft here for the charge deravation
-
-@explicit_serialize
-class LigParGenUpdate(FiretaskBase):
-
-    def run_task(self, fw_spec):
-        # get parameters
-        self.ligpargen_cmd = env_chk(self.get("ligpargen_cmd"), fw_spec)
-        name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
-        self.full_name = name_tag + self['name']
-        self.name = self['name']
-        self.paramset = self["paramset"]
-        self.identifier = fw_spec.get("identifier", ) or self.get("identifier")
-        self.gaussian_file_name = fw_spec.get("ligpargen_fn") or self.get("ligpargen_fn") or "ligpargen"
-        self.dir = self.get("dir") or fw_spec.get("dir")
-        key = self.get("key")
-        chagreMatrix = []
-        with open(f'{self.dir}/{self.name}script{key}/{self.name}-final.log', 'r') as log, open(
-                f'{self.dir}/{self.name}{key}/{self.name}.gmx.itp', 'r') as gmx, open(
-            f'{self.dir}/{self.name}script{key}/{self.name}.itp', 'a') as itp:
-            lines = log.readlines()
-            gmx_lines = gmx.readlines()
-            if len(gmx_lines) == 0:
-                print("gmx is empty, try again")
-                subprocess.run(["ls"], shell=True)
-            index_ESP = 0
-            index_lastEsp = 0
-            index_GMXESP = 0
-            index_lastGMXESP = 0
-            for line in gmx_lines:
-                if line.strip() == "[ atoms ]":
-                    index_GMXESP = gmx_lines.index(line) + 2
-                    break
-            for line in gmx_lines:
-                if line.strip() == "[ bonds ]":
-                    index_lastGMXESP = gmx_lines.index(line) - 2
-            for line in lines:
-                if line.strip() == "ESP charges:":
-                    index_ESP = lines.index(line) + 2
-                    break
-            for line in lines:
-                if line.strip()[0:18] == "Sum of ESP charges":
-                    index_lastEsp = lines.index(line) - 1
-                    break
-
-            for a in range(index_lastEsp - index_ESP + 1):
-                charge_int = float(lines[index_ESP + a].split()[2])
-                charge = f'{charge_int:.4f}'.rjust(11)
-
-                chagreMatrix.append(charge)
-            for char in range(index_lastGMXESP - index_GMXESP + 1):
-                chargeIndexGmx = gmx_lines[index_GMXESP - 1].index("charge") - 6
-
-                gmx_lines[index_GMXESP + char] = gmx_lines[index_GMXESP + char][0:chargeIndexGmx] + str(
-                    chagreMatrix[char]) + gmx_lines[index_GMXESP + char][chargeIndexGmx + 11:]
-            for line in gmx_lines:
-                itp.writelines(line)
-        print("Itp file is made")
-        return FWAction(update_spec={})
-
 
 @explicit_serialize
 class MDPrep(FiretaskBase):
@@ -143,7 +61,7 @@ class MDPrep(FiretaskBase):
         self.conmatrix = self.get("conmatrix") or fw_spec.get("conmatrix")
         key = self.get("key")
         if self.conmatrix == None:
-            prtin("shit failed")
+            print("did not work")
             exit()
 
         self.Density = self.get("den") or fw_spec.get("den")

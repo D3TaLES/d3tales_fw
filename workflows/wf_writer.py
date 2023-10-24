@@ -60,12 +60,8 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
-def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None, z=None, **kwargs):
-    # f10 = InitializeMD(identifier=this, **kwargs)
-    # f11 = InitializeMD(identifier=identifier, parents=ligpargen_fws, **kwargs)
-    # Establish fireworks in workflow
-    # fws = [f10, f11] + ligpargen_fws
-    # f10 =Ligpargen_FW(name="TEST",smiles="C", con=0, Type="Solute", **kwargs)
+def d3tales_md_wf(**kwargs):
+
     key_dic = kwargs.get("key_dic")
     key_mat = []
     for i, j in key_dic.items():
@@ -78,9 +74,9 @@ def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None,
 
     ligpargen_fws = []
 
-    for typ, name, smiles, con in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list"),
-                                      kwargs.get("con_list")):
-        ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=con, Type=typ, di=kwargs.get("dir"), **kwargs))
+    for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
+                                 ):
+        ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"), **kwargs))
         for i in range(number_of_systems):
             if str((i + 1)) in name:
                 name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
@@ -175,8 +171,11 @@ def d3tales_md_wf(this=None, smile=None, charge=None, name=None, x=None, y=None,
     key_fw = key_GEN(**kwargs)
     fws = [key_fw] + ligpargen_fws
     for fw, values in fire_workdic.items():
-        globals()[fw] = values
-        fws.append(globals().get(fw))
+        fws.append(values)
+        # globals()[fw] = values
+        # fws.append(globals().get(fw))
+    print(f"the lig dict {len(ligpargen_fws)} done")
+
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))
 

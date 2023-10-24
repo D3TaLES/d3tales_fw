@@ -1,7 +1,7 @@
 from fireworks import Firework
 from d3tales_fw.workflows.Gromacs import *
-# from d3tales_fw.workflows.Gaussian import *
-# from d3tales_fw.workflows.Initialize import *
+from d3tales_fw.workflows.Gaussian import *
+from d3tales_fw.workflows.Initialize import *
 from d3tales_fw.workflows.envwf import G16_CMD, PATH, PROC_VM_KEY, RUNFILE_LOG
 
 # Copyright 2021-2022, University of Kentucky
@@ -19,7 +19,7 @@ class InitializeMolecule(Firework):
 class MolOpt(Firework):
     def __init__(self, name="opt_mol", parents=None, priority=None, name_tag='', **kwargs):
         kwargs.pop("use_iop") if "use_iop" in kwargs.keys() else None
-        spec = {'_category': CALC_CATEGORY, '_priority': priority} if priority else {'_category': CALC_CATEGORY}
+        spec = {'_category': CALC_CATEGORY,"g16_cmd": G16_CMD, '_priority': priority} if priority else {'_category': CALC_CATEGORY,"g16_cmd": G16_CMD,}
         t = [RunGaussianOpt(name=name, name_tag=name_tag, g16_cmd=G16_CMD, proc_vm_key=PROC_VM_KEY,
                             path=PATH, runfile_log=RUNFILE_LOG, skip_freq=True, use_iop=False, **kwargs)]
         super(MolOpt, self).__init__(t, parents=parents, spec=spec, name="{}{}".format(name_tag, name))
@@ -120,61 +120,61 @@ class Pack_FW(Firework):
 class EM_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [EnergyMinimization(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [EnergyMinimization(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(EM_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class NVT_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [NVT(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [NVT(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(NVT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class NPT_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [NPT(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [NPT(key=key, **kwargs)] ## this is passed for self, self.get() gets this
         super(NPT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Density_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [Density(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [Density(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(Density_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class TR_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [trj_corrector(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [trj_corrector(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(TR_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Index_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [Index(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [Index(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(Index_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class RES_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [residue(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [residue(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(RES_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class RDF_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [rdf(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [rdf(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(RDF_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class CORD_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [cord(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [cord(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(CORD_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Check_FW(Firework):
     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,mm=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"MM":mm, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [Den_checker(**kwargs,key=key)] ## this is passed for self, self.get() gets this
+        t = [Den_checker(key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(Check_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class key_GEN(Firework):
