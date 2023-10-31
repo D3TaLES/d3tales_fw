@@ -73,16 +73,17 @@ class MDPrep(FiretaskBase):
         print(names)
         i = 0
         for iteams, name in zip(smiles,names):
+            print(i)
             print(f'{dft_folder}/{iteams}')
             if os.path.isfile(f'{dft_folder}/{iteams}'):
                 print("found dft")
-                if i >1:
+                if i >=1:
                     transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder)
                 else:
                     transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder)
             else:
                 print("no dft")
-                if i >1:
+                if i >=1:
                     transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder)
                 else:
                     transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder)

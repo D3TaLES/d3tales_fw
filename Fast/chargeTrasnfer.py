@@ -51,4 +51,4 @@ class trans:
             print("Itp file is made")
         else:
             print("else is ran")
-            subprocess.run(f"mv{self.dir}/{name}/{name}.gmx.itp {self.dir}/InputGroFiles{key}/{name}f.itp",shell=True)
+            subprocess.run(f"mv {self.dir}/{name}/{name}.gmx.itp {self.dir}/InputGrofiles{key}/{name}f.itp",shell=True)
