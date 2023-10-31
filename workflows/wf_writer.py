@@ -83,7 +83,7 @@ def d3tales_md_wf(**kwargs):
     fire_workdic = {}
     for i in range(number_of_systems):
         fw_pack_key = f"fw_pack{i + 1}"
-        fire_workdic[fw_pack_key] = Pack_FW(
+        fire_workdic[fw_pack_key] = Pack_FW (
             name=name_dic[f"names{i + 1}"] + 'pack',
             parents=ligpargen_fws,
             solute_name=kwargs.get(f"solute_name{i + 1}"),
@@ -106,7 +106,7 @@ def d3tales_md_wf(**kwargs):
         )
 
         fw_nvt_key = f"fw_nvt{i + 1}"
-        fire_workdic[fw_nvt_key] = NVT_FW(
+        fire_workdic[fw_nvt_key] = NVT_FW (
             name=name_dic[f"names{i + 1}"] + "NVT",
             parents=fire_workdic[fw_em_key], key=key_mat[i],
             **kwargs
@@ -180,7 +180,6 @@ def d3tales_md_wf(**kwargs):
     wf = Workflow(fws, name=kwargs.get("populate_name"))
 
     return wf
-
 
 def just_anion(paramset, identifier=None, smiles=None, wtune=False, solvent='acetonitrile',
                hf_mol_opt=False, email=None, username=None, **kwargs):

@@ -7,9 +7,9 @@ class trans:
         self.dir = di
         self.dft=dft
         self.smiles = smiles
-        print(f'{self.dir}/{self.smiles}')
         chagreMatrix = []
         if re == 1:
+            print("it is ran")
             subprocess.run(f"touch {self.dir}/InputGrofiles{key}/{name}f.itp", shell=True)
             with open (f'{self.dft}/{self.smiles}','r') as log, open(f'{self.dir}/{name}/{name}.gmx.itp','r') as gmx,   open(f'{self.dir}/InputGrofiles{key}/{name}f.itp','a') as itp:
                 lines= log.readlines()
@@ -50,4 +50,5 @@ class trans:
                     itp.writelines(line)
             print("Itp file is made")
         else:
-            subprocess.run(f"mv {self.dir}/InputGroFiles{key}/{name}.gmx.itp {self.dir}/InputGroFiles{key}/{name}f.itp",shell=True)
+            print("else is ran")
+            subprocess.run(f"mv{self.dir}/{name}/{name}.gmx.itp {self.dir}/InputGroFiles{key}/{name}f.itp",shell=True)

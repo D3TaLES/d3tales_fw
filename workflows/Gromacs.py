@@ -46,8 +46,6 @@ class Ligpargen(FiretaskBase):
 class MDPrep(FiretaskBase):
 
     def run_task(self, fw_spec):
-        # get parameters
-        name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
@@ -71,20 +69,24 @@ class MDPrep(FiretaskBase):
         smiles=[] + self.solvent_smiles + self.solute_smiles
         key=self.get("key")
         dft_folder="/project/cmri235_uksr/shasanka_conda_boss/dft_folder"
+        print(smiles)
+        print(names)
         i = 0
         for iteams, name in zip(smiles,names):
-            i+=1
             print(f'{dft_folder}/{iteams}')
             if os.path.isfile(f'{dft_folder}/{iteams}'):
+                print("found dft")
                 if i >1:
                     transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder)
                 else:
                     transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder)
             else:
+                print("no dft")
                 if i >1:
                     transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder)
                 else:
                     transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder)
+            i+=1
         gro.gro(self.Solname[:3], self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
         return FWAction(update_spec={})
 
@@ -205,7 +207,7 @@ class key_gen(FiretaskBase):
         self.dir = self.get("dir") or fw_spec.get("dir")
         with open(f"{self.dir}/key", 'a') as k:
             for i, j in key.items():
-                k.write(f'{i}: {j} \n')
+                k.writelines(f'{i}: {j} \n   ')
 
         return FWAction(update_spec={})
 

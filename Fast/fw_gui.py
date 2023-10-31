@@ -210,6 +210,9 @@ class GUI:
                     self.submatsmiles.append(iteams.strip())
                     self.smilesMatrix.append(iteams.strip())
                 self.systemsmilesmat.append(self.submatsmiles)
+                print(f"submat: {self.submatsmiles}")
+                print(f'systemmat: {self.systemsmilesmat}')
+
 
             number_sys = number
 
@@ -251,12 +254,15 @@ class GUI:
                 md_kwargs[f'solvent_name{index + 1}'] = solventmat
                 md_kwargs[f'solute_name{index + 1}'] = solutemat
                 index += 1
+            index=0
             for j in self.systemsmilesmat:
                 solventmat = []
-                solutemat = j.pop(0)
+                solutemat = j[1:]
                 solventmat.append(j[0])
                 md_kwargs[f'solvent_smiles{index + 1}'] = solventmat
                 md_kwargs[f'solute_smiles{index + 1}'] = solutemat
+                print(index,solutemat,solventmat)
+                index +=1
             self.charge = []
 
             for i in range(number_sys):
@@ -279,7 +285,7 @@ class GUI:
             # md_kwargs = {
             # "smiles_list": ["O","C"],
             # "con_list": [0,0], "WF_name1":"Test_run1","WF_name2":"Test_run2",  "name_list":["water","methane1"], "cons":0, "type_list":["Solvent","Solute1"], "dir":"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1":["water"], "solute_name1":["methane"],"solvent_name2":["wa2ter"], "solute_name2":["ethane"], "x1":10, "y1":10, "z1":10, "conmatrix1":["0.1"], "den1":"10", "MM1":"10", "x2":10, "y2":10, "z2":10, "conmatrix2":["0.1"], "den2":"10", "MM2":"18.012","num_systems":"1", "populate_name":"test","key_dic":key_dic}
-
+            print(md_kwargs)
             all_ids = {"test_md_fw": populate_md_wf(**md_kwargs)}
 
         else:
