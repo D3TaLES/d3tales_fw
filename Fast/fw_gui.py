@@ -1,9 +1,11 @@
+import sys
 import tkinter as tk
 from tkinter import ttk
 import argparse
 import random
 from pathlib import Path
 from fireworks import LaunchPad
+import datetime as dat
 from monty.serialization import dumpfn, loadfn
 from d3tales_fw.workflows.wf_writer import *
 
@@ -219,8 +221,11 @@ class GUI:
             key_dic = {}
             for _ in range(number_sys):
                 key_dic[self.systems[_]] = random.randint(1, 30000000)
-
-            md_kwargs = {
+            darte=(str(dat.datetime.now()).split()[0]).split("-")
+            date=""
+            for iteams in darte:
+                date+=f"_{str(iteams)}"
+            md_kwargs = {"date_sumbit":date,
                 "smiles_list": self.smilesMatrix,
                 "name_list": self.nameMatrix,  # "cons": 0,
                 "type_list": self.typematrix,
@@ -286,6 +291,7 @@ class GUI:
             # "smiles_list": ["O","C"],
             # "con_list": [0,0], "WF_name1":"Test_run1","WF_name2":"Test_run2",  "name_list":["water","methane1"], "cons":0, "type_list":["Solvent","Solute1"], "dir":"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1":["water"], "solute_name1":["methane"],"solvent_name2":["wa2ter"], "solute_name2":["ethane"], "x1":10, "y1":10, "z1":10, "conmatrix1":["0.1"], "den1":"10", "MM1":"10", "x2":10, "y2":10, "z2":10, "conmatrix2":["0.1"], "den2":"10", "MM2":"18.012","num_systems":"1", "populate_name":"test","key_dic":key_dic}
             all_ids = {"test_md_fw": populate_md_wf(**md_kwargs)}
+            sys.exit()
 
         else:
             all_md_data = loadfn(args.filename)

@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
-
-# from pmda.rdf import InterRDF
+#from pmda.rdf import InterRDF
 
 
 class ASMD:

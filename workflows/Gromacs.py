@@ -1,6 +1,8 @@
 import subprocess
 import os
 import multiprocessing
+import datetime
+import sys
 import time
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -210,7 +212,22 @@ class key_gen(FiretaskBase):
             for i, j in key.items():
                 k.writelines(f'{i}: {j} \n   ')
 
+        key_gen.orgainze(key,fw_spec.get("date_sumbit"),self.dir)
+
         return FWAction(update_spec={})
+
+    def orgainze(self,key, date_sumbited, dirs):
+        dir = dirs
+        name = f'{str(date_sumbited)}_'
+        for i in (str(datetime.datetime.now()).split()[1]).split(":"):
+            name += f"_{str(i)[:2]}"
+        subprocess.run([f"mkdir {dir}/run_{name}"], shell=True, check=True)
+        subprocess.run([f"mv {dir}/key {dir}/run_{name}"], shell=True, check=True)
+        print(key)
+        for iteams in key:
+            subprocess.run([f"mv {dir}/InputGrofiles{iteams} {dir}/run_{name}"], shell=True)
+            subprocess.run([f"mv {dir}/Output{iteams} {dir}/run_{name}"], shell=True)
+
 
 @explicit_serialize
 
@@ -227,27 +244,6 @@ class dft_checker(FiretaskBase):
                 transfer.trans(name[:3], iteams, key, 0)
 
         return FWAction(update_spec={})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

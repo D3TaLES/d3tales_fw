@@ -9,8 +9,10 @@ class gro:
         self.y = y
         self.z = z
         self.solvent = solvent
+
         self.solute = solute
         self.solvent2 = solvent2
+        print(f"in the gro solutes: {self.solute}")
         command = f'gmx_mpi editconf -f {self.dir}/Packmol{key}/Mixture.pdb -box {self.x} {self.y} {self.z} -o {self.dir}/Packmol{key}/solvated.gro'
         subprocess.run(command, shell=True, check=True)
         print("gro file made")
@@ -47,19 +49,9 @@ class gro:
             g.reorg(self.solvent2 + "_Solvent2", self.dir + f"/InputGrofiles{key}")
 
         for j in range(len(self.solute)):
+            print(f'ran soulte{j+1}')
             g.reorg(self.solute[j].strip()[:3] + f"_Solute{j + 1}", self.dir + f"/InputGrofiles{key}", key)
 
         subprocess.run(command12, shell=True, check=True)
-
-        print("Starting the simulation")
-
-        if len(self.solvent2) != 0:
-            g.reorg(self.solvent2 + "_Solvent2", self.dir + f"/InputGrofiles{key}")
-
-        for j in range(len(self.solute)):
-            g.reorg(self.solute[j].strip()[:3] + f"_Solute{j+1}", self.dir + f"/InputGrofiles{key}",key)
-
-        subprocess.run(command12, shell=True, check=True)
-
 
         print("Starting the simulation")

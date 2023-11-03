@@ -168,18 +168,22 @@ def d3tales_md_wf(**kwargs):
             parents=fire_workdic[fw_rdf_key], key=key_mat[i],
             **kwargs
         )
-    key_fw = key_GEN(**kwargs)
-    fws = [key_fw] + ligpargen_fws
+
+    regula=[]
+
     for fw, values in fire_workdic.items():
-        fws.append(values)
+        regula.append(values)
         # globals()[fw] = values
         # fws.append(globals().get(fw))
     print(f"the lig dict {len(ligpargen_fws)} done")
+    key_fw = key_GEN(**kwargs,parents=regula)
+    fws = [key_fw] + ligpargen_fws+regula
 
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))
 
     return wf
+
 
 def just_anion(paramset, identifier=None, smiles=None, wtune=False, solvent='acetonitrile',
                hf_mol_opt=False, email=None, username=None, **kwargs):
