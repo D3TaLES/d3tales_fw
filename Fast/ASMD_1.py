@@ -8,10 +8,31 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
-#from pmda.rdf import InterRDF
 
 
 class ASMD:
+
+    """A class that uses the GROMACS wrapper along with subprocess to create and run simulation using
+    GROMACS 2020 software package to find energies and uses pandas,
+    NumPy and matplotlib to store and visualize data, as well as to generate  RDF plots.
+    A density check function is built into the class though, it is disabled due to
+    lack of reliable data about solution densities for arbitrary mixtures.
+    The order of function class for the standard simulation is as follows:
+    count_warnings,
+    EnergyMin,
+    NVT,
+    NPT,
+    calculate_density,
+    check_density_accuracy (NOTE THAT WHILE THE FUNCTION IS CALLED FOR THE SAKE OF CONSISTENCY, IT DOES NOT ACTUALY VERIFY THE DENSITY),
+    correct,
+    index_file,
+    extract_residues_from_itp,
+    RDF,
+    coordination_number.
+    """
+
+
+
     def __init__(self,key):
         self.current_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/"
         self.input_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}"
