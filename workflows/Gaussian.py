@@ -3,15 +3,15 @@ import subprocess
 import multiprocessing
 
 from six import add_metaclass
-from ocelot.task.wtuning import WtuningJob
+from ocelot_api.ocelot.task.wtuning import WtuningJob
 from atomate.utils.utils import get_logger, env_chk
 from d3tales_api.D3database.d3database import D3Database
 from d3tales_fw.workflows.utils import *
 from fireworks import FiretaskBase, explicit_serialize, FWAction
 from pymatgen.core.structure import IMolecule
 from pymatgen.io.gaussian import GaussianInput
-from ocelot.task.confgen import ConfGen
-from ocelot.routines.conformerparser import pmgmol_to_rdmol
+from ocelot_api.ocelot.task.confgen import ConfGen
+from ocelot_api.ocelot.routines.conformerparser import pmgmol_to_rdmol
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.rdMolTransforms import SetDihedralDeg
