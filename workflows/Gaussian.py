@@ -100,6 +100,7 @@ class GaussianBase(FiretaskBase):
         except:
             self.gs_charge = fw_spec.get("gs_charge") or self.get("gs_charge") or 0
             self.gs_spin = fw_spec.get("gs_spin") or self.get("gs_spin") or 1
+            self.smiles = fw_spec.get("smiles") or self.get("smiles") or None
         use_iop = fw_spec.get("use_iop", True) if self.get("use_iop", True) else self.get("use_iop")
         run_from_com = fw_spec.get("run_from_com") or self.get("run_from_com") or False
 
@@ -119,16 +120,28 @@ class GaussianBase(FiretaskBase):
         # get starting geometry for calculation
         geometry = fw_spec.get("geometry", ) or self.get("geometry", )
         geometry_sites = fw_spec.get("{}_geom".format(geometry), )
-        if run_from_com:
-            self.mol = GaussianInput.from_file(self.file_com).molecule
-        else:
-            if geometry_sites:
-                self.mol = Molecule.from_sites([Site.from_dict(sd) for sd in geometry_sites])
+        try:
+            if run_from_com:
+                self.mol = GaussianInput.from_file(self.file_com).molecule
             else:
-                geometry_hash = fw_spec.get("{}_hash".format(geometry), orig_hash_id(self.identifier, self.calc_name, self.paramset.functional,
-                                                                                     self.paramset.basis_set, tuning_parameter=self.iop_str, solvent=solvent))
-                self.mol = get_db_geom(geometry_hash) or start_from_smiles(self.identifier) if geometry_hash else start_from_smiles(self.identifier)
-
+                if geometry_sites:
+                    self.mol = Molecule.from_sites([Site.from_dict(sd) for sd in geometry_sites])
+                else:
+                    geometry_hash = fw_spec.get("{}_hash".format(geometry), orig_hash_id(self.identifier, self.calc_name, self.paramset.functional,
+                                                                                         self.paramset.basis_set, tuning_parameter=self.iop_str, solvent=solvent))
+                    self.mol = get_db_geom(geometry_hash) or start_from_smiles(self.identifier) if geometry_hash else start_from_smiles(self.identifier)
+        except:
+            if run_from_com:
+                self.mol = GaussianInput.from_file(self.file_com).molecule
+            else:
+                if geometry_sites:
+                    self.mol = Molecule.from_sites([Site.from_dict(sd) for sd in geometry_sites])
+                else:
+                    geometry_hash = fw_spec.get("{}_hash".format(geometry),
+                                                orig_hash_id(self.identifier, self.calc_name, self.paramset.functional,
+                                                             self.paramset.basis_set, tuning_parameter=self.iop_str,
+                                                             solvent=solvent))
+                    self.mol = find_lowest_e_conf(self.smiles)
             # End job if the total number of atoms is greater than 200
             num_atoms = len(self.mol.sites)
             if num_atoms > 200:
