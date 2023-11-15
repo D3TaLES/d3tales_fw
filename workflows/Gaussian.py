@@ -352,6 +352,7 @@ class RunWtuning(FiretaskBase):
         except:
             gs_charge = fw_spec.get("gs_charge") or self.get("gs_charge")
             gs_spin = fw_spec.get("gs_spin") or self.get("gs_spin")
+        print(gs_charge, gs_spin)
         gaussian_file_name = fw_spec.get("gaussian_file_name") or self.get("gaussian_file_name") or "gaussian"
         calc_dir = "{}/{}/{}".format(path, identifier, gaussian_file_name)
         check_if_already_run = fw_spec.get("check_if_already_run", ) or self.get("check_if_already_run") or False
