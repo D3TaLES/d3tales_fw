@@ -131,7 +131,7 @@ class GaussianBase(FiretaskBase):
                 try:
                     self.mol = get_db_geom(geometry_hash) or start_from_smiles(self.identifier) if geometry_hash else start_from_smiles(self.identifier)
                 except:
-                    self.mol = find_lowest_e_conf(self.smiles)
+                    self.mol = Molecule.from_str(find_lowest_e_conf(self.smiles), 'xyz')
             # End job if the total number of atoms is greater than 200
             num_atoms = len(self.mol.sites)
             if num_atoms > 200:
