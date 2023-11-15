@@ -31,6 +31,7 @@ class GaussianBase(FiretaskBase):
 
     def setup_files(self, fw_spec, calc_type='opt'):
         # get parameters
+        print(fw_spec)
         self.gaussian_cmd = env_chk(self.get("g16_cmd"), fw_spec)
         name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
         self.full_name = name_tag + self['name']
