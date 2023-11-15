@@ -388,6 +388,7 @@ class RunWtuning(FiretaskBase):
                                  url="https://d3tales.as.uky.edu", return_json=True).response
             except: 
                 init_query = None
+            print(init_query)
             if isinstance(init_query, list):
                 omega_dict_list = init_query[0].get("mol_characterization", {}).get('omega')
                 if isinstance(omega_dict_list, list):
