@@ -374,7 +374,7 @@ class RunWtuning(FiretaskBase):
             try: 
                 init_query = RESTAPI(method='get',
                                  endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
-                                 url="https://d3tales.as.uky.edu", return_json=True).response
+                                 url="https://d3tales.as.uky.edu", return_json=True).response[0]
             except: 
                 init_query = None
             if isinstance(init_query, list):
