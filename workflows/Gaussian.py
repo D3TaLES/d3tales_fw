@@ -385,12 +385,11 @@ class RunWtuning(FiretaskBase):
             try: 
                 init_query = RESTAPI(method='get',
                                  endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
-                                 url="https://d3tales.as.uky.edu", return_json=True).response
+                                 url="https://d3tales.as.uky.edu", return_json=True).response[0]
             except: 
                 init_query = None
-            print(init_query, "this is the init query")
-            if isinstance(init_query, list):
-                omega_dict_list = init_query[0].get("mol_characterization", {}).get('omega')
+            if isinstance(init_query, dict):
+                omega_dict_list = init_query.get("mol_characterization", {}).get('omega')
                 if isinstance(omega_dict_list, list):
                     tuned_w = omega_dict_list[0].get('value')
                     iop_str = str(int(tuned_w * 1e4)).zfill(5) + "00000"
