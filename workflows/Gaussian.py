@@ -41,7 +41,7 @@ class GaussianBase(FiretaskBase):
         self.check_if_already_run = fw_spec.get("check_if_already_run") or self.get("check_if_already_run") or False
         self.skip_freq = fw_spec.get("skip_freq", ) or self.get("skip_freq") or False
         self.skip_freq = True if self.calc_name == "opt_mol" else self.skip_freq
-        self.submit = fw_spec.get("submit", True) if self.get("submit", True) else self.get("submit")
+        self.submit = fw_spec.get("submit", False) if self.get("submit", False) else self.get("submit")
         self.restricted = fw_spec.get("restricted", True) if self.get("restricted", True) else self.get("restricted")
         self.run_nto = fw_spec.get("run_nto") or self.get("run_nto") or False
 
