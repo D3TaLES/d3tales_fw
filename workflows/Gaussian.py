@@ -171,7 +171,8 @@ class GaussianBase(FiretaskBase):
         upload_names = [f.split('/')[-1] for f in upload_files]
         zip_path = zip_files(upload_names, zip_name='{}_{}.zip'.format(self.identifier, name_tag + self.full_name))
         if self.submit:
-            submission = RESTAPI(method='post', endpoint='tools/upload/computation-gaussian',
+            submission = RESTAPI(username='', password='',
+                                 method='post', endpoint='tools/upload/computation-gaussian',
                                  url="https://d3tales.as.uky.edu", expected_endpoint="tools/user_uploads",
                                  upload_file=zip_path, params=dict(molecule_id=self.identifier, calculation_type=calc_type))
             print(submission.params)
