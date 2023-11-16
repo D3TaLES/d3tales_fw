@@ -26,7 +26,7 @@ class MoleculeInit(FiretaskBase):
         gs_charge = instance.get('groundState_charge')
         gs_spin = instance.get('groundState_spin')
         db_insertion = FrontDB(schema_layer='mol_info', instance=instance, smiles=clean_smiles, group=group, public=public)
-        return FWAction(update_spec={"identifier": db_insertion.id, "gs_charge": gs_charge, "gs_spin": gs_spin, 'smiles': clean_smiles},
+        return FWAction(update_spec={"_allowed_fizzled_parents":True, "identifier": db_insertion.id, "gs_charge": gs_charge, "gs_spin": gs_spin, 'smiles': clean_smiles},
                         propagate=True)
 
 
