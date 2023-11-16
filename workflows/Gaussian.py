@@ -100,7 +100,7 @@ class GaussianBase(FiretaskBase):
         except:
             self.gs_charge = fw_spec.get("gs_charge") or self.get("gs_charge") or 0
             self.gs_spin = fw_spec.get("gs_spin") or self.get("gs_spin") or 1
-            self.smiles = fw_spec.get("smiles") or self.get("smiles") or None
+            self.smiles = fw_spec.get("smiles") or self.get("smiles")
         use_iop = fw_spec.get("use_iop", True) if self.get("use_iop", True) else self.get("use_iop")
         run_from_com = fw_spec.get("run_from_com") or self.get("run_from_com") or False
 
