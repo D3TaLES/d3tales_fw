@@ -355,7 +355,7 @@ class RunWtuning(FiretaskBase):
         gaussian_file_name = fw_spec.get("gaussian_file_name") or self.get("gaussian_file_name") or "gaussian"
         calc_dir = "{}/{}/{}".format(path, identifier, gaussian_file_name)
         check_if_already_run = fw_spec.get("check_if_already_run", ) or self.get("check_if_already_run") or False
-        submit = fw_spec.get("submit") or self.get("submit") or True
+        submit = fw_spec.get("submit") or self.get("submit") or False
         restricted = fw_spec.get("restricted", True) if self.get("restricted", True) else self.get("restricted")
 
         radical_electrons = (gs_spin - 1 - paramset.charge) % 2
