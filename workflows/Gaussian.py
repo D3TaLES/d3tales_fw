@@ -370,13 +370,10 @@ class RunWtuning(FiretaskBase):
 
         # check if job has already run
         if check_if_already_run:
-            try: 
-                init_query = RESTAPI(method='get',
-                                 endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
-                                 url="https://d3tales.as.uky.edu", return_json=True).response[0]
-            except: 
-                init_query = None
-            if isinstance(init_query, list):
+            init_query = RESTAPI(method='get',
+                             endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
+                             url="https://d3tales.as.uky.edu", return_json=True).response
+            if init_query:
                 omega_dict_list = init_query[0].get("mol_characterization", {}).get('omega')
                 if isinstance(omega_dict_list, list):
                     tuned_w = omega_dict_list[0].get('value')

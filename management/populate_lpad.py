@@ -8,29 +8,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 def populate_d3tales_lpad(
-    filename=None,
-    ids_list=None,  # norm: None (must be None for json to be read)
-    smiles_list=None,  # norm: None  (must be None for json to be read)
-    required_name_string='',  # norm: ''
+        filename=None,
+        file_of_ids=False,  # norm: False
+        ids_list=None,  # norm: None (must be None for json to be read)
+        smiles_list=None,  # norm: None  (must be None for json to be read)
+        required_name_string='',  # norm: ''
 
-    workflow_function=d3tales_wf,
-    priority=4,
+        workflow_function=d3tales_wf,
+        priority=4,
 
-    public=False,
-    default_origin='Zinc',
-    submit=True,  # norm: True
-    check_if_already_run=True,  # norm: True
-    solvent='acetonitrile',  # norm: acetonitrile  ( DiMethylSulfoxide )
-    param_tag='gaus_',  # norm: gaus_  ( huckaba_ dihedral_ gaus_singlets_)
-    hf_mol_opt=False,  # norm: False
-    restricted=True,  # norm: True
-    use_iop=True,  # norm: True
-    wtune=True,  # norm: True
-    run_nto=False,  # norm: False
+        public=False,
+        default_origin='Zinc',
+        submit=True,  # norm: True
+        check_if_already_run=True,  # norm: True
+        solvent='acetonitrile',  # norm: acetonitrile  ( DiMethylSulfoxide )
+        param_tag='gaus_',  # norm: gaus_  ( huckaba_ dihedral_ gaus_singlets_)
+        hf_mol_opt=False,  # norm: False
+        restricted=True,  # norm: True
+        use_iop=True,  # norm: True
+        wtune=True,  # norm: True
+        run_nto=False,  # norm: False
 
-    email=None,  # "rdu230@uky.edu"
-    username=None,  # "Rebekah Duke"
-    wf_tag=""  # ""
+        email=None,  # "rdu230@uky.edu"
+        username=None,  # "Rebekah Duke"
+        wf_tag=""  # ""
 ):
     """
     Function to initiate a series of D3TaLES workflows for a given set of molecules.
@@ -55,7 +56,7 @@ def populate_d3tales_lpad(
                       gaussian_file_name=gaussian_file_name, email=email, username=username, restricted=restricted,
                       wtune=wtune, run_nto=run_nto, origin_group=origin, wf_tag=wf_tag)
     for mol in mol_list:
-        if ids_list:
+        if ids_list or file_of_ids:
             kwarg_dict.update(identifier=mol)
         else:
             name = names_dict.get(mol)
@@ -74,13 +75,18 @@ def populate_d3tales_lpad(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Launch D3TaLES FireWorks workflow.')
-    parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON molecule file', default=False)
+    parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON molecule file',
+                        default=False)
     parser.add_argument('-p', '--priority', type=int, help='jobs priority', default=2)
-    parser.add_argument('-l', '--id_list', action='store_true', help='denotes that the filename argument is actually a'
+    parser.add_argument('-i', '--id_list', action='store_true', help='denotes that the filename argument is actually a'
                                                                      'comma seperated list of molecule IDs to submit')
+    parser.add_argument('-i_f', '--id_list_file', action='store_true', help='denotes that the filename argument file'
+                                                                            'contains molecule IDs (not SMILES) to submit')
     args = parser.parse_args()
 
     if args.id_list:
         populate_d3tales_lpad(ids_list=args.filename.split(","), priority=args.priority)
+    elif args.id_list_file:
+        populate_d3tales_lpad(filename=args.filename, file_of_ids=True, priority=args.priority)
     else:
-        populate_d3tales_lpad(filename=args.filename)
+        populate_d3tales_lpad(filename=args.filename, priority=args.priority)
