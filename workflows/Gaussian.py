@@ -175,10 +175,9 @@ class GaussianBase(FiretaskBase):
                                  params=dict(molecule_id=self.identifier, calculation_type=calc_type))
             if not submission.successful:
                 raise Exception("Calculation files not successfully submitted with endpoint {}. Response endpoint "
-                                "was {}, not {}. \nSubmission Params: {}".format(submission.endpoint,
-                                                                                 submission.response.request.url,
-                                                                                 submission.expected_endpoint,
-                                                                                 submission.params))
+                                "was {}, not {}. \nSubmission Params: {} \n Zip path: {}".format(
+                    submission.endpoint, submission.response.request.url, submission.expected_endpoint,
+                    submission.params, zip_path))
             print("File {}_{}.zip successfully posted!".format(self.identifier, name_tag + self.full_name))
         # Write runfile to runfile_log so the runfile can be deleted after calculation
         with open(self.runfile_log, 'a') as fn:
