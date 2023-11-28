@@ -16,7 +16,6 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 from rdkit.Chem.rdMolTransforms import SetDihedralDeg
 
-
 logger = get_logger(__name__)
 cpus = [multiprocessing.cpu_count() if multiprocessing.cpu_count() < 16 else 16]
 nprocs = str(cpus[0])
@@ -57,7 +56,8 @@ class GaussianBase(FiretaskBase):
 
         # get calc directory
         if self.get("path", ):
-            self.calc_dir = "{}/{}/{}".format(env_chk(self.get('path'), fw_spec), self.identifier, self.gaussian_file_name)
+            self.calc_dir = "{}/{}/{}".format(env_chk(self.get('path'), fw_spec), self.identifier,
+                                              self.gaussian_file_name)
         else:
             self.calc_dir = self.get("calc_dir", os.getcwd())
 
@@ -65,7 +65,8 @@ class GaussianBase(FiretaskBase):
         if self.get("type", ):
             self.type = self["type"]
             if self.type == "coupling":
-                self.working_dir = '{}/{}/{}/{}/{}'.format(self.calc_dir, self.type, calc_type, self["label"], self["subtype"])
+                self.working_dir = '{}/{}/{}/{}/{}'.format(self.calc_dir, self.type, calc_type, self["label"],
+                                                           self["subtype"])
             elif self.get("label"):
                 self.working_dir = '{}/{}/{}/{}'.format(self.calc_dir, self.type, calc_type, self["label"])
             elif self.type.startswith("solv_"):
@@ -95,7 +96,8 @@ class GaussianBase(FiretaskBase):
         name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
         solvent = fw_spec.get("solvent", ) or self.get("solvent", )
         self.gs_charge = fw_spec.get("gs_charge") or self.get("gs_charge") or get_groundState(self.identifier) or 0
-        self.gs_spin = fw_spec.get("gs_spin") or self.get("gs_spin") or get_groundState(self.identifier, prop='spin') or 1
+        self.gs_spin = fw_spec.get("gs_spin") or self.get("gs_spin") or get_groundState(self.identifier,
+                                                                                        prop='spin') or 1
         use_iop = fw_spec.get("use_iop", True) if self.get("use_iop", True) else self.get("use_iop")
         run_from_com = fw_spec.get("run_from_com") or self.get("run_from_com") or False
 
@@ -105,9 +107,9 @@ class GaussianBase(FiretaskBase):
             molecule_data = RESTAPI(
                 method='get', endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(self.identifier),
                 url="https://d3tales.as.uky.edu", return_json=True
-            ).response[0]
+            ).response
             try:
-                tuned_w = molecule_data["mol_characterization"]['omega'][0]['value']
+                tuned_w = molecule_data[0]["mol_characterization"]['omega'][0]['value']
                 self.iop_str = str(int(tuned_w * 1e4)).zfill(5) + "00000"
             except Exception:
                 pass
@@ -121,9 +123,12 @@ class GaussianBase(FiretaskBase):
             if geometry_sites:
                 self.mol = Molecule.from_sites([Site.from_dict(sd) for sd in geometry_sites])
             else:
-                geometry_hash = fw_spec.get("{}_hash".format(geometry), orig_hash_id(self.identifier, self.calc_name, self.paramset.functional,
-                                                                                     self.paramset.basis_set, tuning_parameter=self.iop_str, solvent=solvent))
-                self.mol = get_db_geom(geometry_hash) or start_from_smiles(self.identifier) if geometry_hash else start_from_smiles(self.identifier)
+                geometry_hash = fw_spec.get("{}_hash".format(geometry),
+                                            orig_hash_id(self.identifier, self.calc_name, self.paramset.functional,
+                                                         self.paramset.basis_set, tuning_parameter=self.iop_str,
+                                                         solvent=solvent))
+                self.mol = get_db_geom(geometry_hash) or start_from_smiles(
+                    self.identifier) if geometry_hash else start_from_smiles(self.identifier)
 
             # End job if the total number of atoms is greater than 200
             num_atoms = len(self.mol.sites)
@@ -156,7 +161,7 @@ class GaussianBase(FiretaskBase):
     def post_job(self, upload_files=None, delete_files=None, calc_type=None, name_tag=''):
         # Upload data to database through website
         upload_files = upload_files or [self.file_log, self.file_fchk]
-        delete_files = [] #delete_files or [self.file_chk, self.file_com, self.file_fchk, self.file_log]
+        delete_files = []  # delete_files or [self.file_chk, self.file_com, self.file_fchk, self.file_log]
         calc_type = calc_type or self.calc_name
         if os.path.isfile(self.file_log):
             _hash = get_hash_id(self.identifier, self.file_log, self.calc_name)
@@ -166,13 +171,15 @@ class GaussianBase(FiretaskBase):
         if self.submit:
             submission = RESTAPI(method='post', endpoint='tools/upload/computation-gaussian',
                                  url="https://d3tales.as.uky.edu", expected_endpoint="tools/user_uploads",
-                                 upload_file=zip_path, params=dict(molecule_id=self.identifier, calculation_type=calc_type))
-            print(submission.params)
-            print(zip_path)
+                                 upload_file=zip_path,
+                                 params=dict(molecule_id=self.identifier, calculation_type=calc_type))
             if not submission.successful:
-                raise Exception("Calculation files not successfully submitted with endpoint {}. Responce endpoint "
-                                "was {}, not {}".format(submission.endpoint, submission.response.request.url, submission.expected_endpoint))
-            print("File {}_{}.zip sucessfully posted!".format(self.identifier, name_tag + self.full_name))
+                raise Exception("Calculation files not successfully submitted with endpoint {}. Response endpoint "
+                                "was {}, not {}. \nSubmission Params: {}".format(submission.endpoint,
+                                                                                 submission.response.request.url,
+                                                                                 submission.expected_endpoint,
+                                                                                 submission.params))
+            print("File {}_{}.zip successfully posted!".format(self.identifier, name_tag + self.full_name))
         # Write runfile to runfile_log so the runfile can be deleted after calculation
         with open(self.runfile_log, 'a') as fn:
             fn.write("{}, {}\n".format(self.data_hash, self.working_dir))
@@ -198,7 +205,8 @@ class RunGaussianEnergy(GaussianBase):
         if self.check_if_already_run:
             if self.run_check():
                 return FWAction(
-                    update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
+                    update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier,
+                                 "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
                                  "{}_hash".format(self.full_name): get_hash_id(self.identifier, self.file_com,
                                                                                self.calc_name),
                                  "iop_str": self.iop_str})
@@ -222,7 +230,8 @@ class RunGaussianEnergy(GaussianBase):
             self.post_job(delete_files=[self.file_log, self.file_chk, self.file_fchk, self.file_com])
         return FWAction(
             update_spec={"gaussrun_dir": self.working_dir, "identifier": self.identifier, "iop_str": self.iop_str,
-                         "gs_charge": self.gs_charge, "gs_spin": self.gs_spin, "{}_eng".format(self.full_name): final_energy})
+                         "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
+                         "{}_eng".format(self.full_name): final_energy})
 
 
 @explicit_serialize
@@ -247,7 +256,8 @@ class RunGaussianOpt(GaussianBase):
             if self.check_if_already_run:
                 if self.run_check():
                     return FWAction(
-                        update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
+                        update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier,
+                                     "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
                                      "{}_hash".format(self.full_name): get_hash_id(self.identifier, self.file_com,
                                                                                    self.calc_name),
                                      "iop_str": self.iop_str})
@@ -321,7 +331,8 @@ class RunGaussianOpt(GaussianBase):
         self.post_job()
 
         return FWAction(
-            update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "gs_charge": self.gs_charge, "gs_spin": self.gs_spin,
+            update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "gs_charge": self.gs_charge,
+                         "gs_spin": self.gs_spin,
                          "{}_hash".format(self.full_name): self.data_hash,
                          "{}_geom".format(self.full_name): final_structure,
                          "{}_eng".format(self.full_name): final_energy,
@@ -371,15 +382,16 @@ class RunWtuning(FiretaskBase):
         # check if job has already run
         if check_if_already_run:
             init_query = RESTAPI(method='get',
-                             endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
-                             url="https://d3tales.as.uky.edu", return_json=True).response
+                                 endpoint="restapi/molecules/_id={}/mol_characterization.omega=1".format(identifier),
+                                 url="https://d3tales.as.uky.edu", return_json=True).response
             if init_query:
                 omega_dict_list = init_query[0].get("mol_characterization", {}).get('omega')
                 if isinstance(omega_dict_list, list):
                     tuned_w = omega_dict_list[0].get('value')
                     iop_str = str(int(tuned_w * 1e4)).zfill(5) + "00000"
                     return FWAction(
-                        update_spec={"iop_str": iop_str, "gaussrun_dir": calc_dir, "identifier": identifier, "gs_charge": gs_charge, "gs_spin": gs_spin})
+                        update_spec={"iop_str": iop_str, "gaussrun_dir": calc_dir, "identifier": identifier,
+                                     "gs_charge": gs_charge, "gs_spin": gs_spin})
 
         # generate the input for wtuning in gaussian and run tuning
         functional = paramset.functional if restricted else "R{}".format(paramset.functional)
@@ -402,16 +414,19 @@ class RunWtuning(FiretaskBase):
         if submit:
             submission = RESTAPI(method='post', endpoint='tools/upload/computation-gaussian',
                                  url="https://d3tales.as.uky.edu", expected_endpoint="tools/user_uploads",
-                                 upload_file=zip_name, params=dict(molecule_id=identifier, calculation_type=self['name']))
+                                 upload_file=zip_name,
+                                 params=dict(molecule_id=identifier, calculation_type=self['name']))
             if not submission.successful:
                 raise Exception("Calculation files not successfully submitted with endpoint {}. Responce endpoint "
-                                "was {}, not {}".format(submission.endpoint, submission.response.request.url, submission.expected_endpoint))
+                                "was {}, not {}".format(submission.endpoint, submission.response.request.url,
+                                                        submission.expected_endpoint))
         data_hash = get_hash_id(identifier, 'wtuning.com', self['name'], output_file='output.log')
         with open(runfile_log, 'a') as fn:
             fn.write("{}, {}\n".format(data_hash, working_dir))
         os.system("rm -rf *.chk *.fchk tuning_wtuning_ocycle*")
         return FWAction(
-            update_spec={"iop_str": iop_str, "gaussrun_dir": calc_dir, "identifier": identifier, "gs_charge": gs_charge, "gs_spin": gs_spin})
+            update_spec={"iop_str": iop_str, "gaussrun_dir": calc_dir, "identifier": identifier, "gs_charge": gs_charge,
+                         "gs_spin": gs_spin})
 
 
 @explicit_serialize
@@ -455,7 +470,8 @@ class RunGaussianTDDFT(GaussianBase):
 
             self.post_job()
         return FWAction(
-            update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "iop_str": self.iop_str, "gs_charge": self.gs_charge, "gs_spin": self.gs_spin})
+            update_spec={"gaussrun_dir": self.calc_dir, "identifier": self.identifier, "iop_str": self.iop_str,
+                         "gs_charge": self.gs_charge, "gs_spin": self.gs_spin})
 
 
 @explicit_serialize
@@ -496,7 +512,8 @@ class GetLowestEConformer(GaussianBase):
         conformer = structures[f]
         for file in [self.file_chk, self.file_com]:
             os.system("rm -fr {}".format(file))
-        return FWAction(update_spec={"identifier": self.identifier, "conformer_geom": conformer, "energy_dict": energies})
+        return FWAction(
+            update_spec={"identifier": self.identifier, "conformer_geom": conformer, "energy_dict": energies})
 
 
 @explicit_serialize
@@ -567,7 +584,8 @@ class RunGaussianDihedRot(GaussianBase):
                 "runtimes": {int(degree): runtime},
                 "backbone_length": {int(degree): backbone_len}
             }
-            D3Database(database="random", collection_name="dihed_rot", instance=insert_data).insert(self.identifier, nested=True)
+            D3Database(database="random", collection_name="dihed_rot", instance=insert_data).insert(self.identifier,
+                                                                                                    nested=True)
 
             # Clean up files
             delete_files = [self.file_log, self.file_chk, self.file_fchk, self.file_com]
