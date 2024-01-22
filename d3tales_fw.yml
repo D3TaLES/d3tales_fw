@@ -1,4 +1,4 @@
-name: d3tales_web
+name: database
 channels:
   - mcs07
   - conda-forge
@@ -121,7 +121,7 @@ dependencies:
   - pycparser=2.20
   - pyexcel=0.6.6
   - pyexcel-io=0.6.4
-  - pymatgen=2022.0.10
+#  - pymatgen=2022.0.10
   - pyopenssl=20.0.1
   - pyparsing=2.4.7
   - pyrsistent=0.18.0
@@ -206,7 +206,7 @@ dependencies:
     - importlib-metadata==4.11.3
     - inflection==0.5.1
     - jmespath==1.0.0
-    - kortex-api==2.3.0.post34
+#    - kortex-api==2.3.0.post34
     - maggma==0.46.1
     - markdown==3.3.6
     - mergedeep==1.3.4
@@ -216,7 +216,6 @@ dependencies:
     - mongomock==4.0.0
     - msgpack==1.0.3
     - nanoid==2.0.0
-    - ocelot==0.2
     - orjson==3.6.8
     - paramiko==2.10.4
     - pint==0.19.2
