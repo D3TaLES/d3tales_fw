@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 from fireworks import LaunchPad
-from d3tales_fw.workflows.wf_writer import *
-from d3tales_fw.workflows.ParamSet import GausParamSet
+from d3tales_api.Workflows.wf_writer import *
+from d3tales_api.Workflows.ParamSet import GausParamSet
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
