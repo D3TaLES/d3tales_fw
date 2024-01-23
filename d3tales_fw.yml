@@ -221,7 +221,7 @@ dependencies:
     - pint==0.19.2
     - protobuf==3.5.1
     - py==1.11.0
-    - pymatgen==2022.0.16
+      #    - pymatgen==2022.0.16
     - pynndescent==0.5.7
     - pytest==7.1.2
     - python-bond==1.4
