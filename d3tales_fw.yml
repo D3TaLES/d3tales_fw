@@ -225,7 +225,7 @@ dependencies:
     - pynndescent==0.5.7
     - pytest==7.1.2
     - python-bond==1.4
-    - python-jsonschema-objects==0.4.0
+    - python-jsonschema-objects==0.4.1
     - scikit-learn==1.1.2
     - seaborn==0.11.2
     - selfies==1.0.4
