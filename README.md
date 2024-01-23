@@ -22,7 +22,7 @@ Most of the most useful code in this repository will be found in the `workflows`
 The primary package this repo requires is the [D<sup>3</sup>TaLES API](https://github.com/D3TaLES/d3tales_api). 
 It is recommended that you create an environment to host the required packages. 
 ```bash
-conda create --name d3tales_fw --file d3tales_fw.yml
+conda env create --name d3tales_fw --file d3tales_fw.yml
 conda activate d3tales_fw
 pip install git+https://github.com/d3tales/d3tales_api.git
 ```
