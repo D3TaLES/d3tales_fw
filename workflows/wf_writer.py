@@ -1,5 +1,7 @@
+from pathlib import Path
 from fireworks import Workflow
 from d3tales_fw.workflows.D3TaLES_FW import *
+from d3tales_api.Workflows.ParamSet import GausParamSet
 
 
 # Copyright 2021, University of Kentucky
@@ -60,7 +62,11 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
-def d3tales_md_wf(**kwargs):
+def d3tales_md_wf(param_file="", **kwargs):
+
+    # Establish calculation parameters from parm_file json file
+    param_file = param_file or os.path.join(Path(__file__).resolve().parent.parent, "parameters" 'md_gaus_parameter_file.json')
+    paramset = GausParamSet().from_json(param_file)
 
     key_dic = kwargs.get("key_dic")
     key_mat = []
@@ -82,6 +88,13 @@ def d3tales_md_wf(**kwargs):
                 name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
     fire_workdic = {}
     for i in range(number_of_systems):
+        for smiles in kwargs.get("smiles_list"):
+            fw_em_key = f"fw_dft_{smiles}"
+            fire_workdic[fw_em_key] = Optimization(paramset=paramset.opt_groundState,
+                                                   species="groundState",
+                                                   parents=parents)
+        # TODO Complete
+
         fw_pack_key = f"fw_pack{i + 1}"
         fire_workdic[fw_pack_key] = Pack_FW (
             name=name_dic[f"names{i + 1}"] + 'pack',
