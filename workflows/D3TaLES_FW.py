@@ -33,13 +33,13 @@ class WTuning(Firework):
 
 
 class Optimization(Firework):
-    def __init__(self, species="groundState", geometry="opt_mol", solvent=None, parents=None, priority=None, name_tag='', **kwargs):
+    def __init__(self, species="groundState", geometry="opt_mol", solvent=None, parents=None, priority=None, name_tag='',s="", **kwargs):
         spec = {'_category': CALC_CATEGORY, '_priority': priority} if priority else {'_category': CALC_CATEGORY}
         _type = "solv_" + solvent if solvent else "gas_phase"
         name = "solv_opt_" + species if solvent else "opt_" + species
         t = [RunGaussianOpt(name=name, name_tag=name_tag, g16_cmd=G16_CMD, proc_vm_key=PROC_VM_KEY, path=PATH, runfile_log=RUNFILE_LOG,
                             geometry=geometry, type=_type, subtype=species, solvent=solvent, **kwargs)]
-        super(Optimization, self).__init__(t, parents=parents, spec=spec, name="{}{}".format(name_tag, name))
+        super(Optimization, self).__init__(t, parents=parents, spec=spec, name=f"{s}_DFT")
 
 
 class Energy(Firework):

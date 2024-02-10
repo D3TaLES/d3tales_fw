@@ -42,7 +42,7 @@ class Ligpargen(FiretaskBase):
 
 
 
-##we need to run the dft here for the charge deravation
+
 
 @explicit_serialize
 class MDPrep(FiretaskBase):

@@ -62,10 +62,10 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
     return wf
 
 
-def d3tales_md_wf(param_file="", **kwargs):
+def d3tales_md_wf(param_file=None, **kwargs):
 
     # Establish calculation parameters from parm_file json file
-    param_file = param_file or os.path.join(Path(__file__).resolve().parent.parent, "parameters" 'md_gaus_parameter_file.json')
+    param_file = param_file or os.path.join(Path(__file__).resolve().parent.parent, "parameters", 'md_gaus_parameter_file.json')
     paramset = GausParamSet().from_json(param_file)
 
     key_dic = kwargs.get("key_dic")
@@ -79,6 +79,7 @@ def d3tales_md_wf(param_file="", **kwargs):
         name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
 
     ligpargen_fws = []
+    dft_fw=[]
 
     for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
                                  ):
@@ -87,18 +88,24 @@ def d3tales_md_wf(param_file="", **kwargs):
             if str((i + 1)) in name:
                 name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
     fire_workdic = {}
+    for smiles in kwargs.get("smiles_list"):
+        globals()[f"fw_dft_{smiles}"] = Optimization(paramset=paramset.opt_groundState,
+                                                     species="groundState",
+                                                     parents=ligpargen_fws,s=f"{smiles}")
+        dft_fw.append(globals().get(f"fw_dft_{smiles}"))
+
+    print(dft_fw)
+    print(ligpargen_fws)
+
     for i in range(number_of_systems):
-        for smiles in kwargs.get("smiles_list"):
-            fw_em_key = f"fw_dft_{smiles}"
-            fire_workdic[fw_em_key] = Optimization(paramset=paramset.opt_groundState,
-                                                   species="groundState",
-                                                   parents=parents)
+
+
         # TODO Complete
 
         fw_pack_key = f"fw_pack{i + 1}"
         fire_workdic[fw_pack_key] = Pack_FW (
             name=name_dic[f"names{i + 1}"] + 'pack',
-            parents=ligpargen_fws,
+            parents=dft_fw,
             solute_name=kwargs.get(f"solute_name{i + 1}"),
             solvent_name=kwargs.get(f"solvent_name{i + 1}"),
             solute_smiles=kwargs.get(f"solute_smiles{i + 1}"),
@@ -190,7 +197,7 @@ def d3tales_md_wf(param_file="", **kwargs):
         # fws.append(globals().get(fw))
     print(f"the lig dict {len(ligpargen_fws)} done")
     key_fw = key_GEN(**kwargs,parents=regula)
-    fws = [key_fw] + ligpargen_fws+regula
+    fws = [key_fw] + ligpargen_fws+regula + dft_fw
 
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))
