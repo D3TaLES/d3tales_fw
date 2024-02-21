@@ -14,7 +14,7 @@ class lig:
         conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
         export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
         #igpargen_cmd = f"ligpargen -s '{self.smiles}' -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {self.mol} -c {self.charge} -o 0 -cgen CM1A"
-        ligpargen_cmd = f"ligpargen -i /project/cmri235_uksr/shasanka_conda_boss/launch/{self.smiles}/gaussian/gas_phase/opt/{regular_name}.pdb -n {regular_name} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {regular_name} -c 0 -o 0 -cgen CM1A"
+        ligpargen_cmd = f"ligpargen -i /project/cmri235_uksr/shasanka_conda_boss/launch/{self.smiles}/gaussian/gas_phase/opt/{self.mol}.pdb -n {regular_name} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {regular_name} -c 0 -o 0 -cgen CM1A"
 
         singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
 
