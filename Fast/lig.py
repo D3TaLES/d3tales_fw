@@ -5,6 +5,7 @@ from rdkit import Chem
 from rdkit.Chem import AllChem
 class lig:
     def __init__(self, smiles, regular_name, molecule, charge, dir):
+        self.PDBMAKER(regular_name,smiles,molecule)
         self.dir = dir
         self.smiles = smiles
         self.mol = molecule
