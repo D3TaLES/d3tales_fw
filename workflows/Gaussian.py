@@ -31,12 +31,13 @@ class GaussianBase(FiretaskBase):
 
     def setup_files(self, fw_spec, calc_type='opt'):
         # get parameters
+        print(self.get("g16_cmd"))
         self.gaussian_cmd = env_chk(self.get("g16_cmd"), fw_spec)
         name_tag = fw_spec.get("name_tag", ) or self.get("name_tag") or ""
         self.full_name = name_tag + self['name']
         self.calc_name = self['name']
         self.paramset = self["paramset"]
-        self.identifier = fw_spec.get("identifier", ) or self.get("identifier")
+        self.identifier = fw_spec.get("identifier", ) or self.get("identifier") or "test"
         self.runfile_log = env_chk(self.get('runfile_log'), fw_spec)
         self.check_if_already_run = fw_spec.get("check_if_already_run") or self.get("check_if_already_run") or False
         self.skip_freq = fw_spec.get("skip_freq", ) or self.get("skip_freq") or False

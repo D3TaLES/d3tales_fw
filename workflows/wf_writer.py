@@ -1,6 +1,7 @@
 from pathlib import Path
 from fireworks import Workflow
 from d3tales_fw.workflows.D3TaLES_FW import *
+from d3tales_api.Workflows.D3TaLES_FW import *
 from d3tales_api.Workflows.ParamSet import GausParamSet
 
 
@@ -79,11 +80,11 @@ def d3tales_md_wf(param_file=None, **kwargs):
         name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
 
     ligpargen_fws = []
-    dft_fw=[]
+    dft_fw = []
 
     for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
                                  ):
-        ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"), **kwargs))
+        ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=dft_fw, **kwargs))
         for i in range(number_of_systems):
             if str((i + 1)) in name:
                 name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
@@ -91,7 +92,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     for smiles in kwargs.get("smiles_list"):
         globals()[f"fw_dft_{smiles}"] = Optimization(paramset=paramset.opt_groundState,
                                                      species="groundState",
-                                                     parents=ligpargen_fws,s=f"{smiles}")
+                                                     parents=None, s=f"{smiles}", submit=False, smiles=smiles)
         dft_fw.append(globals().get(f"fw_dft_{smiles}"))
 
     print(dft_fw)

@@ -36,7 +36,7 @@ class Ligpargen(FiretaskBase):
         self.names = self.get("name") or fw_spec.get("name")
         self.type = self.get("Type") or fw_spec.get("TYPE","")
 
-        l.lig(self.smiles, self.names + f"_{self.type}", self.charge, self.dir)
+        l.lig(self.smiles, self.names ,self.names+ f"_{self.type}", self.charge, self.dir)
 
         return FWAction(update_spec={})
 

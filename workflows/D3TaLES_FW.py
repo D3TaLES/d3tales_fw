@@ -106,7 +106,7 @@ class InitializeMD(Firework):
 
 
 class Ligpargen_FW(Firework):
-    def __init__(self, name=None, parents=None, priority=None, name_tag='', smiles=None, con=None,Type=None, di=None,**kwargs):
+    def __init__(self, name=None,  priority=None, name_tag='', smiles=None, con=None,Type=None, di=None,parents=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority, 'smiles':smiles, 'name':name, 'charge':con, "Type":Type} if priority else {'_category': 'gromacs','smiles':smiles, 'name':name, 'charge':con, "Type":Type, "dir":di, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         t = [Ligpargen(name=name[:3],smile=smiles, charge=con,Type=Type,**kwargs)] ## this is passed for self, self.get() gets this
         super(Ligpargen_FW, self).__init__(t, parents=parents, spec=spec, name=name)
