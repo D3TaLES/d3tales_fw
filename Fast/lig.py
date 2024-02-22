@@ -44,7 +44,7 @@ class lig:
             shell=True)
         with open(
                 f"/project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/out.pdb") as file, open(
-                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/{name}.pdb",
+                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/{type}.pdb",
                 'a') as new:
             f = file.readlines()
             line_to_print = []

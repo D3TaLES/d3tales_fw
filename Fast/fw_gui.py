@@ -328,7 +328,7 @@ class GUI:
             all_md_data = loadfn(args.filename)
             all_ids = {}
             for mol_name, md_kwargs in all_md_data.items():
-                all_ids[mol_name] = populate_md_wf(**md_kwargs)
+                all_ids[mol_name] = populate_md_wf(path="/project/cmri235_uksr/shasanka_conda_boss/d3tales_fw/parameters/md_gaus_parameter_file.json",**md_kwargs)
 
 
 GUI()

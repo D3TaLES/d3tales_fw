@@ -16,9 +16,9 @@ parser.add_argument('-p', '--priority', type=int, help='jobs priority', default=
 args = parser.parse_args()
 
 
-def populate_md_wf(**kwargs):
+def populate_md_wf(path=None,**kwargs):
     lpad_file = os.path.join(BASE_DIR.parent, 'launch', 'md_launchpad.yaml')
-    wf = d3tales_md_wf(**kwargs)
+    wf = d3tales_md_wf(param_file=path,**kwargs)
     info = LaunchPad().from_file(lpad_file).add_wf(wf)
     fw_id = list(info.values())[0]
     return fw_id

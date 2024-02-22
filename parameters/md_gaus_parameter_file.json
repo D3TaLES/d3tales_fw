@@ -3,13 +3,16 @@
     "opt_groundState": {
         "route_parameters":{
             "opt": "",
+            "pop": "(mk,full)",
             "scf(maxcyc=512)" : ""
         },
-        "functional": "LC-wHPBE",
-        "basis_set": "Def2SVP",
+	"functional": "B3LYP",
+        "basis_set": "aug-cc-pVDZ",
         "charge": 0,
         "multiplicity": 1
     },
+
+
 
     "opt_cation1": {
         "route_parameters":{
