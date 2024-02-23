@@ -1,16 +1,24 @@
 {
-    "name": "D3TaLES_MD_Gaus",
+    "name": "D3TaLES_v01",
     "opt_groundState": {
-        "route_parameters":{
-            "opt": "",
-            "pop": "(mk,full)",
-            "scf(maxcyc=512)" : ""
+        "route_parameters": {
+            "nosymm": "",
+            "pop": "(mk, full)",
+            "int": {
+                "acc2e": "12"
+            },
+            "iop(3/33=1,3/59=8)": "",
+            "scf(maxcyc=512)": ""
         },
 	"functional": "B3LYP",
-        "basis_set": "aug-cc-pVDZ",
+        "basis_set": "6-31G(d,p)",
         "charge": 0,
         "multiplicity": 1
     },
+
+
+
+
 
 
 
