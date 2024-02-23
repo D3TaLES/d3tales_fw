@@ -11,7 +11,7 @@ class trans:
         if re == 1:
             print("it is ran")
             subprocess.run(f"touch {self.dir}/InputGrofiles{key}/{name}f.itp", shell=True)
-            with open (f'{self.dft}/{self.smiles}/gaussian/gas_phase/opt/','r') as log, open(f'{self.dir}/{name}/{name}.gmx.itp','r') as gmx,   open(f'{self.dir}/InputGrofiles{key}/{name}f.itp','a') as itp:
+            with open (f'{self.dft}/{self.smiles}/gaussian/gas_phase/opt/opt_groundState.log','r') as log, open(f'{self.dir}/{name}/{name}.gmx.itp','r') as gmx,   open(f'{self.dir}/InputGrofiles{key}/{name}f.itp','a') as itp:
                 lines= log.readlines()
                 gmx_lines= gmx.readlines()
                 if len(gmx_lines) ==0:
