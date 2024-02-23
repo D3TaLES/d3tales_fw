@@ -70,14 +70,14 @@ class MDPrep(FiretaskBase):
         names=[]+ self.solvent_name+self.solute_name 
         smiles=[] + self.solvent_smiles + self.solute_smiles
         key=self.get("key")
-        dft_folder=f"/project/cmri235_uksr/shasanka_conda_boss/launch/"
+        dft_folder=f"/project/cmri235_uksr/shasanka_conda_boss/launch"
         print(smiles)
         print(names)
         i = 0
         for iteams, name in zip(smiles,names):
             print(i)
-            print(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/')
-            if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/'):
+            print(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log')
+            if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log'):
                 print("found dft")
                 if i >=1:
                     transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder)
