@@ -7,7 +7,7 @@ from pathlib import Path
 from fireworks import LaunchPad
 import datetime as dat
 from monty.serialization import dumpfn, loadfn
-#from d3tales_fw.workflows.wf_writer import *
+from d3tales_fw.workflows.wf_writer import *
 
 
 class GUI:
