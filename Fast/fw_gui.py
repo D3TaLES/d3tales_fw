@@ -7,7 +7,7 @@ from pathlib import Path
 from fireworks import LaunchPad
 import datetime as dat
 from monty.serialization import dumpfn, loadfn
-from d3tales_fw.workflows.wf_writer import *
+#from d3tales_fw.workflows.wf_writer import *
 
 
 class GUI:
@@ -83,15 +83,146 @@ class GUI:
     def add_widgets(self):
         self.numsys = tk.Entry(self.frame, fg="black", bg="white", width=10)
         self.numsysL = tk.Label(self.frame, text="number of systems")
-        self.numsysB = tk.Button(self.frame, text="create sys", command=self.make)
+        self.sumbit_button = tk.Button(self.frame, text="create sys", command= self.charge_titration_or_not)
         self.email = tk.Entry(self.frame, fg="black", bg="white", width=50)
-
+        self.check_titration = tk.IntVar()
+        self.charge_tittration_promt=tk.Checkbutton(self.frame, text=f"Is this a charge titration?",variable=self.check_titration)
         self.emailLable = tk.Label(self.frame, text="Email: ".ljust(20))
         self.emailLable.grid(row=2, column=0)
         self.email.grid(row=2, column=1)
         self.numsysL.grid(row=0, column=0)
         self.numsys.grid(row=0, column=1)
-        self.numsysB.grid(row=1, column=0)
+        self.sumbit_button.grid(row=1, column=0)
+        self.charge_tittration_promt.grid(row=3, column=0)
+
+    def charge_titration_or_not(self):
+        if self.check_titration.get() !=0:
+            self.charge_titartion_setup()
+        else:
+            self.make()
+    def charge_titartion_setup(self):
+
+        self.Titration_start= tk.Entry(self.frame, fg="black", bg="white", width=50)
+        self.Titration_start_promt=tk.Label(self.frame, text="Titration start")
+
+        self.Titration_finish= tk.Entry(self.frame, fg="black", bg="white", width=50)
+        self.Titration_finish_promt=tk.Label(self.frame, text="Titration finish")
+
+        self.Titration_steps= tk.Entry(self.frame, fg="black", bg="white", width=50)
+        self.Titration_steps_promt=tk.Label(self.frame, text="delta_steps")
+
+        self.charge_sumbit_button=tk.Button(self.frame, text="Next", command= self.charge_titration_maker)
+
+        self.Titration_start.grid(row=4, column=1)
+        self.Titration_start_promt.grid(row=4, column=0)
+
+        self.Titration_finish.grid(row=5, column=1)
+        self.Titration_finish_promt.grid(row=5, column=0)
+
+        self.Titration_steps.grid(row=6, column=1)
+        self.Titration_steps_promt.grid(row=6, column=0)
+
+        self.charge_sumbit_button.grid(row=7, column=0)
+    def charge_titration_maker(self):
+
+        for i in range(1):
+            self.SoluteSmiles = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.Density = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.xdim = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.ydim = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.zdim = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.xdimLabel = tk.Label(self.frame, text=f"x{i + 1} dimensions: ".ljust(20))
+            self.ydimLabel = tk.Label(self.frame, text=f"y{i + 1} dimensions: ".ljust(20))
+            self.zdimLabel = tk.Label(self.frame, text=f"z{i + 1} dimenisons: ".ljust(20))
+
+            self.labelDensity = tk.Label(self.frame, text="Desity of solvent(M)".ljust(20))
+
+            self.SoluteName = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.SolventSmiles = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.Solname = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.Concentrations = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.labelSolute = tk.Label(self.frame,
+                                        text=f"Solute{i + 1} names (3 letters, if using multiple, seprate with commas): ".ljust(
+                                            20))
+
+            self.labelSolvent = tk.Label(self.frame, text=f"Solvent{i + 1} name (3 letters): ".ljust(20))
+
+            self.labelConcentration = tk.Label(self.frame,
+                                               text=f"Concentration(M) of the Solutes{i + 1}, seprate with commas: ".ljust(
+                                                   20))
+
+            self.lableSolventSmiles = tk.Label(self.frame, text=f"Solvent{i + 1} SMILES code:".ljust(20))
+
+            self.labelSoluteSmiles = tk.Label(self.frame,
+                                              text=f"Solute SMILES{i + 1} code(separate with commas): ".ljust(20))
+
+            self.system = tk.Label(self.frame, text=f"System_{i + 1}-----------------------------------")
+
+            self.chargeV = tk.IntVar()
+
+            self.molarMass = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.molarlabel = tk.Label(self.frame, text=f"Molarmass{i + 1} of Solvents")
+
+            self.chargeCheck = tk.Checkbutton(self.frame, text=f"Charge on the Solutes{i + 1}", variable=self.chargeV)
+            self.chargeMatrix = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.chargeEntry = tk.Entry(self.frame, fg="black", bg="white", width=50)
+
+            self.system.grid(row=10 + (13 * i), column=0, padx=50)
+            self.labelSolvent.grid(row=11 + (13 * i), column=0)
+            self.Solname.grid(row=11 + (13 * i), column=1)
+            self.entries[f"solventname{i + 1}"] = self.Solname
+
+            self.lableSolventSmiles.grid(row=12 + (13 * i), column=0)
+            self.SolventSmiles.grid(row=12 + (13 * i), column=1)
+            self.entries[f"solvetsmiles{i + 1}"] = self.SolventSmiles
+
+            self.labelSolute.grid(row=13+ (13 * i), column=0)
+            self.SoluteName.grid(row=13 + (13 * i), column=1)
+            self.entries[f"solutename{i + 1}"] = self.SoluteName
+
+            self.labelSoluteSmiles.grid(row=14 + (13 * i), column=0)
+            self.SoluteSmiles.grid(row=14 + (13 * i), column=1)
+            self.entries[f"solutesmiles{i + 1}"] = self.SoluteSmiles
+
+            self.labelConcentration.grid(row=15 + (13 * i), column=0)
+            self.Concentrations.grid(row=15 + (13 * i), column=1)
+            self.entries[f"concentration{i + 1}"] = self.Concentrations
+
+            self.labelDensity.grid(row=16 + (13 * i), column=0)
+            self.Density.grid(row=16 + (13 * i), column=1)
+            self.entries[f"Density{i + 1}"] = self.Density
+
+            self.xdimLabel.grid(row=17 + (13 * i), column=0)
+            self.xdim.grid(row=17 + (13 * i), column=1)
+            self.entries[f"xdim{i + 1}"] = self.xdim
+
+            self.ydimLabel.grid(row=18 + (13 * i), column=0)
+            self.ydim.grid(row=18 + (13 * i), column=1)
+            self.entries[f"ydim{i + 1}"] = self.ydim
+
+            self.zdimLabel.grid(row=19 + (13 * i), column=0)
+            self.zdim.grid(row=19 + (13 * i), column=1)
+            self.entries[f"zdim{i + 1}"] = self.zdim
+
+            self.chargeCheck.grid(row=20 + (13 * i), column=0)
+            self.chargeMatrix.grid(row=20+ (13 * i), column=1)
+            self.entries[f"charges{i + 1}"] = self.chargeMatrix
+
+            self.molarMass.grid(row=21 + (13 * i), column=1)
+            self.molarlabel.grid(row=21 + (13 * i), column=0)
+            self.entries[f"molarmass{i + 1}"] = self.molarMass
+
+        return
+
+
+
 
     def make(self):
         global number
@@ -196,6 +327,7 @@ class GUI:
             self.molarMass.grid(row=17 + (13 * i), column=1)
             self.molarlabel.grid(row=17 + (13 * i), column=0)
             self.entries[f"molarmass{i + 1}"] = self.molarMass
+
 
     def run(self):
         BASE_DIR = Path(__file__).resolve().parent.parent
