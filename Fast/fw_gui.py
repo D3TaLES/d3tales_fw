@@ -124,8 +124,12 @@ class GUI:
 
         self.charge_sumbit_button.grid(row=7, column=0)
     def charge_titration_maker(self):
+        self.number_of_titrationsneeded= 1 + ((-1*float(self.Titration_finish.get()) +  float(self.Titration_start.get()))/float(self.Titration_steps.get()))
+        print(round(self.number_of_titrationsneeded,4))
+        if round(self.number_of_titrationsneeded,4)%1 != 0.0:
+            raise(ValueError("titration inputs are not valid"))
 
-        for i in range(1):
+        for i in range(int(self.numsys.get())):
             self.SoluteSmiles = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
             self.Density = tk.Entry(self.frame, fg="black", bg="white", width=50)
@@ -388,12 +392,25 @@ class GUI:
             date=""
             for iteams in darte:
                 date+=f"_{str(iteams)}"
-            md_kwargs = {"date_sumbit":date,
-                "smiles_list": self.smilesMatrix,
-                "name_list": self.nameMatrix,  # "cons": 0,
-                "type_list": self.typematrix,
-                "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic}
+            if self.check_titration.get() !=0:
+                iterator= int((round(self.number_of_titrationsneeded,4)))
+                titration_list= [float(self.Titration_start.get())-(i*float(self.Titration_steps)) for i in range(iterator) ]
+                md_kwargs = {"date_sumbit":date,
+                    "smiles_list": self.smilesMatrix,
+                    "name_list": self.nameMatrix,  # "cons": 0,
+                    "type_list": self.typematrix,
+                    "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
+                    "num_systems": f"{number_sys}", "titartion_list":titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic}
+
+            else:
+
+                md_kwargs = {"date_sumbit": date,
+                             "smiles_list": self.smilesMatrix,
+                             "name_list": self.nameMatrix,  # "cons": 0,
+                             "type_list": self.typematrix,
+                             "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
+                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic}
+
             for _ in range(number_sys):
                 md_kwargs[f"WF_name{_ + 1}"] = self.systems[_]
             for _ in range(number_sys):
