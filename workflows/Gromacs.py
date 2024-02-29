@@ -52,7 +52,6 @@ class MDPrep(FiretaskBase):
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
         self.Solname = self.solvent_name[0]
-        print(self.Solname)
         self.solute_smiles= self.get("solute_smiles")
         self.solvent_smiles= self.get("solvent_smiles")
         self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
@@ -66,6 +65,8 @@ class MDPrep(FiretaskBase):
             exit()
 
         self.Density = self.get("den") or fw_spec.get("den")
+        print(self.Solname or "did not work")
+
         pack.Solvate(self.Solname, self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                      self.zdim, self.dir, None, key)
         names=[]+ self.solvent_name+self.solute_name 

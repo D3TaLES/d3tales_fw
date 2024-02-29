@@ -195,18 +195,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 **kwargs
             )
 
-        regula=[]
 
-        for fw, values in fire_workdic.items():
-            regula.append(values)
-            # globals()[fw] = values
-            # fws.append(globals().get(fw))
-        print(f"the lig dict {len(ligpargen_fws)} done")
-        key_fw = key_GEN(**kwargs,parents=regula)
-        fws = [key_fw] + ligpargen_fws+regula + dft_fw
-
-
-        wf = Workflow(fws, name=kwargs.get("populate_name"))
     else:
 
 
@@ -235,11 +224,12 @@ def d3tales_md_wf(param_file=None, **kwargs):
             for i in range(number_of_systems):
 
                 fw_pack_key = f"fw_pack{i + 1}_{titration_constant}"
+                print(f'{kwargs.get(f"solvent_name{i + 1}")}_{titration_constant}')
                 fire_workdic[fw_pack_key] = Pack_FW(
                     name=name_dic[f"names{i + 1}"] + 'pack'+f"_{titration_constant}",
                     parents=ligpargen_fws,
-                    solute_name=f'{kwargs.get(f"solute_name{i + 1}") }_{titration_constant}',
-                    solvent_name=f'{kwargs.get(f"solvent_name{i + 1}")}_{titration_constant}',
+                    solute_name= [f'{a}_{titration_constant}' for a in kwargs.get(f"solute_name{i + 1}")],
+                    solvent_name= [f'{a}_{titration_constant}' for a in kwargs.get(f"solvent_name{i + 1}")],
                     solute_smiles=kwargs.get(f"solute_smiles{i + 1}"),
                     solvent_smiles=kwargs.get(f"solvent_smiles{i + 1}"),
                     x=kwargs.get(f"x{i + 1}"),
