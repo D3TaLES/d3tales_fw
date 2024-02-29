@@ -130,6 +130,15 @@ class GUI:
             raise(ValueError("titration inputs are not valid"))
 
         for i in range(int(self.numsys.get())):
+            global number
+            number = int(self.numsys.get())
+            self.button = tk.Button(self.frame,
+                                    text="Submit",
+                                    width=5,
+                                    height=1,
+                                    bg="gray",
+                                    fg="black", command=self.run)
+            self.button.grid(row=17 + (17 * int(self.numsys.get()) - 1), column=0)
             self.SoluteSmiles = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
             self.Density = tk.Entry(self.frame, fg="black", bg="white", width=50)
@@ -386,30 +395,40 @@ class GUI:
             number_sys = number
 
             key_dic = {}
-            for _ in range(number_sys):
-                key_dic[self.systems[_]] = random.randint(1, 30000000)
+
+
+
             darte=(str(dat.datetime.now()).split()[0]).split("-")
             date=""
             for iteams in darte:
                 date+=f"_{str(iteams)}"
+
             if self.check_titration.get() !=0:
-                iterator= int((round(self.number_of_titrationsneeded,4)))
-                titration_list= [float(self.Titration_start.get())-(i*float(self.Titration_steps)) for i in range(iterator) ]
+                iterator = int((round(self.number_of_titrationsneeded, 4)))
+                titration_list= [float(self.Titration_start.get())-(i*float(self.Titration_steps.get())) for i in range(iterator) ]
+
+
+                for _ in range(number_sys):
+                    for i in titration_list:
+                        key_dic[self.systems[_]+f"_{i}"] = random.randint(1, 3000000000)
+
                 md_kwargs = {"date_sumbit":date,
                     "smiles_list": self.smilesMatrix,
                     "name_list": self.nameMatrix,  # "cons": 0,
                     "type_list": self.typematrix,
                     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                    "num_systems": f"{number_sys}", "titartion_list":titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic}
+                    "num_systems": f"{number_sys}", "titartion_list":titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True}
 
             else:
+                for _ in range(number_sys):
+                    key_dic[self.systems[_]] = random.randint(1, 30000000)
 
                 md_kwargs = {"date_sumbit": date,
                              "smiles_list": self.smilesMatrix,
                              "name_list": self.nameMatrix,  # "cons": 0,
                              "type_list": self.typematrix,
                              "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic}
+                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False}
 
             for _ in range(number_sys):
                 md_kwargs[f"WF_name{_ + 1}"] = self.systems[_]

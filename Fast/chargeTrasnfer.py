@@ -1,8 +1,9 @@
 import subprocess
 class trans:
-    def __init__(self,name,smiles,key,re,di,dft):
+    def __init__(self,name,smiles,key,re,di,dft,Titration):
 
         self.name = name
+        self.titrat=Titration
 
         self.dir = di
         self.dft=dft
@@ -38,7 +39,7 @@ class trans:
                         break
 
                 for a in range(index_lastEsp - index_ESP + 1):
-                    charge_int= float(lines[index_ESP+a].split()[2])
+                    charge_int= float(lines[index_ESP+a].split()[2])*self.titrat
                     charge = f'{charge_int:.4f}'.rjust(11)
 
                     chagreMatrix.append(charge)

@@ -52,6 +52,7 @@ class MDPrep(FiretaskBase):
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
         self.Solname = self.solvent_name[0]
+        print(self.Solname)
         self.solute_smiles= self.get("solute_smiles")
         self.solvent_smiles= self.get("solvent_smiles")
         self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
@@ -65,7 +66,7 @@ class MDPrep(FiretaskBase):
             exit()
 
         self.Density = self.get("den") or fw_spec.get("den")
-        pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
+        pack.Solvate(self.Solname, self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                      self.zdim, self.dir, None, key)
         names=[]+ self.solvent_name+self.solute_name 
         smiles=[] + self.solvent_smiles + self.solute_smiles
@@ -80,17 +81,17 @@ class MDPrep(FiretaskBase):
             if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log'):
                 print("found dft")
                 if i >=1:
-                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder)
+                    transfer.trans(f"{name}_Solute1",iteams,key,1,self.dir,dft_folder)
                 else:
-                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder)
+                    transfer.trans(f"{name}_Solvent",iteams,key,1,self.dir,dft_folder)
             else:
                 print("no dft")
                 if i >=1:
-                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder)
+                    transfer.trans(f"{name}_Solute1",iteams,key,0,self.dir,dft_folder)
                 else:
-                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder)
+                    transfer.trans(f"{name}_Solvent",iteams,key,0,self.dir,dft_folder)
             i+=1
-        gro.gro(self.Solname[:3], self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
+        gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
         return FWAction(update_spec={})
 
 
