@@ -135,7 +135,10 @@ class GUI:
 
         for i in range(int(self.numsys.get())):
             global number
+            global Tnumber
             number = int(self.numsys.get())
+            Tnumber = int(self.numsys.get()) * self.iterator
+
             self.button = tk.Button(self.frame,
                                     text="Submit",
                                     width=5,
@@ -382,7 +385,7 @@ class GUI:
                     print(self.titration_list)
                     for _ in self.titration_list:
                         print("in loop 2")
-                        titration_name= solvent + str(_)
+                        titration_name= solvent
                         self.solvent_titratnts.append(titration_name)
 
                     for iteams in self.solute_matrix:
@@ -391,19 +394,25 @@ class GUI:
                         self.typematrix.append("Solute1")
                         self.nameMatrix.append(iteams.strip())
                         self.subnamemat.append(iteams.strip())
+                    self.systemNamemat.append(self.subnamemat)
 
-                        for _ in self.titration_list:
+                    for _ in self.titration_list:
                             print("in loop 4")
                             self.solute_titrants.append(iteams.strip() +str(_))
-                    self.systemNamemat.append(self.subnamemat)
-                for i in self.solvent_titratnts:
+                for i, iteams in enumerate(self.solvent_titratnts):
                     print("in loop 5")
-  ## the for loop is made to where it can only process one system the whole block of code needs to be eddited for multiple sysytem
-                    for j in self.solute_titrants:
-                        string_to_append = str(i)
-                        print("in loop 6")
-                        string_to_append += f"_{j}"
-                        self.systems.append(string_to_append)
+                    self.systems.append(f"{iteams}_{self.solute_titrants[i]}")
+                for _ in range(number):
+                    self.submatsmiles = []
+                    a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
+                    self.submatsmiles.append(a)
+                    self.smilesMatrix.append(a)
+                    b = self.entries[f"solutesmiles{_ + 1}"].get().split(",")
+                    for iteams in b:
+                        self.submatsmiles.append(iteams.strip())
+                        self.smilesMatrix.append(iteams.strip())
+                    self.systemsmilesmat.append(self.submatsmiles)
+
 
                 print(self.systems)
                 print(self.nameMatrix)
@@ -472,7 +481,7 @@ class GUI:
 
             if self.check_titration.get() !=0:
 
-                number_sys = int(float(number) *(self.iterator)*(self.iterator))
+                number_sys = len(self.systems)
                 key_dic = {}
                 darte = (str(dat.datetime.now()).split()[0]).split("-")
                 date = ""
@@ -481,9 +490,18 @@ class GUI:
 
                 titration_list= self.titration_list
 
-                for _ in range(number_sys):
-                    for i in titration_list:
-                        key_dic[self.systems[_]+f"_{i}"] = random.randint(1, 3000000000)
+                number_of_titration=len(self.titration_list)
+                outer_system=number_sys/(number_of_titration)
+                print(int(outer_system))
+                for j in range(int(outer_system)):
+                    current_index=j*number_of_titration
+                    print(current_index)
+                    key_number=random.randint(1, 30000000)
+                    key_dic[self.systems[current_index]] = key_number
+                    for i in range(number_of_titration-1):
+                        key_dic[self.systems[current_index+(i+1)]] = f'{key_number}_{self.titration_list[i+1]}'
+
+                print(f"the key looks like this:{key_dic} ")
 
                 md_kwargs = {"date_sumbit":date,
                     "smiles_list": self.smilesMatrix,
@@ -501,7 +519,10 @@ class GUI:
                 for iteams in darte:
                     date += f"_{str(iteams)}"
                 for _ in range(number_sys):
-                    key_dic[self.systems[_]] = random.randint(1, 30000000)
+                     key_dic[self.systems[_]] = random.randint(1, 3000000000)
+
+
+
 
                 md_kwargs = {"date_sumbit": date,
                              "smiles_list": self.smilesMatrix,
@@ -509,8 +530,16 @@ class GUI:
                              "type_list": self.typematrix,
                              "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
                              "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False}
+            if self.check_titration.get() !=0:
 
-            for _ in range(number):
+                self.iterator_for_wf = Tnumber
+
+            else:
+
+
+                self.iterator_for_wf=  number
+
+            for _ in range(self.iterator_for_wf):
                 md_kwargs[f"WF_name{_ + 1}"] = self.systems[_]
             for _ in range(number):
                 md_kwargs[f"den{_ + 1}"] = float(self.entries[f'Density{_ + 1}'].get().strip())

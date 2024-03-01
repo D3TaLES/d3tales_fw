@@ -36,7 +36,7 @@ class Ligpargen(FiretaskBase):
         self.names = self.get("name") or fw_spec.get("name")
         self.type = self.get("Type") or fw_spec.get("TYPE","")
 
-        l.lig(self.smiles, self.names ,self.names+ f"_{self.type}", self.charge, self.dir)
+        l.lig(self.smiles, self.names[:3] ,self.names[:3] + f"_{self.type}", self.charge, self.dir)
 
         return FWAction(update_spec={})
 
@@ -67,7 +67,7 @@ class MDPrep(FiretaskBase):
         self.Density = self.get("den") or fw_spec.get("den")
         print(self.Solname or "did not work")
 
-        pack.Solvate(self.Solname, self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
+        pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                      self.zdim, self.dir, None, key)
         names=[]+ self.solvent_name+self.solute_name 
         smiles=[] + self.solvent_smiles + self.solute_smiles
@@ -95,6 +95,12 @@ class MDPrep(FiretaskBase):
         gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
         return FWAction(update_spec={})
 
+@explicit_serialize
+class TitrationChargeScaler(FiretaskBase):
+
+    def run_task(self, fw_spec):
+
+        return FWAction(update_spec={"outputEM": a, "runner": runer})
 
 @explicit_serialize
 class EnergyMinimization(FiretaskBase):
