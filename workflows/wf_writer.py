@@ -70,6 +70,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     paramset = GausParamSet().from_json(param_file)
 
     key_dic = kwargs.get("key_dic")
+    print(key_dic)
     key_mat = []
     for i, j in key_dic.items():
         key_mat.append(j)
@@ -222,6 +223,8 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
 
             for i in range(number_of_systems):
+                print(key_mat[i])
+                print(key_mat)
 
                 fw_pack_key = f"fw_pack{i + 1}_{titration_constant}"
                 print(f'{kwargs.get(f"solvent_name{i + 1}")}_{titration_constant}')

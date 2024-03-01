@@ -125,6 +125,10 @@ class GUI:
         self.charge_sumbit_button.grid(row=7, column=0)
     def charge_titration_maker(self):
         self.number_of_titrationsneeded= 1 + ((-1*float(self.Titration_finish.get()) +  float(self.Titration_start.get()))/float(self.Titration_steps.get()))
+        self.iterator = int((round(self.number_of_titrationsneeded, 4)))
+        self.titration_list = [float(self.Titration_start.get()) - (i * float(self.Titration_steps.get())) for i in
+                          range(self.iterator)]
+
         print(round(self.number_of_titrationsneeded,4))
         if round(self.number_of_titrationsneeded,4)%1 != 0.0:
             raise(ValueError("titration inputs are not valid"))
@@ -360,53 +364,122 @@ class GUI:
 
         if not os.path.isfile(args.filename):
             self.systems = []
-
-            for _ in range(number):
-                self.subnamemat = []
-
-                string_to_append = ""
-                a = self.entries[f"solventname{_ + 1}"].get().strip()
-                self.typematrix.append("Solvent")
-                self.subnamemat.append(a)
-                self.nameMatrix.append(a)
-                string_to_append += f'{a}'
-                b = self.entries[f"solutename{_ + 1}"].get().split(",")
-                for iteams in b:
-                    self.subnamemat.append(iteams.strip())
-                    string_to_append += f'_{iteams}'
-                    self.typematrix.append("Solute1")
-                    self.nameMatrix.append(iteams.strip())
-                self.systems.append(string_to_append)
-                self.systemNamemat.append(self.subnamemat)
-            for _ in range(number):
-                self.submatsmiles = []
-                a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
-                self.submatsmiles.append(a)
-                self.smilesMatrix.append(a)
-                b = self.entries[f"solutesmiles{_ + 1}"].get().split(",")
-                for iteams in b:
-                    self.submatsmiles.append(iteams.strip())
-                    self.smilesMatrix.append(iteams.strip())
-                self.systemsmilesmat.append(self.submatsmiles)
-                print(f"submat: {self.submatsmiles}")
-                print(f'systemmat: {self.systemsmilesmat}')
-
-
-            number_sys = number
-
-            key_dic = {}
-
-
-
-            darte=(str(dat.datetime.now()).split()[0]).split("-")
-            date=""
-            for iteams in darte:
-                date+=f"_{str(iteams)}"
+            self.subnamemat=[]
+            self.solute_titrants=[]
+            self.solvent_titratnts=[]
 
             if self.check_titration.get() !=0:
-                iterator = int((round(self.number_of_titrationsneeded, 4)))
-                titration_list= [float(self.Titration_start.get())-(i*float(self.Titration_steps.get())) for i in range(iterator) ]
+                print("in the titration")
 
+                for i in range(number):
+                    print(" in loop 1")
+                    self.solute_matrix = self.entries[f"solutename{i + 1}"].get().split(",")
+                    print(self.solute_matrix)
+                    solvent = self.entries[f"solventname{i + 1}"].get().strip()
+                    self.typematrix.append("Solvent")
+                    self.nameMatrix.append(solvent)
+                    self.subnamemat.append(solvent)
+                    print(self.titration_list)
+                    for _ in self.titration_list:
+                        print("in loop 2")
+                        titration_name= solvent + str(_)
+                        self.solvent_titratnts.append(titration_name)
+
+                    for iteams in self.solute_matrix:
+                        print(self.solute_matrix)
+                        print("in loop 3")
+                        self.typematrix.append("Solute1")
+                        self.nameMatrix.append(iteams.strip())
+                        self.subnamemat.append(iteams.strip())
+
+                        for _ in self.titration_list:
+                            print("in loop 4")
+                            self.solute_titrants.append(iteams.strip() +str(_))
+                    self.systemNamemat.append(self.subnamemat)
+                for i in self.solvent_titratnts:
+                    print("in loop 5")
+  ## the for loop is made to where it can only process one system the whole block of code needs to be eddited for multiple sysytem
+                    for j in self.solute_titrants:
+                        string_to_append = str(i)
+                        print("in loop 6")
+                        string_to_append += f"_{j}"
+                        self.systems.append(string_to_append)
+
+                print(self.systems)
+                print(self.nameMatrix)
+
+            #      for _ in self.titration_list:
+            #          self.subnamemat = []
+            #          string_to_append = ""
+            #          for i in range(self.iterator):
+            #              a = self.entries[f"solventname{_ + 1}"].get().strip()
+            #             self.typematrix.append("Solvent")
+            #             self.subnamemat.append(a)
+            #             self.nameMatrix.append(a)
+            #             string_to_append += f'{a}'
+            #             b = self.entries[f"solutename{_ + 1}"].get().split(",")
+            #         for iteams in b:
+            #             self.subnamemat.append(iteams.strip())
+            #             string_to_append += f'_{iteams}'
+            #             self.typematrix.append("Solute1")
+            #             self.nameMatrix.append(iteams.strip())
+            #         self.systems.append(string_to_append)
+            #         self.systemNamemat.append(self.subnamemat)
+            #     for _ in range(number):
+            #         self.submatsmiles = []
+            #         a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
+            #         self.submatsmiles.append(a)
+            #         self.smilesMatrix.append(a)
+            #         b = self.entries[f"solutesmiles{_ + 1}"].get().split(",")
+            #         for iteams in b:
+            #             self.submatsmiles.append(iteams.strip())
+            #             self.smilesMatrix.append(iteams.strip())
+            #         self.systemsmilesmat.append(self.submatsmiles)
+            #         print(f"submat: {self.submatsmiles}")
+            #         print(f'systemmat: {self.systemsmilesmat}')
+
+            else:
+                for _ in range(number):
+                    self.subnamemat = []
+                    string_to_append = ""
+                    a = self.entries[f"solventname{_ + 1}"].get().strip()
+                    self.typematrix.append("Solvent")
+                    self.subnamemat.append(a)
+                    self.nameMatrix.append(a)
+                    string_to_append += f'{a}'
+                    b = self.entries[f"solutename{_ + 1}"].get().split(",")
+                    for iteams in b:
+                        self.subnamemat.append(iteams.strip())
+                        string_to_append += f'_{iteams}'
+                        self.typematrix.append("Solute1")
+                        self.nameMatrix.append(iteams.strip())
+                    self.systems.append(string_to_append)
+                    self.systemNamemat.append(self.subnamemat)
+                for _ in range(number):
+                    self.submatsmiles = []
+                    a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
+                    self.submatsmiles.append(a)
+                    self.smilesMatrix.append(a)
+                    b = self.entries[f"solutesmiles{_ + 1}"].get().split(",")
+                    for iteams in b:
+                        self.submatsmiles.append(iteams.strip())
+                        self.smilesMatrix.append(iteams.strip())
+                    self.systemsmilesmat.append(self.submatsmiles)
+                    print(f"submat: {self.submatsmiles}")
+                    print(f'systemmat: {self.systemsmilesmat}')
+
+
+
+            if self.check_titration.get() !=0:
+
+                number_sys = int(float(number) *(self.iterator)*(self.iterator))
+                key_dic = {}
+                darte = (str(dat.datetime.now()).split()[0]).split("-")
+                date = ""
+                for iteams in darte:
+                    date += f"_{str(iteams)}"
+
+                titration_list= self.titration_list
 
                 for _ in range(number_sys):
                     for i in titration_list:
@@ -420,6 +493,13 @@ class GUI:
                     "num_systems": f"{number_sys}", "titartion_list":titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True}
 
             else:
+                number_sys = number
+
+                key_dic = {}
+                darte = (str(dat.datetime.now()).split()[0]).split("-")
+                date = ""
+                for iteams in darte:
+                    date += f"_{str(iteams)}"
                 for _ in range(number_sys):
                     key_dic[self.systems[_]] = random.randint(1, 30000000)
 
@@ -430,20 +510,20 @@ class GUI:
                              "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
                              "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False}
 
-            for _ in range(number_sys):
+            for _ in range(number):
                 md_kwargs[f"WF_name{_ + 1}"] = self.systems[_]
-            for _ in range(number_sys):
+            for _ in range(number):
                 md_kwargs[f"den{_ + 1}"] = float(self.entries[f'Density{_ + 1}'].get().strip())
-            for _ in range(number_sys):
+            for _ in range(number):
                 try:
                     md_kwargs[f'MM{_ + 1}'] = float(self.entries[f'molarmass{_ + 1}'].get().strip())
                 except ValueError:
                     md_kwargs[f'MM{_ + 1}'] = int(self.entries[f'molarmass{_ + 1}'].get().strip())
-            for _ in range(number_sys):
+            for _ in range(number):
                 md_kwargs[f'x{_ + 1}'] = float(self.entries[f'xdim{_ + 1}'].get().strip())
                 md_kwargs[f'y{_ + 1}'] = float(self.entries[f'ydim{_ + 1}'].get().strip())
                 md_kwargs[f'z{_ + 1}'] = float(self.entries[f'zdim{_ + 1}'].get().strip())
-            for _ in range(number_sys):
+            for _ in range(number):
                 conamt = []
                 preprocessd = self.entries[f'concentration{_ + 1}'].get().split(",")
                 for iteams in preprocessd:
@@ -469,7 +549,7 @@ class GUI:
                 index +=1
             self.charge = []
 
-            for i in range(number_sys):
+            for i in range(number):
                 self.charge.append(
                     self.entries[f"charges{i + 1}"].get() if len(self.entries[f"charges{i + 1}"].get()) != 0 else 0)
             md_kwargs["charge_list"] = self.charge
