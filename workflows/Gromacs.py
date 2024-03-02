@@ -83,17 +83,17 @@ class MDPrep(FiretaskBase):
             if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log'):
                 print("found dft")
                 if i >=1:
-                    transfer.trans(f"{name}_Solute1",iteams,key,1,self.dir,dft_folder,self.titration)
+                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder,self.titration)
                 else:
-                    transfer.trans(f"{name}_Solvent",iteams,key,1,self.dir,dft_folder, self.titration)
+                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder, self.titration)
             else:
                 print("no dft")
                 if i >=1:
-                    transfer.trans(f"{name}_Solute1",iteams,key,0,self.dir,dft_folder, self.titration)
+                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder, self.titration)
                 else:
-                    transfer.trans(f"{name}_Solvent",iteams,key,0,self.dir,dft_folder, self.titration)
+                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder, self.titration)
             i+=1
-        gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
+        gro.gro(self.Solname[:3], self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
         return FWAction(update_spec={})
 
 @explicit_serialize
