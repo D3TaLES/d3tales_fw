@@ -14,6 +14,7 @@ import d3tales_fw.Fast.waiting as wait
 import d3tales_fw.Fast.chargeTrasnfer as transfer
 import d3tales_fw.Fast.packmol as pack
 import d3tales_fw.Fast.make_gro as gro
+import d3tales_fw.Fast.titration as titrate
 
 from atomate.utils.utils import get_logger, env_chk
 from fireworks import FiretaskBase, explicit_serialize, FWAction
@@ -100,8 +101,16 @@ class MDPrep(FiretaskBase):
 class TitrationChargeScaler(FiretaskBase):
 
     def run_task(self, fw_spec):
+        self.titration_matrix=self.get("titration_constant")
+        self.dir = self.get("dir") or fw_spec.get("dir")
+        self.key = self.get("key")
+        self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
+        self.solvent = self.solvent_name[0][:3]
+        self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
+        titrate.titration(self.titration_matrix, self.key, self.dir, self.solvent, self.solute_name)
 
-        return FWAction(update_spec={"outputEM": a, "runner": runer})
+
+        return FWAction(update_spec={})
 
 @explicit_serialize
 class EnergyMinimization(FiretaskBase):

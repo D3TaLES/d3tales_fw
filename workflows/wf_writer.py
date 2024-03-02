@@ -81,7 +81,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     fire_workdic = {}
     dft_fw = []
     ligpargen_fws = []
-
+    matrix_of_titration = []
 
     if not titration:
         for i in range(number_of_systems):
@@ -225,7 +225,6 @@ def d3tales_md_wf(param_file=None, **kwargs):
         print(f"the name dic is {name_dic}")
         print(f'type list:{kwargs.get("type_list")} name_lis:{kwargs.get("name_list")} smiles_list:{ kwargs.get("smiles_list")} ')
 
-
         for i in range(outer_system):
             Index_key_to_pull= i* number_of_titrations
             fw_pack_key = f"fw_pack{i + 1}"
@@ -243,6 +242,20 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
                 den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull]
             )
+            matrix_of_titration.append( Titrate(
+                name=name_dic[f"names{i + 1}"] + 'Titrate',
+                parents=fw_pack_key,
+                solute_name=kwargs.get(f"solute_name{i + 1}"),
+                solvent_name=kwargs.get(f"solvent_name{i + 1}"),
+                solute_smiles=kwargs.get(f"solute_smiles{i + 1}"),
+                solvent_smiles=kwargs.get(f"solvent_smiles{i + 1}"),
+                x=kwargs.get(f"x{i + 1}"),
+                y=kwargs.get(f"y{i + 1}"),
+                z=kwargs.get(f"z{i + 1}"),
+                di=kwargs.get("dir"),
+                conmatrix=kwargs.get(f"conmatrix{i + 1}"),
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull]
+            ))
 
         for i in range(number_of_systems):
 
@@ -250,7 +263,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             fw_em_key = f"fw_em{i + 1}"
             fire_workdic[fw_em_key] = EM_FW(
                 name=name_dic[f"names{i + 1}"] + "EM",
-                parents=fire_workdic[fw_pack_key], key=key_mat[i],
+                parents=fire_workdic[matrix_of_titration], key=key_mat[i],
                 **kwargs
             )
 
@@ -327,7 +340,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 # fws.append(globals().get(fw))
     print(f"the lig dict {len(ligpargen_fws)} done")
     key_fw = key_GEN(**kwargs, parents=regula)
-    fws = [key_fw] + ligpargen_fws + regula + dft_fw
+    fws = [key_fw] + ligpargen_fws + regula + dft_fw + matrix_of_titration
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))
 
