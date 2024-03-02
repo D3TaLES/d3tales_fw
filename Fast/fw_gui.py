@@ -417,35 +417,7 @@ class GUI:
                 print(self.systems)
                 print(self.nameMatrix)
 
-            #      for _ in self.titration_list:
-            #          self.subnamemat = []
-            #          string_to_append = ""
-            #          for i in range(self.iterator):
-            #              a = self.entries[f"solventname{_ + 1}"].get().strip()
-            #             self.typematrix.append("Solvent")
-            #             self.subnamemat.append(a)
-            #             self.nameMatrix.append(a)
-            #             string_to_append += f'{a}'
-            #             b = self.entries[f"solutename{_ + 1}"].get().split(",")
-            #         for iteams in b:
-            #             self.subnamemat.append(iteams.strip())
-            #             string_to_append += f'_{iteams}'
-            #             self.typematrix.append("Solute1")
-            #             self.nameMatrix.append(iteams.strip())
-            #         self.systems.append(string_to_append)
-            #         self.systemNamemat.append(self.subnamemat)
-            #     for _ in range(number):
-            #         self.submatsmiles = []
-            #         a = self.entries[f"solvetsmiles{_ + 1}"].get().strip()
-            #         self.submatsmiles.append(a)
-            #         self.smilesMatrix.append(a)
-            #         b = self.entries[f"solutesmiles{_ + 1}"].get().split(",")
-            #         for iteams in b:
-            #             self.submatsmiles.append(iteams.strip())
-            #             self.smilesMatrix.append(iteams.strip())
-            #         self.systemsmilesmat.append(self.submatsmiles)
-            #         print(f"submat: {self.submatsmiles}")
-            #         print(f'systemmat: {self.systemsmilesmat}')
+
 
             else:
                 for _ in range(number):
@@ -488,7 +460,9 @@ class GUI:
                 for iteams in darte:
                     date += f"_{str(iteams)}"
 
-                titration_list= self.titration_list
+                titration_list = []
+                titration_list[:] = self.titration_list
+                titration_list.pop(self.titration_list.index(1.0))
 
                 number_of_titration=len(self.titration_list)
                 outer_system=number_sys/(number_of_titration)
@@ -499,7 +473,7 @@ class GUI:
                     key_number=random.randint(1, 30000000)
                     key_dic[self.systems[current_index]] = key_number
                     for i in range(number_of_titration-1):
-                        key_dic[self.systems[current_index+(i+1)]] = f'{key_number}_{self.titration_list[i+1]}'
+                        key_dic[self.systems[current_index+(i+1)]] = f'{key_number}_{titration_list[i]}'
 
                 print(f"the key looks like this:{key_dic} ")
 
@@ -508,8 +482,8 @@ class GUI:
                     "name_list": self.nameMatrix,  # "cons": 0,
                     "type_list": self.typematrix,
                     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                    "num_systems": f"{number_sys}", "titartion_list":titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True}
-
+                    "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True}
+                print(f"The titrationlist:{self.titration_list}")
             else:
                 number_sys = number
 

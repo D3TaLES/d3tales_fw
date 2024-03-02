@@ -222,7 +222,6 @@ class ASMD:
         self.production_run(self.topology_file, self.output_dir)
         if lower_limit <= x <= upper_limit:
             print(f"The given value x = {x} is within 10% accuracy of the mean density y = {mean_density:.2f}.")
-            self.production_run(self.topology_file, self.output_dir)
             return True
         else:
             print(f"The given value x = {x} is not within 10% accuracy of the mean density y = {mean_density:.2f}.")

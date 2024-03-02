@@ -101,7 +101,7 @@ class MDPrep(FiretaskBase):
 class TitrationChargeScaler(FiretaskBase):
 
     def run_task(self, fw_spec):
-        self.titration_matrix=self.get("titration_constant")
+        self.titration_matrix=fw_spec.get("titartion_list") or self.get("titartion_list")
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.key = self.get("key")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")

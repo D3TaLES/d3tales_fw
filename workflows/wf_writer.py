@@ -254,8 +254,10 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=kwargs.get("dir"),
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull]
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], titration_list=kwargs.get("titartion_list")
             )   )
+        densities=[kwargs.get(f"den{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
+        molarmasses=[kwargs.get(f"MM{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
 
         for i in range(number_of_systems):
 
@@ -291,8 +293,8 @@ def d3tales_md_wf(param_file=None, **kwargs):
             fw_prod_key = f"fw_prod{i + 1}"
             fire_workdic[fw_prod_key] = Check_FW(
                 name=name_dic[f"names{i + 1}"] + "prod",
-                parents=fire_workdic[fw_den_key], key=key_mat[i], den=kwargs.get(f"den{i + 1}"),
-                mm=kwargs.get(f"MM{i + 1}"),
+                parents=fire_workdic[fw_den_key], key=key_mat[i], den=densities[i],
+                mm=molarmasses[i],
                 **kwargs
             )
 
