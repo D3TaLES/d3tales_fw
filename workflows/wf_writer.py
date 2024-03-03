@@ -256,6 +256,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
                 den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], titration_list=kwargs.get("titartion_list")
             )   )
+            print(f'in the workflow this is waht is ebing passed for titration list{kwargs.get("titartion_list")}')
         densities=[kwargs.get(f"den{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
         molarmasses=[kwargs.get(f"MM{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
 

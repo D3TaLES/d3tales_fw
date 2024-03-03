@@ -6,7 +6,7 @@ class Solvate:
     def __init__(self, solvent, solute, con, density, solvent2, den2, x,y,z,di, ratio,key):
         self.dir = di
         self.solvent= solvent
-        self.solvent2 = solvent2
+        self.solvent2 = ''
         self.solutes = solute
         self.con= con
         key=key

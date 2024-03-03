@@ -6,7 +6,7 @@ class titration:
         titration_list.pop(titration_matrix.index(1.0))
 
 
-        for i in range(len(titration_list) - 1):
+        for i in range(len(titration_list)):
             chargeMatrix=[]
             subprocess.run([f"cp -r {outputdir}/InputGrofiles{key} {outputdir}/InputGrofiles{key}_{titration_list[i]}"], shell=True)
             with open(
