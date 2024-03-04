@@ -367,7 +367,6 @@ class GUI:
 
         if not os.path.isfile(args.filename):
             self.systems = []
-            self.subnamemat=[]
             self.solute_titrants=[]
             self.solvent_titratnts=[]
 
@@ -375,6 +374,8 @@ class GUI:
                 print("in the titration")
 
                 for i in range(number):
+                    self.subnamemat = []
+
                     print(" in loop 1")
                     self.solute_matrix = self.entries[f"solutename{i + 1}"].get().split(",")
                     print(self.solute_matrix)
@@ -394,11 +395,13 @@ class GUI:
                         self.typematrix.append("Solute1")
                         self.nameMatrix.append(iteams.strip())
                         self.subnamemat.append(iteams.strip())
-                    self.systemNamemat.append(self.subnamemat)
 
-                    for _ in self.titration_list:
+                        for _ in self.titration_list:
                             print("in loop 4")
-                            self.solute_titrants.append(iteams.strip() +str(_))
+                            self.solute_titrants.append(iteams.strip() + str(_))
+                    self.systemNamemat.append(self.subnamemat)
+                    print(f"this is the subname mat at {i+1} iteration : {self.subnamemat}")
+
                 for i, iteams in enumerate(self.solvent_titratnts):
                     print("in loop 5")
                     self.systems.append(f"{iteams}_{self.solute_titrants[i]}")
@@ -464,7 +467,8 @@ class GUI:
                 titration_list[:] = self.titration_list
                 titration_list.pop(self.titration_list.index(1.0))
 
-                number_of_titration=len(self.titration_list)
+                global number_of_titration
+                number_of_titration = len(self.titration_list)
                 outer_system=number_sys/(number_of_titration)
                 print(int(outer_system))
                 for j in range(int(outer_system)):
@@ -515,6 +519,9 @@ class GUI:
 
             for _ in range(self.iterator_for_wf):
                 md_kwargs[f"WF_name{_ + 1}"] = self.systems[_]
+            for a in range(number):
+                md_kwargs[f"Average_den{list(key_dic.values())[a*number_of_titration]}"] = []
+
             for _ in range(number):
                 md_kwargs[f"den{_ + 1}"] = float(self.entries[f'Density{_ + 1}'].get().strip())
             for _ in range(number):

@@ -198,8 +198,10 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
 
     if titration:
-        number_of_titrations=len(kwargs.get("titartion_list"))
-        outer_system= int(number_of_systems/(number_of_titrations))
+        global number_of_titrations
+        global outer_system
+        number_of_titrations = len(kwargs.get("titartion_list"))
+        outer_system = int(number_of_systems / (number_of_titrations))
         for i in range(number_of_systems):
             name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
 
@@ -229,7 +231,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             Index_key_to_pull= i* number_of_titrations
             fw_pack_key = f"fw_pack{i + 1}"
             fire_workdic[fw_pack_key] = Pack_FW (
-                name=name_dic[f"names{i + 1}"] + 'pack',
+                name=name_dic[f"names{Index_key_to_pull + 1}"] + 'pack',
                 parents=ligpargen_fws,
                 solute_name=kwargs.get(f"solute_name{i + 1}"),
                 solvent_name=kwargs.get(f"solvent_name{i + 1}"),
@@ -243,7 +245,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull]
             )
             matrix_of_titration.append( Titrate(
-                name=name_dic[f"names{i + 1}"] + 'Titrate',
+                name=name_dic[f"names{Index_key_to_pull + 1}"] + 'Titrate',
                 parents=fire_workdic[fw_pack_key],
                 solute_name=kwargs.get(f"solute_name{i + 1}"),
                 solvent_name=kwargs.get(f"solvent_name{i + 1}"),
@@ -336,6 +338,8 @@ def d3tales_md_wf(param_file=None, **kwargs):
             print(f"{i+1} iteration")
     print("made regualr")
     regula = []
+    plotter=[]
+
 
     for fw, values in fire_workdic.items():
         regula.append(values)
@@ -344,9 +348,21 @@ def d3tales_md_wf(param_file=None, **kwargs):
     print(f"the lig dict {len(ligpargen_fws)} done")
     print(f"lig fw: {ligpargen_fws}")
     print(f"matrix_titration: {matrix_of_titration}")
-    key_fw = key_GEN(**kwargs, parents=regula)
+    if titration:
+
+        for i in range(outer_system):
+            Index_key_to_pull = i * number_of_titrations
+            fw_graph_key = f"Graph{i + 1}"
+            plotter.append( Plotter(
+                name=fw_graph_key,
+                parents=regula,
+                key=key_mat[Index_key_to_pull]
+            ))
+
+    key_fw = key_GEN(**kwargs, parents=plotter)
     fws = [key_fw] + ligpargen_fws + regula + dft_fw
     fws.extend(matrix_of_titration)
+    fws.extend(plotter)
     print(fws)
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))

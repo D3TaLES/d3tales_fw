@@ -15,6 +15,8 @@ import d3tales_fw.Fast.chargeTrasnfer as transfer
 import d3tales_fw.Fast.packmol as pack
 import d3tales_fw.Fast.make_gro as gro
 import d3tales_fw.Fast.titration as titrate
+import d3tales_fw.Fast.titrationPlotter as plotter
+
 
 from atomate.utils.utils import get_logger, env_chk
 from fireworks import FiretaskBase, explicit_serialize, FWAction
@@ -146,9 +148,16 @@ class Density(FiretaskBase):
 
     def run_task(self, fw_spec):
         b = run.ASMD(self.get("key"))
+        key=self.get("key")
         output_density = b.calculate_density()
+        average=0.0
+        for i in output_density:
+            average = average+float(i)
+        average= average/(float(len(output_density)))
+        density_mat=fw_spec.get(f"Average_den{key}")
+        density_mat.append(average)
 
-        return FWAction(update_spec={"outputden": output_density})
+        return FWAction(update_spec={f"Average_den{key}": density_mat})
 
 
 @explicit_serialize
@@ -265,3 +274,14 @@ class dft_checker(FiretaskBase):
 
 
 
+@explicit_serialize
+class Graph_plotter(FiretaskBase):
+
+    def run_task(self, fw_spec):
+        key=self.get("This_key")
+        titration_list=fw_spec.get("titration_list")
+        Average_simulation_density=fw_spec.get(f"Average_den{key}")
+        Average_simulation_density_dic={i:j for i,j in zip(titration_list,Average_simulation_density) }
+        plotter.TitrationPlotter( Average_simulation_density_dic, key)
+
+        return FWAction(update_spec={})

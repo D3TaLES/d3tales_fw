@@ -189,3 +189,9 @@ class key_GEN(Firework):
         t = [key_gen(**kwargs)] ## this is passed for self, self.get() gets this
         super(key_GEN, self).__init__(t, parents=parents, spec=spec, name="key_gen")
 
+class Plotter(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [Graph_plotter(This_key=key,**kwargs)] ## this is passed for self, self.get() gets this
+        super(Plotter, self).__init__(t, parents=parents, spec=spec, name=f"plotter{key}")
+
