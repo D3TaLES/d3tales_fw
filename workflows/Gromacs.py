@@ -144,21 +144,31 @@ class NPT(FiretaskBase):
 
 
 @explicit_serialize
-class Density(FiretaskBase):
+class Density(FiretaskBase): ### need to fix this block later
 
     def run_task(self, fw_spec):
         b = run.ASMD(self.get("key"))
         key=self.get("key")
+        density_key=int(str(key).split("_")[0])
+        print(f"the key in denisty is {key}")
         output_density = b.calculate_density()
         average=0.0
         for i in output_density:
             average = average+float(i)
         average= average/(float(len(output_density)))
-        density_mat=fw_spec.get(f"Average_den{key}")
+        path_f= self.get("path_to_folder")
+        subprocess.run([f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data"], shell=True)
+        print(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data")
+        with open(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data",'a') as file:
+            file.write(f"{average},")
+
+        density_mat=fw_spec.get(f"Average_den{density_key}")
+        print(f"Average_den{density_key}")
         density_mat.append(average)
+        print(f"updated denmat{density_mat}")
 
-        return FWAction(update_spec={f"Average_den{key}": density_mat})
 
+        return FWAction(update_spec={f"Average_den{density_key}": density_mat, "outputden":output_density})
 
 @explicit_serialize
 class Den_checker(FiretaskBase):
@@ -279,8 +289,17 @@ class Graph_plotter(FiretaskBase):
 
     def run_task(self, fw_spec):
         key=self.get("This_key")
-        titration_list=fw_spec.get("titration_list")
-        Average_simulation_density=fw_spec.get(f"Average_den{key}")
+        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}"
+        titration_list=fw_spec.get("titartion_list") or self.get("titartion_list")
+        Average_simulation_density=[]
+        with open(path, 'r') as file:
+            a = file.readlines()
+            for iteams in a:
+                for t in iteams.split(","):
+                    if len(t) !=0:
+                        Average_simulation_density.append(t)
+
+
         Average_simulation_density_dic={i:j for i,j in zip(titration_list,Average_simulation_density) }
         plotter.TitrationPlotter( Average_simulation_density_dic, key)
 

@@ -178,9 +178,10 @@ class CORD_FW(Firework):
         super(CORD_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Check_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,mm=None,**kwargs):
-        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"MM":mm, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,mm=None,path_to_folder=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"MM":mm, "path_to_folder":path_to_folder, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         t = [Den_checker(key=key,**kwargs)] ## this is passed for self, self.get() gets this
+        print(f"in Details den {den}")
         super(Check_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class key_GEN(Firework):

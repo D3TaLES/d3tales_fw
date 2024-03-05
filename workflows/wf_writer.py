@@ -260,6 +260,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             )   )
             print(f'in the workflow this is waht is ebing passed for titration list{kwargs.get("titartion_list")}')
         densities=[kwargs.get(f"den{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
+        print(f"waht is passed in as  density {densities[0]}")
         molarmasses=[kwargs.get(f"MM{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
 
         for i in range(number_of_systems):
@@ -356,7 +357,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             plotter.append( Plotter(
                 name=fw_graph_key,
                 parents=regula,
-                key=key_mat[Index_key_to_pull]
+                key=key_mat[Index_key_to_pull],path_to_folder="/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles", **kwargs
             ))
 
     key_fw = key_GEN(**kwargs, parents=plotter)
