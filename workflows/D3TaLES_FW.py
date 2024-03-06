@@ -196,3 +196,8 @@ class Plotter(Firework):
         t = [Graph_plotter(This_key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(Plotter, self).__init__(t, parents=parents, spec=spec, name=f"plotter{key}")
 
+class fo(Firework):
+    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"name":name, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+        t = [DFT_FOLDER_maker(name=name,**kwargs)] ## this is passed for self, self.get() gets this
+        super(fo, self).__init__(t, parents=parents, spec=spec, name=f"DFT_reorg")

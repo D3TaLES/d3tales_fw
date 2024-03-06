@@ -14,7 +14,7 @@ class lig:
         conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
         export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
         #igpargen_cmd = f"ligpargen -s '{self.smiles}' -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {self.mol} -c {self.charge} -o 0 -cgen CM1A"
-        ligpargen_cmd = f"ligpargen -i /project/cmri235_uksr/shasanka_conda_boss/launch/{self.smiles}/gaussian/gas_phase/opt/{self.mol}.pdb -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {regular_name} -c 0 -o 0 -cgen CM1A"
+        ligpargen_cmd = f"ligpargen -i /project/cmri235_uksr/shasanka_conda_boss/launch/{regular_name}/gaussian/gas_phase/opt/{self.mol}.pdb -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {regular_name[:3]} -c 0 -o 0 -cgen CM1A"
 
         singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
 
@@ -37,14 +37,14 @@ class lig:
 
     def PDBMAKER(self, name, smiles, type):
         subprocess.run([
-                           f"obabel /project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/freq_opt_groundState.log -opdb -O /project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/out.pdb"],
+                           f"obabel /project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/freq_opt_groundState.log -opdb -O /project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb"],
                        shell=True)
         subprocess.run(
-            [f"touch /project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/out.pdb"],
+            [f"touch /project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb"],
             shell=True)
         with open(
-                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/out.pdb") as file, open(
-                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{smiles}/gaussian/gas_phase/opt/{type}.pdb",
+                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb") as file, open(
+                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/{type}.pdb",
                 'a') as new:
             f = file.readlines()
             line_to_print = []

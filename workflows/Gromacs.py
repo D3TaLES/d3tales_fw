@@ -39,7 +39,7 @@ class Ligpargen(FiretaskBase):
         self.names = self.get("name") or fw_spec.get("name")
         self.type = self.get("Type") or fw_spec.get("TYPE","")
 
-        l.lig(self.smiles, self.names[:3] ,self.names[:3] + f"_{self.type}", self.charge, self.dir)
+        l.lig(self.smiles, self.names ,self.names[:3] + f"_{self.type}", self.charge, self.dir)
 
         return FWAction(update_spec={})
 
@@ -302,5 +302,14 @@ class Graph_plotter(FiretaskBase):
 
         Average_simulation_density_dic={i:j for i,j in zip(titration_list,Average_simulation_density) }
         plotter.TitrationPlotter( Average_simulation_density_dic, key)
+
+        return FWAction(update_spec={})
+
+@explicit_serialize
+class DFT_FOLDER_maker(FiretaskBase):
+    def run_task(self, fw_spec):
+        identifier=self.get("identifier") or fw_spec.get("identifier")
+        name= self.get("name") or fw_spec.get("name")
+        subprocess.run([f'mv -r /project/cmri235_uksr/shasanka_conda_boss/launch/{identifier} /project/cmri235_uksr/shasanka_conda_boss/launch/{name}'], shell=True)
 
         return FWAction(update_spec={})

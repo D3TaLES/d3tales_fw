@@ -80,6 +80,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     titration=kwargs.get("is_titration")
     fire_workdic = {}
     dft_fw = []
+    folder=[]
     ligpargen_fws = []
     matrix_of_titration = []
 
@@ -89,15 +90,16 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
 
 
-        for smiles in kwargs.get("smiles_list"):
-            globals()[f"fw_dft_{smiles}"] = Optimization(paramset=paramset.opt_groundState,
+        for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
+            d = Optimization(paramset=paramset.opt_groundState,
                                                          species="groundState",
-                                                         parents=None, s=f"{smiles}", submit=False, smiles=smiles)
-            dft_fw.append(globals().get(f"fw_dft_{smiles}"))
+                                                         parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
+            dft_fw.append(d)
+            folder.append(fo(name=names,parents=d,**kwargs))
 
         for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
                                      ):
-            ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=dft_fw, **kwargs))
+            ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=folder, **kwargs))
             for i in range(number_of_systems):
                 if str((i + 1)) in name:
                     name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
@@ -205,12 +207,13 @@ def d3tales_md_wf(param_file=None, **kwargs):
         for i in range(number_of_systems):
             name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
 
-
-        for smiles in kwargs.get("smiles_list"):
-            globals()[f"fw_dft_{smiles}"] = Optimization(paramset=paramset.opt_groundState,
+        for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
+            d = Optimization(paramset=paramset.opt_groundState,
                                                          species="groundState",
-                                                         parents=None, s=f"{smiles}", submit=False, smiles=smiles)
-            dft_fw.append(globals().get(f"fw_dft_{smiles}"))
+                                                         parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
+            dft_fw.append(d)
+            folder.append(fo(name=names,parents=d,**kwargs))
+
 
 
 
@@ -219,7 +222,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
         for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
                                      ):
             ligpargen_fws.append(
-                Ligpargen_FW(name=f"{name}", smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"), parents=dft_fw,
+                Ligpargen_FW(name=f"{name}", smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"), parents=folder,
                              **kwargs))
             for i in range(outer_system):
                 if str((i + 1)) in name:
@@ -360,10 +363,11 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 key=key_mat[Index_key_to_pull],path_to_folder="/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles", **kwargs
             ))
 
-    key_fw = key_GEN(**kwargs, parents=plotter)
+    key_fw = key_GEN(**kwargs, parents=plotter if titration else regula)
     fws = [key_fw] + ligpargen_fws + regula + dft_fw
     fws.extend(matrix_of_titration)
     fws.extend(plotter)
+    fws.extend(folder)
     print(fws)
 
     wf = Workflow(fws, name=kwargs.get("populate_name"))
