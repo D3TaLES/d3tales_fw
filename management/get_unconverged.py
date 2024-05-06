@@ -1,7 +1,7 @@
 from tqdm import tqdm
 from d3tales_api.D3database.d3database import D3Database
 
-SPECIAL_KW = ""  # PUGREST.ServerBusy not successfully submitted ValidationError FileNotFound RESTAPI
+SPECIAL_KW = "Submission"  # PUGREST.ServerBusy not successfully submitted ValidationError FileNotFound RESTAPI
 RUN_MCC = False
 RERUN = False or RUN_MCC or SPECIAL_KW
 MULTIPLICITY = None
