@@ -23,7 +23,7 @@ class ASMD:
     NVT,
     NPT,
     calculate_density,
-    check_density_accuracy (NOTE THAT WHILE THE FUNCTION IS CALLED FOR THE SAKE OF CONSISTENCY, IT DOES NOT ACTUALY VERIFY THE DENSITY),
+    check_density_accuracy (NOTE: CURRENTLY THE FUNCTION IS CALLED FOR THE SAKE OF CONSISTENCY, IT DOES NOT ACTUALY VERIFY THE DENSITY),
     correct,
     index_file,
     extract_residues_from_itp,

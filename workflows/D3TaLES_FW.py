@@ -106,37 +106,37 @@ class InitializeMD(Firework):
 
 
 class Ligpargen_FW(Firework):
-    def __init__(self, name=None,  priority=None, name_tag='', smiles=None, con=None,Type=None, di=None,parents=None,**kwargs):
+    def __init__(self, name=None,  priority=None,  smiles=None, con=None,Type=None, di=None,parents=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority, 'smiles':smiles, 'name':name, 'charge':con, "Type":Type} if priority else {'_category': 'gromacs','smiles':smiles, 'name':name, 'charge':con, "Type":Type, "dir":di, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [Ligpargen(name=name,smile=smiles, charge=con,Type=Type,**kwargs)] ## this is passed for self, self.get() gets this
+        t = [Ligpargen(name=name,smile=smiles, charge=con,Type=Type,**kwargs)]
         super(Ligpargen_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Pack_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[],solvent_smiles=[],solute_smiles=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,titration_constant=1,**kwargs):
+    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[],solvent_smiles=[],solute_smiles=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,titration_constant=1,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         t = [MDPrep(solute_name=solute_name, solvent_name=solvent_name, x=x,y=y,z=z,di=di,conmatrix=conmatrix,den=den,key=key,solvent_smiles=solvent_smiles,solute_smiles=solute_smiles, titration_constant=titration_constant)] ## this is passed for self, self.get() gets this
         super(Pack_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 class Titrate(Firework):
-    def __init__(self, name=None, parents=None, priority=None, name_tag='', solute_name=[], solvent_name=[], solvent_smiles=[], solute_smiles=[], x=None, y=None, z=None, di=None, conmatrix=None, den=None, key=None, titration_list=None, **kwargs):
+    def __init__(self, name=None, parents=None, priority=None,  solute_name=[], solvent_name=[], solvent_smiles=[], solute_smiles=[], x=None, y=None, z=None, di=None, conmatrix=None, den=None, key=None, titration_list=None, **kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         print(f"in the details this is the titration list{titration_list}")
         t = [TitrationChargeScaler(solute_name=solute_name, solvent_name=solvent_name, x=x, y=y, z=z, di=di, conmatrix=conmatrix, den=den, key=key, solvent_smiles=solvent_smiles, solute_smiles=solute_smiles, titration_list=titration_list)] ## this is passed for self, self.get() gets this
         super(Titrate, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class EM_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [EnergyMinimization(key=key,**kwargs)] ## this is passed for self, self.get() gets this
+        t = [EnergyMinimization(key=key,**kwargs)]
         super(EM_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class NVT_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [NVT(key=key,**kwargs)] ## this is passed for self, self.get() gets this
+        t = [NVT(key=key,**kwargs)]
         super(NVT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class NPT_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         t = [NPT(key=key, **kwargs)] ## this is passed for self, self.get() gets this
         super(NPT_FW, self).__init__(t, parents=parents, spec=spec, name=name)
