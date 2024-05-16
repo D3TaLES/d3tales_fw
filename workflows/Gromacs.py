@@ -310,6 +310,6 @@ class DFT_FOLDER_maker(FiretaskBase):
     def run_task(self, fw_spec):
         identifier=self.get("identifier") or fw_spec.get("identifier")
         name= self.get("name") or fw_spec.get("name")
-        subprocess.run([f'mv -r /project/cmri235_uksr/shasanka_conda_boss/launch/{identifier} /project/cmri235_uksr/shasanka_conda_boss/launch/{name}'], shell=True)
+        subprocess.run([f'mv /project/cmri235_uksr/shasanka_conda_boss/launch/{identifier} /project/cmri235_uksr/shasanka_conda_boss/launch/{name}'], shell=True)
 
         return FWAction(update_spec={})
