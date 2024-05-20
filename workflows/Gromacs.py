@@ -157,7 +157,7 @@ class Density(FiretaskBase): ### need to fix this block later
             average = average+float(i)
         average= average/(float(len(output_density)))
         path_f= self.get("path_to_folder")
-        subprocess.run([f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data"], shell=True)
+        subprocess.run([f" touch /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data"], shell=True)
         print(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data")
         with open(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data",'a') as file:
             file.write(f"{average},")
@@ -289,7 +289,7 @@ class Graph_plotter(FiretaskBase):
 
     def run_task(self, fw_spec):
         key=self.get("This_key")
-        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/data_rerun"
+        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/data"
         titration_list=fw_spec.get("titartion_list") or self.get("titartion_list")
         Average_simulation_density=[]
         with open(path, 'r') as file:
