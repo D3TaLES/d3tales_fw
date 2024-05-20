@@ -124,9 +124,9 @@ class GUI:
 
         self.charge_sumbit_button.grid(row=7, column=0)
     def charge_titration_maker(self):
-        self.number_of_titrationsneeded= 1 + ((-1*float(self.Titration_finish.get()) +  float(self.Titration_start.get()))/float(self.Titration_steps.get()))
+        self.number_of_titrationsneeded= 1 + ((1*float(self.Titration_finish.get()) - float(self.Titration_start.get()))/float(self.Titration_steps.get()))
         self.iterator = int((round(self.number_of_titrationsneeded, 4)))
-        self.titration_list = [float(self.Titration_start.get()) - (i * float(self.Titration_steps.get())) for i in
+        self.titration_list = [float(self.Titration_finish.get()) - (i * float(self.Titration_steps.get())) for i in
                           range(self.iterator)]
 
         print(round(self.number_of_titrationsneeded,4))
