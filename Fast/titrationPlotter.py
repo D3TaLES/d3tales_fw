@@ -9,6 +9,6 @@ def TitrationPlotter( Average_simulation_density_dic, key):
     plt.xlabel("System")
     plt.ylabel("Simulation density")
     plt.title(f"Titration Result{key}")
-    #plt.savefig(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/TitrationGraph_{key}.pdf")
-    plt.show()
+    plt.savefig(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/TitrationGraph_{key}.pdf")
+
 
