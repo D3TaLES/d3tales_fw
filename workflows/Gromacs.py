@@ -289,7 +289,7 @@ class Graph_plotter(FiretaskBase):
 
     def run_task(self, fw_spec):
         key=self.get("This_key")
-        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}"
+        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/data_rerun"
         titration_list=fw_spec.get("titartion_list") or self.get("titartion_list")
         Average_simulation_density=[]
         with open(path, 'r') as file:
