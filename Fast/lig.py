@@ -72,9 +72,13 @@ class lig:
     def own(self,smiles, regular_name, molecule, charge, dir, own, own_path):
         subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
         subprocess.run([f'mkdir {self.dir}/{self.mol}'], shell=True)
+        path1=os.path.join(own_path, f"{regular_name}.pdb")
+        path2=os.path.join(own_path, f"{regular_name}.itp")
+        cmd1= f"cp {path1} {self.dir}/{self.mol}/{molecule}.pdb"
+        cmd2 = f"cp {path2} {self.dir}/{self.mol}/{molecule}.gmx.itp"
 
-        subprocess.run([f'cp {os.path.join(own_path, regular_name.pdb) } {self.dir}/{self.mol}/{molecule}.pdb'], shell=True)
-        subprocess.run([f'cp {os.path.join(own_path, regular_name.itp) } {self.dir}/{self.mol}/{molecule}.gmx.itp'], shell=True)
+        subprocess.run([cmd1], shell=True)
+        subprocess.run([cmd2], shell=True)
 
 
 
