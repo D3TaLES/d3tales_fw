@@ -85,10 +85,11 @@ def d3tales_md_wf(param_file=None, **kwargs):
     matrix_of_titration = []
 
     if not titration:
+        for i in range(number_of_systems):
+            name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
         if kwargs.get("own") == False:
 
-            for i in range(number_of_systems):
-                name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
+
 
 
 

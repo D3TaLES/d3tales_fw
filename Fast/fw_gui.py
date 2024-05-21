@@ -574,6 +574,7 @@ class GUI:
 
             if self.own:
                 md_kwargs["own_path"] = self.path_to_user_input
+                md_kwargs["own"] = True
 
             # md_kwargs = {
             #     "smiles_list": ["CO", "CO", "CCO", "CCO"],

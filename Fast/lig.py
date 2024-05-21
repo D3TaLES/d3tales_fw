@@ -73,8 +73,8 @@ class lig:
         subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
         subprocess.run([f'mkdir {self.dir}/{self.mol}'], shell=True)
 
-        subprocess.run([f'mv {os.path.join(own_path, regular_name.pdb) } {self.dir}/{self.mol}/{molecule}.pdb'], shell=True)
-        subprocess.run([f'mv {os.path.join(own_path, regular_name.itp) } {self.dir}/{self.mol}/{molecule}.gmx.itp'], shell=True)
+        subprocess.run([f'cp {os.path.join(own_path, regular_name.pdb) } {self.dir}/{self.mol}/{molecule}.pdb'], shell=True)
+        subprocess.run([f'cp {os.path.join(own_path, regular_name.itp) } {self.dir}/{self.mol}/{molecule}.gmx.itp'], shell=True)
 
 
 
