@@ -21,6 +21,7 @@ class lig:
         cmd = ["singularity", "exec", singularity_container, "bash", "-c",
                f'{conda_activate} && {export_bossdir} && {ligpargen_cmd}']
         try:
+            subprocess.check_call(cmd, shell=True)
             subprocess.Popen(cmd).wait()
 
             while os.path.isfile(f'{self.dir}/{self.mol}/{self.mol}-debug.pdb') == False:
@@ -35,8 +36,8 @@ class lig:
             print(comand3)
             subprocess.run([comand2], shell=True)
             subprocess.run([comand3], shell=True)
-        except:
-            mv
+        except subprocess.CalledProcessError:
+            print(f'Ligpargen was not able to find a parameter, user input files is being used. This is passed for smiles, regular_name, molecule, charge, dir {(smiles, regular_name, molecule, charge, dir)}')
 
 
     def PDBMAKER(self, name, smiles, type):
