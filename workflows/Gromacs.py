@@ -38,10 +38,14 @@ class Ligpargen(FiretaskBase):
         self.charge = self.get("charge") or fw_spec.get("charge")
         self.names = self.get("name") or fw_spec.get("name")
         self.type = self.get("Type") or fw_spec.get("TYPE","")
+        self.own = self.get("own") or fw_spec.get("own")
+        self.own_path= self.get("own_path") or fw_spec.get("own_path")
 
-        l.lig(self.smiles, self.names ,self.names[:3] + f"_{self.type}", self.charge, self.dir)
+        l.lig(self.smiles, self.names ,self.names[:3] + f"_{self.type}", self.charge, self.dir,self.own, self.own_path)
 
         return FWAction(update_spec={})
+
+
 
 
 

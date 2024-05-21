@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 import argparse
 import random
+
 from pathlib import Path
 from fireworks import LaunchPad
 import datetime as dat
@@ -63,8 +64,10 @@ class GUI:
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
         self.frame = ttk.Frame(self.canvas)
+        self.own = False
 
         self.add_widgets()
+
 
         self.frame_id = self.canvas.create_window((0, 0), window=self.frame, anchor=tk.NW)
 
@@ -84,18 +87,22 @@ class GUI:
         self.numsys = tk.Entry(self.frame, fg="black", bg="white", width=10)
         self.numsysL = tk.Label(self.frame, text="number of systems")
         self.sumbit_button = tk.Button(self.frame, text="create sys", command= self.charge_titration_or_not)
-        self.email = tk.Entry(self.frame, fg="black", bg="white", width=50)
+        self.entry_path = tk.Entry(self.frame, fg="black", bg="white", width=50)
         self.check_titration = tk.IntVar()
         self.charge_tittration_promt=tk.Checkbutton(self.frame, text=f"Is this a charge titration?",variable=self.check_titration)
-        self.emailLable = tk.Label(self.frame, text="Email: ".ljust(20))
-        self.emailLable.grid(row=2, column=0)
-        self.email.grid(row=2, column=1)
+        self.path_to_user_input= tk.Label(self.frame, text="Path to inputfiles if providing own param: ".ljust(20))
+        self.path_to_user_input.grid(row=2, column=0)
+        self.entry_path.grid(row=2, column=1)
         self.numsysL.grid(row=0, column=0)
         self.numsys.grid(row=0, column=1)
         self.sumbit_button.grid(row=1, column=0)
         self.charge_tittration_promt.grid(row=3, column=0)
 
     def charge_titration_or_not(self):
+        if len(self.entry_path.get().strip()) !=0:
+            self.path_to_user_input = self.entry_path.get()
+            print(self.path_to_user_input)
+            self.own = True
         if self.check_titration.get() !=0:
             self.charge_titartion_setup()
         else:
@@ -124,9 +131,9 @@ class GUI:
 
         self.charge_sumbit_button.grid(row=7, column=0)
     def charge_titration_maker(self):
-        self.number_of_titrationsneeded= 1 + ((1*float(self.Titration_finish.get()) - float(self.Titration_start.get()))/float(self.Titration_steps.get()))
+        self.number_of_titrationsneeded= 1 + ((-1*float(self.Titration_finish.get()) +  float(self.Titration_start.get()))/float(self.Titration_steps.get()))
         self.iterator = int((round(self.number_of_titrationsneeded, 4)))
-        self.titration_list = [float(self.Titration_finish.get()) - (i * float(self.Titration_steps.get())) for i in
+        self.titration_list = [float(self.Titration_start.get()) - (i * float(self.Titration_steps.get())) for i in
                           range(self.iterator)]
 
         print(round(self.number_of_titrationsneeded,4))
@@ -486,7 +493,7 @@ class GUI:
                     "name_list": self.nameMatrix,  # "cons": 0,
                     "type_list": self.typematrix,
                     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                    "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True}
+                    "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True, "own":False}
                 print(f"The titrationlist:{self.titration_list}")
             else:
                 number_sys = number
@@ -507,11 +514,10 @@ class GUI:
                              "name_list": self.nameMatrix,  # "cons": 0,
                              "type_list": self.typematrix,
                              "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False}
+                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False, "own":False}
             if self.check_titration.get() !=0:
 
                 self.iterator_for_wf = Tnumber
-
             else:
 
 
@@ -522,9 +528,7 @@ class GUI:
             if self.check_titration.get() !=0:
                 for a in range(number):
                     md_kwargs[f"Average_den{list(key_dic.values())[a*number_of_titration]}"] = []
-            if self.check_titration.get() ==0:
-                for a in range(number):
-                    md_kwargs[f"Average_den{list(key_dic.values())[a]}"] = []
+
             for _ in range(number):
                 md_kwargs[f"den{_ + 1}"] = float(self.entries[f'Density{_ + 1}'].get().strip())
             for _ in range(number):
@@ -567,6 +571,9 @@ class GUI:
                     self.entries[f"charges{i + 1}"].get() if len(self.entries[f"charges{i + 1}"].get()) != 0 else 0)
             md_kwargs["charge_list"] = self.charge
             print(md_kwargs)
+
+            if self.own:
+                md_kwargs["own_path"] = self.path_to_user_input
 
             # md_kwargs = {
             #     "smiles_list": ["CO", "CO", "CCO", "CCO"],
