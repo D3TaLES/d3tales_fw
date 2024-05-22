@@ -9,9 +9,9 @@ class toopol:
         self.solute1 = solute
         self.con = con
         self.dir = currentdir
-        self.x = float(x)
-        self.y = float(y)
-        self.z = float(z)
+        self.x = float(x) if x is not None else None
+        self.y = float(y) if y is not None else None
+        self.z = float(z) if z is not None else None
         command2 = f'mkdir {self.dir}/InputGrofiles{key}'
         if os.path.isdir(f'{self.dir}/InputGrofiles{key}') == True:
             folder_number=0

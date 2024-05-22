@@ -128,7 +128,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=kwargs.get("dir"),
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[i]
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[i], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
             )
 
             fw_em_key = f"fw_em{i + 1}"
@@ -255,7 +255,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=kwargs.get("dir"),
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull]
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path"),**kwargs
             )
             matrix_of_titration.append( Titrate(
                 name=name_dic[f"names{Index_key_to_pull + 1}"] + 'Titrate',

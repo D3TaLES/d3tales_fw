@@ -12,7 +12,7 @@ class gro:
         self.fullname_solvent=solvent
         self.solvent = solvent[:3]
         self.key=key
-        self.command12 = f'cp -r /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/MDP {self.dir}/InputGrofiles{key}'
+        self.command12 = f'cp -r /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/MDP {self.dir}/InputGrofiles{self.key}'
 
         self.solute = solute
         self.solvent2 = solvent2
@@ -64,30 +64,32 @@ class gro:
             subprocess.run(self.command12, shell=True, check=True)
 
             print("Starting the simulation")
-    def initla(self):
+    def inital(self):
         top.toopol(currentdir=self.dir,inital=True)
         subprocess.run(self.command12, shell=True, check=True)
         move_the_inital_system=f"cp {self.path_to_file}/solvated.gro {self.dir}/InputGrofiles{self.key}"
         move_topol=f"cp {self.path_to_file}/topol.top {self.dir}/InputGrofiles{self.key}"
         move_nmol=f"cp {self.path_to_file}/nmol.itp {self.dir}/InputGrofiles{self.key}"
-        move_solvent_itp=  f"{self.path_to_file}/{self.fullname_solvent}.itp {self.dir}/InputGrofiles{self.key}"
-        move_solvent_atomtype= f"{self.path_to_file}/{self.fullname_solvent}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
+        move_solvent_itp=  f" cp {self.path_to_file}/{self.fullname_solvent}.itp {self.dir}/InputGrofiles{self.key}"
+        move_solvent_atomtype= f"cp {self.path_to_file}/{self.fullname_solvent}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
 
         subprocess.run(move_the_inital_system, shell=True, check=True)
         subprocess.run(move_topol, shell=True, check=True)
         subprocess.run(move_nmol, shell=True, check=True)
         subprocess.run(move_solvent_itp, shell=True, check=True)
         try:
+            subprocess.check_call(move_solvent_atomtype, shell=True)
             subprocess.run(move_solvent_atomtype, shell=True, check=True)
-        except FileNotFoundError:
+        except subprocess.CalledProcessError:
             print("Looks like you did not provide the atomtypes for your solvent. The system continued with out it.")
         for i in self.solute:
-            move_solute_itp = f"{self.path_to_file}/{i}.itp {self.dir}/InputGrofiles{self.key}"
-            move_solute_atomtype = f"{self.path_to_file}/{i}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
+            move_solute_itp = f"cp {self.path_to_file}/{i}.itp {self.dir}/InputGrofiles{self.key}"
+            move_solute_atomtype = f"cp {self.path_to_file}/{i}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
             subprocess.run(move_solute_itp, shell=True, check=True)
             try:
+                subprocess.check_call(move_solute_atomtype, shell=True)
                 subprocess.run(move_solute_atomtype, shell=True, check=True)
-            except FileNotFoundError:
+            except subprocess.CalledProcessError:
                 print(
                     f"Looks like you did not provide the atomtypes for {i}. The system continued with out it.")
 

@@ -77,7 +77,7 @@ class MDPrep(FiretaskBase):
         self.Density = self.get("den") or fw_spec.get("den")
         print(self.Solname or "did not work")
 
-        if self.initial_system:
+        if self.initial_system == False:
             pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                          self.zdim, self.dir, None, key)
             names=[]+ self.solvent_name+self.solute_name
