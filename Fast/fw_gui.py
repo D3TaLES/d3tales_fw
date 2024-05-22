@@ -528,7 +528,9 @@ class GUI:
             if self.check_titration.get() !=0:
                 for a in range(number):
                     md_kwargs[f"Average_den{list(key_dic.values())[a*number_of_titration]}"] = []
-
+            if self.check_titration.get() ==0:
+                for a in range(number):
+                    md_kwargs[f"Average_den{list(key_dic.values())[a]}"] = []
             for _ in range(number):
                 md_kwargs[f"den{_ + 1}"] = float(self.entries[f'Density{_ + 1}'].get().strip())
             for _ in range(number):
