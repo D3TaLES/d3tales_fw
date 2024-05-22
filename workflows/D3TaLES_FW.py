@@ -117,10 +117,10 @@ class Pack_FW(Firework):
         t = [MDPrep(solute_name=solute_name, solvent_name=solvent_name, x=x,y=y,z=z,di=di,conmatrix=conmatrix,den=den,key=key,solvent_smiles=solvent_smiles,solute_smiles=solute_smiles, titration_constant=titration_constant, inital_sys=intial, own_path=own_path)] ## this is passed for self, self.get() gets this
         super(Pack_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 class Titrate(Firework):
-    def __init__(self, name=None, parents=None, priority=None,  solute_name=[], solvent_name=[], solvent_smiles=[], solute_smiles=[], x=None, y=None, z=None, di=None, conmatrix=None, den=None, key=None, titration_list=None, **kwargs):
+    def __init__(self, name=None, parents=None, priority=None,  solute_name=[], solvent_name=[], solvent_smiles=[], solute_smiles=[], x=None, y=None, z=None, di=None, conmatrix=None, den=None, key=None, titration_list=None, intial=False, own_path=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         print(f"in the details this is the titration list{titration_list}")
-        t = [TitrationChargeScaler(solute_name=solute_name, solvent_name=solvent_name, x=x, y=y, z=z, di=di, conmatrix=conmatrix, den=den, key=key, solvent_smiles=solvent_smiles, solute_smiles=solute_smiles, titration_list=titration_list)] ## this is passed for self, self.get() gets this
+        t = [TitrationChargeScaler(solute_name=solute_name, solvent_name=solvent_name, x=x, y=y, z=z, di=di, conmatrix=conmatrix, den=den, key=key, solvent_smiles=solvent_smiles, solute_smiles=solute_smiles, titration_list=titration_list, inital_sys=intial, own_path=own_path)] ## this is passed for self, self.get() gets this
         super(Titrate, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class EM_FW(Firework):

@@ -113,7 +113,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
         for i in range(number_of_systems):
 
 
-            # TODO Complete
+
 
             fw_pack_key = f"fw_pack{i + 1}"
             fire_workdic[fw_pack_key] = Pack_FW (
@@ -255,7 +255,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=kwargs.get("dir"),
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path"),**kwargs
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
             )
             matrix_of_titration.append( Titrate(
                 name=name_dic[f"names{Index_key_to_pull + 1}"] + 'Titrate',
@@ -269,7 +269,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=kwargs.get("dir"),
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], titration_list=kwargs.get("titartion_list")
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], titration_list=kwargs.get("titartion_list") , intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
             )   )
             print(f'in the workflow this is waht is ebing passed for titration list{kwargs.get("titartion_list")}')
         densities=[kwargs.get(f"den{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
