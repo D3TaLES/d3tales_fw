@@ -111,12 +111,14 @@ class TitrationChargeScaler(FiretaskBase):
 
     def run_task(self, fw_spec):
         self.titration_matrix=fw_spec.get("titration_list") or self.get("titration_list")
+        self.initial_system= self.get("inital_sys") or fw_spec.get("inital_sys")
+        self.path_inital= self.get("own_path") or fw_spec.get("own_path")
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.key = self.get("key")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
-        self.solvent = self.solvent_name[0][:3]
+        self.solvent = self.solvent_name[0]
         self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
-        titrate.titration(self.titration_matrix, self.key, self.dir, self.solvent, self.solute_name)
+        titrate.titration(self.titration_matrix, self.key, self.dir, self.solvent, self.solute_name, self.initial_system, self.path_inital)
 
 
         return FWAction(update_spec={})

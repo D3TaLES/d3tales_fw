@@ -1,4 +1,5 @@
 import subprocess
+import os
 import d3tales_fw.Fast.reorg as g
 import d3tales_fw.Fast.topology as top
 
@@ -65,13 +66,13 @@ class gro:
 
             print("Starting the simulation")
     def inital(self):
-        top.toopol(currentdir=self.dir,inital=True)
+        top.toopol(currentdir=self.dir,key=self.key,inital=True)
         subprocess.run(self.command12, shell=True, check=True)
-        move_the_inital_system=f"cp {self.path_to_file}/solvated.gro {self.dir}/InputGrofiles{self.key}"
-        move_topol=f"cp {self.path_to_file}/topol.top {self.dir}/InputGrofiles{self.key}"
-        move_nmol=f"cp {self.path_to_file}/nmol.itp {self.dir}/InputGrofiles{self.key}"
-        move_solvent_itp=  f" cp {self.path_to_file}/{self.fullname_solvent}.itp {self.dir}/InputGrofiles{self.key}"
-        move_solvent_atomtype= f"cp {self.path_to_file}/{self.fullname_solvent}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
+        move_the_inital_system=f"cp  {os.path.join(self.path_to_file,'solvated.gro')} {self.dir}/InputGrofiles{self.key}"
+        move_topol=f"cp  {os.path.join(self.path_to_file,'topol.top')} {self.dir}/InputGrofiles{self.key}"
+        move_nmol=f"cp {os.path.join(self.path_to_file,'nmol.itp')} {self.dir}/InputGrofiles{self.key}"
+        move_solvent_itp=  f" cp  {os.path.join(self.path_to_file,self.fullname_solvent)}.itp {self.dir}/InputGrofiles{self.key}"
+        move_solvent_atomtype= f"cp {os.path.join(self.path_to_file,self.fullname_solvent)}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
 
         subprocess.run(move_the_inital_system, shell=True, check=True)
         subprocess.run(move_topol, shell=True, check=True)
@@ -83,8 +84,8 @@ class gro:
         except subprocess.CalledProcessError:
             print("Looks like you did not provide the atomtypes for your solvent. The system continued with out it.")
         for i in self.solute:
-            move_solute_itp = f"cp {self.path_to_file}/{i}.itp {self.dir}/InputGrofiles{self.key}"
-            move_solute_atomtype = f"cp {self.path_to_file}/{i}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
+            move_solute_itp = f"cp {os.path.join(self.path_to_file,i)}.itp {self.dir}/InputGrofiles{self.key}"
+            move_solute_atomtype = f"cp  {os.path.join(self.path_to_file,i)}_atomtypes.itp {self.dir}/InputGrofiles{self.key}"
             subprocess.run(move_solute_itp, shell=True, check=True)
             try:
                 subprocess.check_call(move_solute_atomtype, shell=True)
