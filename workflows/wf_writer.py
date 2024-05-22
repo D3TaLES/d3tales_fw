@@ -87,7 +87,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     if not titration:
         for i in range(number_of_systems):
             name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
-        if kwargs.get("own") == False:
+        if kwargs.get("own") == False and kwargs.get("inital_sys") ==False:
 
             for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
                 d = Optimization(paramset=paramset.opt_groundState,
@@ -96,14 +96,18 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 dft_fw.append(d)
                 folder.append(fo(name=names,parents=d,**kwargs))
 
-
-        for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
-                                     ):
-            ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=folder, **kwargs))
-            for i in range(number_of_systems):
-                if str((i + 1)) in name:
-                    name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
-
+        if kwargs.get("inital_sys") == False:
+            for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
+                                         ):
+                ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=folder, **kwargs))
+                for i in range(number_of_systems):
+                    if str((i + 1)) in name:
+                        name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
+        if kwargs.get("inital_sys") == True:
+            for  name in  kwargs.get("name_list"):
+                for i in range(number_of_systems):
+                    if str((i + 1)) in name:
+                        name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
 
 
         for i in range(number_of_systems):
@@ -220,14 +224,18 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
 
 
-        for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
-                                     ):
-            ligpargen_fws.append(
-                Ligpargen_FW(name=f"{name}", smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"), parents=folder,
-                             **kwargs))
-            for i in range(outer_system):
-                if str((i + 1)) in name:
-                    name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
+        if kwargs.get("inital_sys") == False:
+            for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
+                                         ):
+                ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=kwargs.get("dir"),parents=folder, **kwargs))
+                for i in range(number_of_systems):
+                    if str((i + 1)) in name:
+                        name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
+        if kwargs.get("inital_sys") == True:
+            for  name in  kwargs.get("name_list"):
+                for i in range(number_of_systems):
+                    if str((i + 1)) in name:
+                        name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
         print(f"the name dic is {name_dic}")
         print(f'type list:{kwargs.get("type_list")} name_lis:{kwargs.get("name_list")} smiles_list:{ kwargs.get("smiles_list")} ')
 

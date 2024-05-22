@@ -89,10 +89,13 @@ class GUI:
         self.sumbit_button = tk.Button(self.frame, text="create sys", command= self.charge_titration_or_not)
         self.entry_path = tk.Entry(self.frame, fg="black", bg="white", width=50)
         self.check_titration = tk.IntVar()
+        self.intial=tk.IntVar()
         self.charge_tittration_promt=tk.Checkbutton(self.frame, text=f"Is this a charge titration?",variable=self.check_titration)
         self.path_to_user_input= tk.Label(self.frame, text="Path to inputfiles if providing own param: ".ljust(20))
+        self.check_if_inital_conf=tk.Checkbutton(self.frame, text="initial system", variable=self.intial)
         self.path_to_user_input.grid(row=2, column=0)
         self.entry_path.grid(row=2, column=1)
+        self.check_if_inital_conf.grid(row=2, column=2)
         self.numsysL.grid(row=0, column=0)
         self.numsys.grid(row=0, column=1)
         self.sumbit_button.grid(row=1, column=0)
@@ -493,7 +496,7 @@ class GUI:
                     "name_list": self.nameMatrix,  # "cons": 0,
                     "type_list": self.typematrix,
                     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                    "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True, "own":False}
+                    "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True, "own":False, "inital_sys":False}
                 print(f"The titrationlist:{self.titration_list}")
             else:
                 number_sys = number
@@ -514,7 +517,7 @@ class GUI:
                              "name_list": self.nameMatrix,  # "cons": 0,
                              "type_list": self.typematrix,
                              "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
-                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False, "own":False}
+                             "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False, "own":False, "inital_sys":False}
             if self.check_titration.get() !=0:
 
                 self.iterator_for_wf = Tnumber
@@ -577,6 +580,11 @@ class GUI:
             if self.own:
                 md_kwargs["own_path"] = self.path_to_user_input
                 md_kwargs["own"] = True
+                print("User provided the parameters")
+            if self.intial:
+                md_kwargs["own_path"] = self.path_to_user_input
+                md_kwargs["inital_sys"] = True
+                print("User provided the inital system")
 
             # md_kwargs = {
             #     "smiles_list": ["CO", "CO", "CCO", "CCO"],

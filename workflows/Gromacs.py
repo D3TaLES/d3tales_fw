@@ -55,6 +55,8 @@ class Ligpargen(FiretaskBase):
 class MDPrep(FiretaskBase):
 
     def run_task(self, fw_spec):
+        self.initial_system= self.get("inital_sys") or fw_spec.get("inital_sys")
+        self.path_inital= self.get("own_path") or fw_spec.get("own_path")
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.titration = self.get("titration_constant")
         self.charge = self.get("charge") or fw_spec.get("charge")
@@ -75,32 +77,33 @@ class MDPrep(FiretaskBase):
         self.Density = self.get("den") or fw_spec.get("den")
         print(self.Solname or "did not work")
 
-        pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
-                     self.zdim, self.dir, None, key)
-        names=[]+ self.solvent_name+self.solute_name 
-        smiles=[] + self.solvent_smiles + self.solute_smiles
-        key=self.get("key")
-        dft_folder=f"/project/cmri235_uksr/shasanka_conda_boss/launch"
-        print(smiles)
-        print(names)
-        i = 0
-        for iteams, name in zip(smiles,names):
-            print(i)
-            print(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log')
-            if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log'):
-                print("found dft")
-                if i >=1:
-                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder,self.titration)
+        if self.initial_system:
+            pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
+                         self.zdim, self.dir, None, key)
+            names=[]+ self.solvent_name+self.solute_name
+            smiles=[] + self.solvent_smiles + self.solute_smiles
+            key=self.get("key")
+            dft_folder=f"/project/cmri235_uksr/shasanka_conda_boss/launch"
+            print(smiles)
+            print(names)
+            i = 0
+            for iteams, name in zip(smiles,names):
+                print(i)
+                print(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log')
+                if os.path.isfile(f'{dft_folder}/{iteams}/gaussian/gas_phase/opt/opt_groundState.log'):
+                    print("found dft")
+                    if i >=1:
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,dft_folder,self.titration)
+                    else:
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder, self.titration)
                 else:
-                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,dft_folder, self.titration)
-            else:
-                print("no dft")
-                if i >=1:
-                    transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder, self.titration)
-                else:
-                    transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder, self.titration)
-            i+=1
-        gro.gro(self.Solname[:3], self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key)
+                    print("no dft")
+                    if i >=1:
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder, self.titration)
+                    else:
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder, self.titration)
+                i+=1
+        gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key, self.initial_system, self.path_inital)
         return FWAction(update_spec={})
 
 @explicit_serialize

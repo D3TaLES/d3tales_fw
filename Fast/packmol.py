@@ -78,7 +78,9 @@ class Solvate:
         subprocess.run(cmd, shell=True, check=True)
         self.to(key)
     def to(self,key):
-        top.toopol(self.solvent, self.numberSolvent, self.solvent2, self.numberSolvent2, self.solutes, self.con, self.dir, self.x/10, self.y/10, self.z/10,key)
+        t_key=key
+
+        top.toopol(solvent1=self.solvent, solvent1N=self.numberSolvent,solute= self.solutes, con=self.con, currentdir=self.dir, x= self.x/10, y= self.y/10, z= self.z/10,key=t_key)
 
 
 
