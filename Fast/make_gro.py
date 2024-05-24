@@ -67,7 +67,11 @@ class gro:
             print("Starting the simulation")
     def inital(self):
         top.toopol(currentdir=self.dir,key=self.key,inital=True)
-        subprocess.run(self.command12, shell=True, check=True)
+        try:
+            self.commandMDP = f"cp -r {os.path.join(self.path_to_file,'MDP')} {self.dir}/InputGrofiles{self.key}"
+            subprocess.run(self.commandMDP, shell=True, check=True)
+        except subprocess.CalledProcessError:
+            subprocess.run(self.command12, shell=True, check=True)
         move_the_inital_system=f"cp  {os.path.join(self.path_to_file,'solvated.gro')} {self.dir}/InputGrofiles{self.key}"
         move_topol=f"cp  {os.path.join(self.path_to_file,'topol.top')} {self.dir}/InputGrofiles{self.key}"
         move_nmol=f"cp {os.path.join(self.path_to_file,'nmol.itp')} {self.dir}/InputGrofiles{self.key}"
