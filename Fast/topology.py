@@ -3,13 +3,14 @@ import os
 
 
 class toopol:
-    def __init__(self, solvent1=None, solvent1N=None, solvent2=None, solvent2N=None, solute=None, con=None, currentdir=None, x=None,y=None,z=None,key=None, inital=False):
+    def __init__(self, solvent1=None, solvent1N=None, solvent2='', solvent2N=None, solute=None, con=None, currentdir=None, x=None,y=None,z=None,key=None, inital=False):
         self.solvent = solvent1
         self.solvent2 = solvent2
         self.solute1 = solute
         self.con = con
         self.dir = currentdir
         self.x = float(x) if x is not None else None
+        print(self.x)
         self.y = float(y) if y is not None else None
         self.z = float(z) if z is not None else None
         command2 = f'mkdir {self.dir}/InputGrofiles{key}'

@@ -55,7 +55,10 @@ class Ligpargen(FiretaskBase):
 class MDPrep(FiretaskBase):
 
     def run_task(self, fw_spec):
-        self.initial_system= self.get("inital_sys") or fw_spec.get("inital_sys")
+        self.initial_system= self["inital_sys"]
+        print(self.initial_system)
+        print(self["inital_sys"])
+        print(self.get("inital_sys"))
         self.path_inital= self.get("own_path") or fw_spec.get("own_path")
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.titration = self.get("titration_constant")
@@ -76,8 +79,9 @@ class MDPrep(FiretaskBase):
 
         self.Density = self.get("den") or fw_spec.get("den")
         print(self.Solname or "did not work")
-
+        print(self.initial_system is None)
         if self.initial_system == False:
+            print("in the if")
             pack.Solvate(self.Solname[:3], self.solute_name, self.conmatrix, self.Density, '', None, self.xdim, self.ydim,
                          self.zdim, self.dir, None, key)
             names=[]+ self.solvent_name+self.solute_name
