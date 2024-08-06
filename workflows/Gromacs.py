@@ -251,7 +251,7 @@ class key_gen(FiretaskBase):
             for i, j in key.items():
                 k.writelines(f'{i}: {j} \n   ')
         print(f'{key},{fw_spec.get("date_sumbit")},{self.dir}')
-        self.orgainze(key,fw_spec.get("date_sumbit"),self.dir)
+        self.organize(key,fw_spec.get("date_sumbit"),self.dir)
 
         return FWAction(update_spec={})
 
@@ -266,9 +266,9 @@ class key_gen(FiretaskBase):
 
         subprocess.run([f"mv {os.path.join(dir, 'key')} {run_dir}"], shell=True, check=True)
         print(key)
-        for item in key:
-            subprocess.run([f"mv {os.path.join(dir, 'InputGrofiles', key[item])} {run_dir}"], shell=True)
-            subprocess.run([f"mv {os.path.join(dir, 'Output', key[item])} {run_dir}"], shell=True)
+        for iteam in key:
+            subprocess.run([f"mv {os.path.join(dir, f'InputGrofiles{key[iteam]}')} {run_dir}"], shell=True)
+            subprocess.run([f"mv {os.path.join(dir, f'Output{key[iteam]}')} {run_dir}"], shell=True)
 
 
 # @explicit_serialize

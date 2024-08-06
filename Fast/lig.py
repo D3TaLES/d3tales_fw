@@ -5,8 +5,8 @@ import rdkit as rd
 from d3tales_fw.workflows.envwf import BOSSDIR, CONDAPATH,SINGPATH
 
 class lig:
-    def __init__(self, smiles, regular_name, molecule, charge, dir, own, own_path):
-        self.dir = dir
+    def __init__(self, smiles, regular_name, molecule, charge, di, own, own_path):
+        self.dir = di
         self.smiles = smiles
         self.mol = molecule
         self.charge = int(charge) or 0

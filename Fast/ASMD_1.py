@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
-from d3tales_fw.workflows.envwf import meta_dir
+from d3tales_fw.workflows.envwf import meta_dir, MDP_Location
 
 
 class ASMD:
@@ -39,7 +39,7 @@ class ASMD:
         self.current_dir = meta_dir
         self.input_dir = os.path.join(self.current_dir,f"InputGrofiles{key}")
         self.output_dir =  os.path.join(self.current_dir,f"Output{key}")
-        self.mdp_dir = os.path.join(self.current_dir,f"InputGrofiles{key}","MDP")
+        self.mdp_dir = MDP_Location if MDP_Location else os.path.join(self.current_dir,f"InputGrofiles{key}","MDP")
         self.topology_file = os.path.join(self.input_dir,"topol.top")
         self.initial_coordinates =os.path.join(self.input_dir,"solvated.gro")
         self.xtc_file = os.path.join(self.output_dir,f"production.xtc")
