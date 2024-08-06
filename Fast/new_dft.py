@@ -1,17 +1,17 @@
-
 import rdkit.Chem as Chem
 from rdkit.Chem import AllChem, Descriptors
 import rdkit as rd
 import subprocess
 import os
+from d3tales_fw.workflows.envwf import CONDAPATH
 
 
 def run_on_terminla(name, q, smiles, direc=None, mul=None):
     charge_mat=[]
     command = (
-    f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && "
+    f"source {CONDAPATH} && "
     f"conda activate vlxenv && "
-    f"python -c \"import d3tales_fw.Fast.new_dft as a; a.get_charge('{name}', {q}, '{smiles}', direc= '{direc}', muk = {mul})\"")
+    f"python -c \"import d3tales_fw.Fast.new_dft as a; a.get_charge('{name}', {q}, '{smiles}', direc= '{direc}', mul = {mul})\"")
 
     subprocess.run(command, shell=True,check=True)
     with open (f"{os.path.join(direc,'charge.txt')}", 'r') as file:
