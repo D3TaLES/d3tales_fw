@@ -28,12 +28,12 @@ class gro:
             subprocess.run(command, shell=True, check=True)
             print("gro file made")
 
-            command4 = f'mv {self.dir}/{solvent}_Solvent/{solvent}_Solvent.pdb {self.dir}/InputGrofiles{key} && mv {self.dir}/{solvent}_Solventscript {self.dir}/InputGrofiles{key}'
+            command4 = f'mv {self.dir}/{solvent[:3]}_Solvent/{solvent[:3]}_Solvent.pdb {self.dir}/InputGrofiles{key}'
 
             command5 = f'mv {self.dir}/Packmol{key}/solvated.gro {self.dir}/InputGrofiles{key}'
-            command6 = f'rm -r {self.dir}/{solvent}_Solvent && rm -r {self.dir}/Packmol{key}'
+            command6 = f'rm -r {self.dir}/{solvent[:3]}_Solvent && rm -r {self.dir}/Packmol{key}'
 
-            command8 = f'mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.pdb {self.dir}/InputGrofiles && mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.gmx.itp {self.dir}/InputGrofiles{key} && mv {self.dir}/{solvent2}_Solvent2script {self.dir}/InputGrofiles{key}'
+            command8 = f'mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.pdb {self.dir}/InputGrofiles && mv {self.dir}/{solvent2}_Solvent2/{solvent2}_Solvent2.gmx.itp {self.dir}/InputGrofiles{key}'
             command10 = f'rm -r {self.dir}/{solvent2}_Solvent2'
             print("cleaning up")
 
@@ -47,8 +47,8 @@ class gro:
             for i in range(len(self.solute)):
                 com1 = (
                     f"mv {self.dir}/{self.solute[i].strip()[:3]}_Solute{1}/"
-                    f"{self.solute[i].strip()[:3]}_Solute{1}.pdb {self.dir}/InputGrofiles{key} && "
-                    f"mv {self.dir}/{self.solute[i].strip()[:3]}_Solute{1}script {self.dir}/InputGrofiles{key}")
+                    f"{self.solute[i].strip()[:3]}_Solute{1}.pdb {self.dir}/InputGrofiles{key}"
+                    )
                 com2 = f'rm -r {self.dir}/{self.solute[i].strip()[:3]}_Solute{1}'
                 subprocess.run(com1, shell=True, check=True)
                 subprocess.run(com2, shell=True, check=True)

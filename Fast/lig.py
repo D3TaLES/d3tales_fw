@@ -9,43 +9,40 @@ class lig:
         self.smiles = smiles
         self.mol = molecule
         self.charge = int(charge) or 0
-        path_to_pdb= os.path.join(self.dir, f"{self.mol}.pdb")
-        print(path_to_pdb)
-        path_to_output=os.path.join(self.dir,self.mol)
+        self.path_to_pdb= os.path.join(self.dir, f"{self.mol}.pdb")
+        print(self.path_to_pdb)
+        path_to_output=os.path.join(self.dir, self.mol)
         if own == True:
             self.own(smiles, regular_name, molecule, charge, dir, own, own_path)
         else:
             tr_mol = rd.Chem.MolFromSmiles(smiles)
             b = rd.Chem.AddHs(tr_mol)
             rd.Chem.AllChem.EmbedMolecule(b)
-            rd.Chem.MolToPDBFile(b,path_to_pdb)
+            rd.Chem.MolToPDBFile(b,self.path_to_pdb)
             conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
             export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
-            ligpargen_cmd = f"ligpargen -i {path_to_pdb} -n {self.mol} -p {path_to_output} -r {regular_name[:3]} -c {self.charge} -o 0 -cgen CM1A"
+            ligpargen_cmd = f"ligpargen -i {self.path_to_pdb} -n { self.mol} -p {path_to_output} -r {regular_name[:3]} -c {self.charge} -o 0 -cgen CM1A"
             singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
-            moving_pdb_command= f"mv {path_to_pdb} {os.path.join(self.dir, self.mol )}"
+            obabel_cmd=f"obabel -ipdb {self.path_to_pdb} -oxyz -O {os.path.join(self.dir,  self.mol, f'{self.mol}.xyz')} "
+            moving_pdb_command= f"mv {self.path_to_pdb} {os.path.join(self.dir,  self.mol )}"
 
             cmd = ["singularity", "exec", singularity_container, "bash", "-c",
-                   f'{conda_activate} && {export_bossdir} && {ligpargen_cmd} && {moving_pdb_command}']
+                   f'{conda_activate} && {export_bossdir} && {ligpargen_cmd} && {obabel_cmd} &&  {moving_pdb_command}']
             try:
                 print("in try")
                 print(cmd)
                 subprocess.Popen(cmd).wait()
-                while os.path.isfile(f'{self.dir}/{self.mol}/{self.mol}-debug.pdb') == False:
-                    print("still making pdb")
-                    time.sleep(1)
+
             except:
                 print(f'Ligpargen was not able to find a parameter, user input files is being used. Please rerun with your own itp and pdb files. This is passed for smiles, regular_name, molecule, charge, dir {(smiles, regular_name, molecule, charge, dir)}')
+            self.PDBMAKER(self.mol,self.smiles)
 
-
-    def PDBMAKER(self, name, smiles, type):
+    def PDBMAKER(self, name, smiles):
         if name == "MET":
            name = "MeT"
-        
-
         with open(
-                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb") as fie, open(
-                f"/project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/{type}.pdb",
+                f"{os.path.join(self.dir,self.mol,f'{self.mol}.pdb')}",'r') as fie, open(
+                f"{os.path.join(self.dir,self.mol,'new.pdb')}",
                 'a') as new:
             f = fie.readlines()
             line_to_print = []
@@ -60,6 +57,7 @@ class lig:
                         new.write(f'')
                     new.write(f'{line} ')
                 new.write("\n")
+            subprocess.run([f"rm {os.path.join(self.dir,self.mol,f'{self.mol}.pdb')} && mv {os.path.join(self.dir,self.mol,'new.pdb')} {os.path.join(self.dir,self.mol,f'{self.mol}.pdb')}"], shell=True, check=True)
     def own(self,smiles, regular_name, molecule, charge, dir, own, own_path):
         subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
         subprocess.run([f'mkdir {self.dir}/{self.mol}'], shell=True)

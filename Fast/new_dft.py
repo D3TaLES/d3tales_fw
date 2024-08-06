@@ -1,7 +1,4 @@
-try:
-   import veloxchem as vlx
-except:
-   raise Exception("cannot load the module")
+
 import rdkit.Chem as Chem
 from rdkit.Chem import AllChem, Descriptors
 import rdkit as rd
@@ -9,7 +6,27 @@ import subprocess
 import os
 
 
-def get_charge(name, q, smiles, direc=None, mul=None):
+def run_on_terminla(name, q, smiles, direc=None, mul=None):
+    charge_mat=[]
+    command = (
+    f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && "
+    f"conda activate vlxenv && "
+    f"python -c \"import d3tales_fw.Fast.new_dft as a; a.get_charge('{name}', {q}, '{smiles}', direc= '{direc}')\"")
+
+    subprocess.run(command, shell=True,check=True)
+    with open (f"{os.path.join(direc,'charge.txt')}", 'r') as file:
+        lines= file.readlines()
+        for a in lines:
+            charge_mat.append(float(a))
+    subprocess.run([f"rm {os.path.join(direc,'charge.txt')}"], shell=True,check=True)
+    return charge_mat
+
+def get_charge(name, ch, smiles, direc=None, mul=None):
+    q= ch if ch else 0
+    try:
+        import veloxchem as vlx
+    except:
+        raise Exception("cannot load the module")
     path_to_mol = f"{name}.pdb"
     path_to_xyz = f"{name}.xyz"
     tr_mol = rd.Chem.MolFromSmiles(smiles)  # I found that if I just use the xyz file RDKIT
@@ -19,13 +36,13 @@ def get_charge(name, q, smiles, direc=None, mul=None):
     if direc:
         path_to_mol = os.path.join(direc,name, f"{name}.pdb")
         path_to_xyz = os.path.join(direc,name, f"{name}.xyz")
-    subprocess.run([f"obabel -ipdb {path_to_mol} -oxyz -O {path_to_xyz}"], shell=True)
+    print(path_to_xyz)
     molecule = vlx.Molecule.read_xyz_file(path_to_xyz)  # Loading Molecule into veloxchem
     basis = vlx.MolecularBasis.read(molecule, "cc-pVDZ")  # setting up for calc
     unpaired = Descriptors.NumRadicalElectrons(tr_mol)  # finding num of unpaired e for multiplicity calc
     multiplicity=mul
     if mul==None:
-        multiplicity = unpaired + 1 + int(q)%2  # 2S+1+charge mod 2
+        multiplicity = unpaired + 1 + int(q)%2 # 2S+1+charge mod 2
     print(f"the spin multi: {multiplicity}")
     vlx.Molecule.set_multiplicity(molecule, multiplicity)  # setting multi
     vlx.Molecule.set_charge(molecule, q)  # Setting Charge
@@ -51,9 +68,9 @@ def get_charge(name, q, smiles, direc=None, mul=None):
     except AssertionError:
         print(f" Error in DFT clac, please recheck the inputs and try again or manually create the parameters")
         return None
+    with open (f"{os.path.join(direc,'charge.txt')}", 'a') as file:
+        print(esp_charges.tolist())
+        for i in esp_charges.tolist():
+            file.write(f"{str(i)}\n")
+    return None #returns an np array
 
-    return esp_charges  #returns an np array
-
-
-if __name__ == "__main__":
-    print(get_charge("ept", 2, "CCN1C2=CC=CC=C2SC3=CC=CC=C31"))
