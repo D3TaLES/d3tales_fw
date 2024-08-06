@@ -3,12 +3,13 @@ import tkinter as tk
 from tkinter import ttk
 import argparse
 import random
-
+from atomate.utils.utils import env_chk
 from pathlib import Path
 from fireworks import LaunchPad
 import datetime as dat
 from monty.serialization import dumpfn, loadfn
 from d3tales_fw.workflows.wf_writer import *
+from d3tales_fw.workflows.envwf import meta_dir
 
 
 class GUI:
@@ -44,6 +45,7 @@ class GUI:
     Note: The GUI is currently in development and new features may be added while the old ones are dropped
     """
     def __init__(self):
+        self.meta_dir=meta_dir
         self.window = tk.Tk()
         self.window.title('ASMD')
         self.window.geometry('850x650')
@@ -495,7 +497,7 @@ class GUI:
                     "smiles_list": self.smilesMatrix,
                     "name_list": self.nameMatrix,  # "cons": 0,
                     "type_list": self.typematrix,
-                    "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
+                    "dir": self.meta_dir,
                     "num_systems": f"{number_sys}", "titartion_list":self.titration_list, "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":True, "own":False, "inital_sys":False}
                 print(f"The titrationlist:{self.titration_list}")
             else:
@@ -516,7 +518,7 @@ class GUI:
                              "smiles_list": self.smilesMatrix,
                              "name_list": self.nameMatrix,  # "cons": 0,
                              "type_list": self.typematrix,
-                             "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs",
+                             "dir": self.meta_dir,
                              "num_systems": f"{number_sys}", "populate_name": "MD_FIREWORK", "key_dic": key_dic,"is_titration":False, "own":False, "inital_sys":False}
             if self.check_titration.get() !=0:
 

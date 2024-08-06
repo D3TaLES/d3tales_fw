@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
+from d3tales_fw.workflows.envwf import meta_dir
 
 
 class ASMD:
@@ -34,20 +35,21 @@ class ASMD:
 
 
     def __init__(self,key):
-        self.current_dir = "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/"
-        self.input_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}"
-        self.output_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/"
-        self.mdp_dir = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/MDP"
-        self.topology_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/topol.top"
-        self.initial_coordinates = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/solvated.gro"
-        self.xtc_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.xtc"
-        self.tpr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.tpr"
-        self.eqtpr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/equilibration.tpr"
-        self.trr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.trr"
-        self.nmol_itp =f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/nmol.itp"
-        self.gro_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/production.gro"
-        self.edr_file = f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/Output{key}/equilibration.edr"
-        
+
+        self.current_dir = meta_dir
+        self.input_dir = os.path.join(self.current_dir,f"InputGrofiles{key}")
+        self.output_dir =  os.path.join(self.current_dir,f"Output{key}")
+        self.mdp_dir = os.path.join(self.current_dir,f"InputGrofiles{key}","MDP")
+        self.topology_file = os.path.join(self.input_dir,"topol.top")
+        self.initial_coordinates =os.path.join(self.input_dir,"solvated.gro")
+        self.xtc_file = os.path.join(self.output_dir,f"production.xtc")
+        self.tpr_file = os.path.join(self.output_dir,f"production.tpr")
+        self.eqtpr_file = os.path.join(self.output_dir,f"equilibration.tpr")
+        self.trr_file = os.path.join(self.output_dir,f"production.trr")
+        self.nmol_itp = os.path.join(self.input_dir,"nmol.itp")
+        self.gro_file =os.path.join(self.output_dir,f"production.gro")
+        self.edr_file = os.path.join(self.output_dir,f"equilibration.edr")
+
 
         # Copy MDP files to output directory
         subprocess.run(["cp", "-r", f"{self.mdp_dir}/.", self.output_dir])

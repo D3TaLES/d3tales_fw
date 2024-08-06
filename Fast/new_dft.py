@@ -11,7 +11,7 @@ def run_on_terminla(name, q, smiles, direc=None, mul=None):
     command = (
     f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && "
     f"conda activate vlxenv && "
-    f"python -c \"import d3tales_fw.Fast.new_dft as a; a.get_charge('{name}', {q}, '{smiles}', direc= '{direc}')\"")
+    f"python -c \"import d3tales_fw.Fast.new_dft as a; a.get_charge('{name}', {q}, '{smiles}', direc= '{direc}', muk = {mul})\"")
 
     subprocess.run(command, shell=True,check=True)
     with open (f"{os.path.join(direc,'charge.txt')}", 'r') as file:

@@ -2,6 +2,7 @@ from pathlib import Path
 import numpy as np
 from fireworks import Workflow
 from d3tales_fw.workflows.D3TaLES_FW import *
+from d3tales_fw.workflows.envwf import meta_dir
 # from d3tales_api.Workflows.D3TaLES_FW import *
 # from d3tales_api.Workflows.ParamSet import GausParamSet
 
@@ -368,7 +369,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             plotter.append( Plotter(
                 name=fw_graph_key,
                 parents=regula,
-                key=key_mat[Index_key_to_pull],path_to_folder="/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles", **kwargs
+                key=key_mat[Index_key_to_pull],path_to_folder= os.path.join(meta_dir,"InputGrofiles"), **kwargs
             ))
 
     key_fw = key_GEN(**kwargs, parents=plotter if titration else regula)

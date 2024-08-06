@@ -16,6 +16,7 @@ import d3tales_fw.Fast.packmol as pack
 import d3tales_fw.Fast.make_gro as gro
 import d3tales_fw.Fast.titration as titrate
 import d3tales_fw.Fast.titrationPlotter as plotter
+from d3tales_fw.workflows.envwf import meta_dir
 
 
 from atomate.utils.utils import get_logger, env_chk
@@ -87,7 +88,6 @@ class MDPrep(FiretaskBase):
             names=[]+ self.solvent_name+self.solute_name
             smiles=[] + self.solvent_smiles + self.solute_smiles
             key=self.get("key")
-            dft_folder=f"/project/cmri235_uksr/shasanka_conda_boss/launch"
             print(smiles)
             print(names)
             i = 0
@@ -159,10 +159,9 @@ class Density(FiretaskBase): ### need to fix this block later
         for i in output_density:
             average = average+float(i)
         average= average/(float(len(output_density)))
-        path_f= self.get("path_to_folder")
-        subprocess.run([f" touch /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data"], shell=True)
-        print(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data")
-        with open(f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{density_key}/data",'a') as file:
+        subprocess.run([f" touch {os.path.join(meta_dir,f'InputGrofiles{density_key}','data')}"], shell=True)
+        print(f"{os.path.join(meta_dir,f'InputGrofiles{density_key}','data')}")
+        with open(f"{os.path.join(meta_dir,f'InputGrofiles{density_key}','data')}",'a') as file:
             file.write(f"{average},")
 
         density_mat=fw_spec.get(f"Average_den{density_key}")
@@ -256,34 +255,37 @@ class key_gen(FiretaskBase):
 
         return FWAction(update_spec={})
 
-    def orgainze(self,key, date_sumbited, dirs):
+    def organize(self, key, date_submitted, dirs):
         dir = dirs
-        name = f'{str(date_sumbited)}_'
+        name = f'{str(date_submitted)}_'
         for i in (str(datetime.datetime.now()).split()[1]).split(":"):
             name += f"_{str(i)[:2]}"
-        subprocess.run([f"mkdir {dir}/run_{name}"], shell=True, check=True)
-        subprocess.run([f"mv {dir}/key {dir}/run_{name}"], shell=True, check=True)
+
+        run_dir = os.path.join(dir, f"run_{name}")
+        os.makedirs(run_dir, exist_ok=True)
+
+        subprocess.run([f"mv {os.path.join(dir, 'key')} {run_dir}"], shell=True, check=True)
         print(key)
-        for iteams in key:
-            subprocess.run([f"mv {dir}/InputGrofiles{key[iteams]} {dir}/run_{name}"], shell=True)
-            subprocess.run([f"mv {dir}/Output{key[iteams]} {dir}/run_{name}"], shell=True)
+        for item in key:
+            subprocess.run([f"mv {os.path.join(dir, 'InputGrofiles', key[item])} {run_dir}"], shell=True)
+            subprocess.run([f"mv {os.path.join(dir, 'Output', key[item])} {run_dir}"], shell=True)
 
 
-@explicit_serialize
+# @explicit_serialize
 
-class dft_checker(FiretaskBase):
-    def run_task(self, fw_spec):
-        smiles= fw_spec.get("smiles_list")
-        names=fw_spec.get("name_list")
-        key=self.get("key")
-        dft_folder="/project/cmri235_uksr/shasanka_conda_boss/dft_folder"
-        for iteams, name in zip(smiles,names):
-            if os.path.isfile(dft_folder+iteams):
-                transfer.trans(name[:3],iteams,key,1)
-            else:
-                transfer.trans(name[:3], iteams, key, 0)
-
-        return FWAction(update_spec={})
+# class dft_checker(FiretaskBase):
+#     def run_task(self, fw_spec):
+#         smiles= fw_spec.get("smiles_list")
+#         names=fw_spec.get("name_list")
+#         key=self.get("key")
+#         dft_folder="/project/cmri235_uksr/shasanka_conda_boss/dft_folder"
+#         for iteams, name in zip(smiles,names):
+#             if os.path.isfile(dft_folder+iteams):
+#                 transfer.trans(name[:3],iteams,key,1)
+#             else:
+#                 transfer.trans(name[:3], iteams, key, 0)
+#
+#         return FWAction(update_spec={})
 
 
 
@@ -292,7 +294,7 @@ class Graph_plotter(FiretaskBase):
 
     def run_task(self, fw_spec):
         key=self.get("This_key")
-        path=f"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/InputGrofiles{key}/data"
+        path=os.path.join(meta_dir,f'InputGrofiles{key}','data')
         titration_list=fw_spec.get("titartion_list") or self.get("titartion_list")
         Average_simulation_density=[]
         with open(path, 'r') as file:
@@ -308,11 +310,11 @@ class Graph_plotter(FiretaskBase):
 
         return FWAction(update_spec={})
 
-@explicit_serialize
-class DFT_FOLDER_maker(FiretaskBase):
-    def run_task(self, fw_spec):
-        identifier=self.get("identifier") or fw_spec.get("identifier")
-        name= self.get("name") or fw_spec.get("name")
-        subprocess.run([f'mv /project/cmri235_uksr/shasanka_conda_boss/launch/{identifier} /project/cmri235_uksr/shasanka_conda_boss/launch/{name}'], shell=True)
-
-        return FWAction(update_spec={})
+# @explicit_serialize
+# class DFT_FOLDER_maker(FiretaskBase):
+#     def run_task(self, fw_spec):
+#         identifier=self.get("identifier") or fw_spec.get("identifier")
+#         name= self.get("name") or fw_spec.get("name")
+#         subprocess.run([f'mv /project/cmri235_uksr/shasanka_conda_boss/launch/{identifier} /project/cmri235_uksr/shasanka_conda_boss/launch/{name}'], shell=True)
+#
+#         return FWAction(update_spec={})

@@ -2,6 +2,7 @@ import os
 import subprocess
 import time
 import rdkit as rd
+from d3tales_fw.workflows.envwf import BOSSDIR, CONDAPATH,SINGPATH
 
 class lig:
     def __init__(self, smiles, regular_name, molecule, charge, dir, own, own_path):
@@ -19,10 +20,10 @@ class lig:
             b = rd.Chem.AddHs(tr_mol)
             rd.Chem.AllChem.EmbedMolecule(b)
             rd.Chem.MolToPDBFile(b,self.path_to_pdb)
-            conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
-            export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
+            conda_activate = f"source {CONDAPATH} && conda activate ligpg"
+            export_bossdir = f" export BOSSdir={BOSSDIR}"
             ligpargen_cmd = f"ligpargen -i {self.path_to_pdb} -n { self.mol} -p {path_to_output} -r {regular_name[:3]} -c {self.charge} -o 0 -cgen CM1A"
-            singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
+            singularity_container = SINGPATH
             obabel_cmd=f"obabel -ipdb {self.path_to_pdb} -oxyz -O {os.path.join(self.dir,  self.mol, f'{self.mol}.xyz')} "
             moving_pdb_command= f"mv {self.path_to_pdb} {os.path.join(self.dir,  self.mol )}"
 
@@ -59,12 +60,11 @@ class lig:
                 new.write("\n")
             subprocess.run([f"rm {os.path.join(self.dir,self.mol,f'{self.mol}.pdb')} && mv {os.path.join(self.dir,self.mol,'new.pdb')} {os.path.join(self.dir,self.mol,f'{self.mol}.pdb')}"], shell=True, check=True)
     def own(self,smiles, regular_name, molecule, charge, dir, own, own_path):
-        subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
-        subprocess.run([f'mkdir {self.dir}/{self.mol}'], shell=True)
+        subprocess.run([f'mkdir {os.path.join(self.dir,self.mol)}'], shell=True)
         path1=os.path.join(own_path, f"{regular_name}.pdb")
         path2=os.path.join(own_path, f"{regular_name}.itp")
-        cmd1= f"cp {path1} {self.dir}/{self.mol}/{molecule}.pdb"
-        cmd2 = f"cp {path2} {self.dir}/{self.mol}/{molecule}.gmx.itp"
+        cmd1= f" cp  {path1} {os.path.join(self.dir, self.mol, f'{molecule}.pdb')}"
+        cmd2 = f" cp {path2} {os.path.join(self.dir, self.mol, f'{molecule}.gmx.itp')} "
 
         subprocess.run([cmd1], shell=True)
         subprocess.run([cmd2], shell=True)
