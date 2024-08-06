@@ -103,9 +103,9 @@ class MDPrep(FiretaskBase):
                 else:
                     print("no dft")
                     if i >=1:
-                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,dft_folder, self.titration)
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,0,self.dir,self.charge, self.titration)
                     else:
-                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,dft_folder, self.titration)
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,0,self.dir,0, self.titration)
                 i+=1
         gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key, self.initial_system, self.path_inital)
         return FWAction(update_spec={})

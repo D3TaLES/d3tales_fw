@@ -1,9 +1,11 @@
 import subprocess
-from new_dft import get_charge
+from d3tales_fw.Fast.new_dft import get_charge
 import os
 class trans:
     def __init__(self,name,smiles,key,re,di,charg,Titration, mult=None):
         charges = get_charge(name, charg, smiles,direc=di,mul=mult)
+        if len(charges) ==0:
+           raise Exception("Unable to get the charges")
         self.name = name
         self.titrat=Titration
 

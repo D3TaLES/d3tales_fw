@@ -1,7 +1,10 @@
+try:
+   import veloxchem as vlx
+except:
+   raise Exception("cannot load the module")
 import rdkit.Chem as Chem
 from rdkit.Chem import AllChem, Descriptors
 import rdkit as rd
-import veloxchem as vlx
 import subprocess
 import os
 
