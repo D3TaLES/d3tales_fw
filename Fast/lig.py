@@ -1,14 +1,16 @@
 import os
 import subprocess
 import time
-from rdkit import Chem
-from rdkit.Chem import AllChem
+import rdkit as rd
+
 class lig:
     def __init__(self, smiles, regular_name, molecule, charge, dir, own, own_path):
         self.dir = dir
         self.smiles = smiles
         self.mol = molecule
         self.charge = int(charge) or 0
+        path_to_pdb= os.path.join(self.dir, f"{self.mol}.pdb")
+        path_to_output=os.path.join(self.dir,self.mol)
         if own == True:
             self.own(smiles, regular_name, molecule, charge, dir, own, own_path)
         else:
@@ -17,9 +19,7 @@ class lig:
             subprocess.run([f'mkdir {self.dir}/{self.mol}script'], shell=True)
             conda_activate = f"source /project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/miniconda3/bin/activate && conda activate ligpg"
             export_bossdir = f" export BOSSdir=/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/boss"
-            #igpargen_cmd = f"ligpargen -s '{self.smiles}' -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {self.mol} -c {self.charge} -o 0 -cgen CM1A"
-            ligpargen_cmd = f"ligpargen -i /project/cmri235_uksr/shasanka_conda_boss/launch/{regular_name}/gaussian/gas_phase/opt/{self.mol}.pdb -n {self.mol} -p /mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs/{self.mol} -r {regular_name[:3]} -c {self.charge} -o 0 -cgen CM1A"
-
+            ligpargen_cmd = f"ligpargen -i {path_to_pdb} -n {self.mol} -p {path_to_output} -r {regular_name[:3]} -c {self.charge} -o 0 -cgen CM1A"
             singularity_container = f"/project/cmri235_uksr/shasanka_conda_boss/sla296/singularity/Fast/f.sif"
 
             cmd = ["singularity", "exec", singularity_container, "bash", "-c",
@@ -32,10 +32,10 @@ class lig:
                 while os.path.isfile(f'{self.dir}/{self.mol}/{self.mol}-debug.pdb') == False:
                     print("still making pdb")
                     time.sleep(1)
-                pdb_location = Chem.MolFromPDBFile(f'{self.dir}/{self.mol}/{self.mol}-debug.pdb')
-                pdb_location = Chem.AddHs(pdb_location)
-                AllChem.EmbedMolecule(pdb_location)
-                Chem.MolToMolFile(pdb_location, f'{self.dir}/{self.mol}/{self.mol}.mol')
+                pdb_location = rd.Chem.MolFromPDBFile(f'{self.dir}/{self.mol}/{self.mol}-debug.pdb')
+                pdb_location =rd. Chem.AddHs(pdb_location)
+                rd.AllChem.EmbedMolecule(pdb_location)
+                rd.Chem.MolToMolFile(pdb_location, f'{self.dir}/{self.mol}/{self.mol}.mol')
                 comand2 = f'obabel -imol {self.dir}/{self.mol}/{self.mol}.mol -ogjf -O {self.dir}/{self.mol}script/{self.mol}.gjf --gen3D'
                 comand3 = f'obabel -igro {self.dir}/{self.mol}/{self.mol}.gmx.gro -opdb -O {self.dir}/{self.mol}/{self.mol}.pdb '
                 print(comand3)
@@ -48,9 +48,10 @@ class lig:
     def PDBMAKER(self, name, smiles, type):
         if name == "MET":
            name = "MeT"
-        subprocess.run([
-                           f"obabel /project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/freq_opt_groundState.log -opdb -O /project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb"],
-                       shell=True)
+        tr_mol = rd.Chem.MolFromSmiles(smiles)
+        b = rd.Chem.AddHs(tr_mol)
+        rd.Chem.AllChem.EmbedMolecule(b)
+        rd.Chem.MolToPDBFile(b,)
 
         with open(
                 f"/project/cmri235_uksr/shasanka_conda_boss/launch/{name}/gaussian/gas_phase/opt/out.pdb") as fie, open(

@@ -3,26 +3,33 @@ from rdkit.Chem import AllChem, Descriptors
 import rdkit as rd
 import veloxchem as vlx
 import subprocess
+import os
 
 
-
-def get_charge(name, q, smiles, dir):
-    tr_mol = rd.Chem.MolFromSmiles(smiles) # I found that if I just use the xyz file RDKIT
+def get_charge(name, q, smiles, direc=None, mul=None):
+    path_to_mol = f"{name}.pdb"
+    path_to_xyz = f"{name}.xyz"
+    tr_mol = rd.Chem.MolFromSmiles(smiles)  # I found that if I just use the xyz file RDKIT
     # cannot count num of unpaired e, so I am defining the molecule using smiles first
-    b = rd.Chem.AddHs(tr_mol) # adding H so i can later turn XYZ to PDB
-    rd.Chem.AllChem.EmbedMolecule(b) # Generating 3D rep of molecule
-    rd.Chem.MolToXYZFile(b, f"{name}.xyz") # Generating XYZ, so I can turn this into PDB for Ligpargen
-    molecule= vlx.Molecule.read_xyz_file(f"{name}.xyz") # Loading Molecule into veloxchem
-    basis = vlx.MolecularBasis.read(molecule, "cc-pVDZ") # setting up for calc
-    unpaired=Descriptors.NumRadicalElectrons(tr_mol) # finding num of unpaired e for multiplicity calc
-    multiplicity = unpaired+1 + int(q) # 2S+1+charge
+    b = rd.Chem.AddHs(tr_mol)  # adding H so i can later turn pdb
+    rd.Chem.AllChem.EmbedMolecule(b)  # Generating 3D rep of molecule
+    if direc:
+        path_to_mol = os.path.join(direc,name, f"{name}.pdb")
+        path_to_xyz = os.path.join(direc,name, f"{name}.xyz")
+    subprocess.run([f"obabel -ipdb {path_to_mol} -oxyz -O {path_to_xyz}"], shell=True)
+    molecule = vlx.Molecule.read_xyz_file(path_to_xyz)  # Loading Molecule into veloxchem
+    basis = vlx.MolecularBasis.read(molecule, "cc-pVDZ")  # setting up for calc
+    unpaired = Descriptors.NumRadicalElectrons(tr_mol)  # finding num of unpaired e for multiplicity calc
+    multiplicity=mul
+    if mul==None:
+        multiplicity = unpaired + 1 + int(q)%2  # 2S+1+charge mod 2
     print(f"the spin multi: {multiplicity}")
-    vlx.Molecule.set_multiplicity(molecule,multiplicity) # setting multi
-    vlx.Molecule.set_charge(molecule, q) # Setting Charge
-    scf_drv= vlx.ScfUnrestrictedDriver() # Unrestricted for sate>singlet
-    if multiplicity==1:
-        scf_drv= vlx.ScfRestrictedDriver() # for singlet
-    scf_drv.ostream.mute() # shutting off the output stream for the calc
+    vlx.Molecule.set_multiplicity(molecule, multiplicity)  # setting multi
+    vlx.Molecule.set_charge(molecule, q)  # Setting Charge
+    scf_drv = vlx.ScfUnrestrictedDriver()  # Unrestricted for sate>singlet
+    if multiplicity == 1:
+        scf_drv = vlx.ScfRestrictedDriver()  # for singlet
+    scf_drv.ostream.mute()  # shutting off the output stream for the calc
 
     scf_drv.xcfun = "B3LYP"
     # avaible functioals: ['SLATER', 'SLDA', 'B88X', 'BLYP', 'B3LYP', 'BHANDH', 'BHANDHLYP', 'PBE', 'PBE0', 'REVPBE',
@@ -34,16 +41,16 @@ def get_charge(name, q, smiles, dir):
     # defult
     scf_drv.conv_thresh = 1.0e-6  # setting criteria of deltaE for convergence
 
-
     try:
         scf_results = scf_drv.compute(molecule, basis)
-        esp_drv = vlx.RespChargesDriver() #restraied ESP calc driver
-        esp_charges = esp_drv.compute(molecule, basis, scf_results, "esp") # calc
+        esp_drv = vlx.RespChargesDriver()  #restraied ESP calc driver
+        esp_charges = esp_drv.compute(molecule, basis, scf_results, "esp")  # calc
     except AssertionError:
-        print(f" Error in DFT clac ")
+        print(f" Error in DFT clac, please recheck the inputs and try again or manually create the parameters")
         return None
-    subprocess.run(f"obabel -ixyz {name}.xyz -opdb -O {name}.pdb")
+
     return esp_charges  #returns an np array
 
-if __name__=="__main__":
-    print( get_charge("try", 1, "CCCC"))
+
+if __name__ == "__main__":
+    print(get_charge("ept", 2, "CCN1C2=CC=CC=C2SC3=CC=CC=C31"))

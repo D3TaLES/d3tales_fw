@@ -1,8 +1,9 @@
 from pathlib import Path
+import numpy as np
 from fireworks import Workflow
 from d3tales_fw.workflows.D3TaLES_FW import *
-from d3tales_api.Workflows.D3TaLES_FW import *
-from d3tales_api.Workflows.ParamSet import GausParamSet
+# from d3tales_api.Workflows.D3TaLES_FW import *
+# from d3tales_api.Workflows.ParamSet import GausParamSet
 
 
 # Copyright 2021, University of Kentucky
@@ -66,8 +67,8 @@ def d3tales_wf(paramset, identifier=None, smiles=None, wtune=True, solvent='acet
 def d3tales_md_wf(param_file=None, **kwargs):
 
     # Establish calculation parameters from parm_file json file
-    param_file = param_file or os.path.join(Path(__file__).resolve().parent.parent, "parameters", 'md_gaus_parameter_file.json')
-    paramset = GausParamSet().from_json(param_file)
+    # param_file = param_file or os.path.join(Path(__file__).resolve().parent.parent, "parameters", 'md_gaus_parameter_file.json')
+    # paramset = GausParamSet().from_json(param_file)
 
     key_dic = kwargs.get("key_dic")
     print(key_dic)
@@ -79,7 +80,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
     name_dic = {}
     titration=kwargs.get("is_titration")
     fire_workdic = {}
-    dft_fw = []
+    # dft_fw = []
     folder=[]
     ligpargen_fws = []
     matrix_of_titration = []
@@ -87,14 +88,14 @@ def d3tales_md_wf(param_file=None, **kwargs):
     if not titration:
         for i in range(number_of_systems):
             name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
-        if kwargs.get("own") == False and kwargs.get("inital_sys") ==False:
-
-            for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
-                d = Optimization(paramset=paramset.opt_groundState,
-                                                             species="groundState",
-                                                             parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
-                dft_fw.append(d)
-                folder.append(fo(name=names,parents=d,**kwargs))
+        # if kwargs.get("own") == False and kwargs.get("inital_sys") ==False:
+        #
+        #     for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
+        #         d = Optimization(paramset=paramset.opt_groundState,
+        #                                                      species="groundState",
+        #                                                      parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
+        #         dft_fw.append(d)
+        #         folder.append(fo(name=names,parents=d,**kwargs))
 
         if kwargs.get("inital_sys") == False:
             for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
@@ -207,14 +208,14 @@ def d3tales_md_wf(param_file=None, **kwargs):
         outer_system = int(number_of_systems / (number_of_titrations))
         for i in range(number_of_systems):
             name_dic[f"names{i + 1}"] = kwargs.get(f"WF_name{i + 1}")
-        if kwargs.get("own") == False:
-
-            for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
-                d = Optimization(paramset=paramset.opt_groundState,
-                                                             species="groundState",
-                                                             parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
-                dft_fw.append(d)
-                folder.append(fo(name=names,parents=d,**kwargs))
+        # if kwargs.get("own") == False:
+        #
+        #     for smiles, (index,names) in zip(kwargs.get("smiles_list"), enumerate(kwargs.get("name_list"))):
+        #         d = Optimization(paramset=paramset.opt_groundState,
+        #                                                      species="groundState",
+        #                                                      parents=folder[index-1] if index !=0 else None, s=f"{smiles}", submit=False, smiles=smiles)
+        #         dft_fw.append(d)
+        #         folder.append(fo(name=names,parents=d,**kwargs))
 
 
 
@@ -371,7 +372,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
             ))
 
     key_fw = key_GEN(**kwargs, parents=plotter if titration else regula)
-    fws = [key_fw] + ligpargen_fws + regula + dft_fw
+    fws = [key_fw] + ligpargen_fws + regula
     fws.extend(matrix_of_titration)
     fws.extend(plotter)
     fws.extend(folder)
