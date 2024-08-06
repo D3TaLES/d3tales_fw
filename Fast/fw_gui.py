@@ -581,7 +581,7 @@ class GUI:
                 md_kwargs["own_path"] = self.path_to_user_input
                 md_kwargs["own"] = True
                 print("User provided the parameters")
-            if self.intial:
+            if self.intial.get() !=0:
                 md_kwargs["own_path"] = self.path_to_user_input
                 md_kwargs["inital_sys"] = True
                 print("User provided the inital system")

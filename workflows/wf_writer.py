@@ -112,9 +112,6 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
         for i in range(number_of_systems):
 
-
-
-
             fw_pack_key = f"fw_pack{i + 1}"
             fire_workdic[fw_pack_key] = Pack_FW (
                 name=name_dic[f"names{i + 1}"] + 'pack',
