@@ -230,7 +230,7 @@ class GUI:
             self.entries[f"Density{i + 1}"] = self.Density
 
             self.xdimLabel.grid(row=17 + (offset * i), column=0)
-            self.xdim.grid(row=17 + (13 * i), column=1)
+            self.xdim.grid(row=17 + (offset * i), column=1)
             self.entries[f"xdim{i + 1}"] = self.xdim
 
             self.ydimLabel.grid(row=18 + (offset * i), column=0)
@@ -313,7 +313,7 @@ class GUI:
             self.molarMass = tk.Entry(self.frame, fg="black", bg="white", width=50)
             self.molarlabel = tk.Label(self.frame, text=f"Molarmass{i + 1} of Solvents")
             self.multiplicity = tk.Entry(self.frame, fg="black", bg="white", width=50)
-            self.multiplicity_lable = tk.Label(self.frame, text=f"Multiplicity{i + 1} for DFT")
+            self.multiplicity_lable = tk.Label(self.frame, text=f"Multiplicity{i + 1} enter as solvent,solutes")
             self.chargeCheck = tk.Checkbutton(self.frame, text=f"Charge on the Solutes{i + 1}", variable=self.chargeV)
             self.chargeMatrix = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
@@ -345,7 +345,7 @@ class GUI:
             self.entries[f"Density{i + 1}"] = self.Density
 
             self.xdimLabel.grid(row=17 + (offset * i), column=0)
-            self.xdim.grid(row=17 + (13 * i), column=1)
+            self.xdim.grid(row=17 + (offset * i), column=1)
             self.entries[f"xdim{i + 1}"] = self.xdim
 
             self.ydimLabel.grid(row=18 + (offset * i), column=0)
@@ -560,14 +560,14 @@ class GUI:
                 conamt = spliter(self.entries[f'concentration{_ + 1}'].get())
                 multi_mat=spliter( self.entries[f'multiplicity{_ + 1}'].get())
                 le = len(self.entries[f"charges{_ + 1}"].get())
-                number_of_molecules = len(self.smilesMatrix)
+                number_of_molecules=len(spliter(self.entries[f'multiplicity{_ + 1}'].get()))
                 self.charge=[]
                 self.charge.extend(
                     ['0'] + [j for j in spliter(self.entries[f"charges{_ + 1}"].get())] if le != 0 else ['0' for _ in
                                                                                                          range(
                                                                                                              number_of_molecules)])
                 md_kwargs[f"charge{_+1}"] = self.charge
-                md_kwargs[f'multiplicity{_ + 1}'] = ['1'] + multi_mat
+                md_kwargs[f'multiplicity{_ + 1}'] = multi_mat
                 md_kwargs[f'conmatrix{_ + 1}'] = conamt
 
             index = 0
@@ -592,7 +592,7 @@ class GUI:
             self.charge = []
             for i in range(number):
                 le= len(self.entries[f"charges{i + 1}"].get())
-                number_of_molecules=len(self.smilesMatrix)
+                number_of_molecules=len(spliter(self.entries[f'multiplicity{i + 1}'].get()))
                 self.charge.extend(['0']+[j for j in spliter( self.entries[f"charges{i + 1}"].get())] if le != 0 else ['0' for _ in range(number_of_molecules)])
             md_kwargs["charge_list"] = self.charge
             print(md_kwargs)
@@ -606,20 +606,6 @@ class GUI:
                 md_kwargs["inital_sys"] = True
                 print("User provided the inital system")
 
-            # md_kwargs = {
-            #     "smiles_list": ["CO", "CO", "CCO", "CCO"],
-            #     "con_list": [0, 0, 0, 0], "WF_name1": "Test_run1", "WF_name2": "Test_run2",
-            #     "name_list": ["wa1ter", "wa2ter", "methane1", "ethane2"], "cons": 0,
-            #     "type_list": ["Solvent", "Solvent", "Solute1", "Solute1"],
-            #     "dir": "/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1": ["wa1ter"],
-            #     "solute_name1": ["methane"], "solvent_name2": ["wa2ter"], "solute_name2": ["ethane"],
-            #     "solvent_smiles1": ["CO"], "solute_smiles1": ["CCO"], "solvent_smiles2": ["CO"],
-            #     "solute_smiles2": ["CCO"], "x1": 10, "y1": 10, "z1": 10, "conmatrix1": ["0.1"], "den1": "10",
-            #     "MM1": "5", "x2": 10, "y2": 10, "z2": 10, "conmatrix2": ["0.1"], "den2": "10", "MM2": "5",
-            #     "num_systems": "2", "populate_name": "test", "key_dic": key_dic}
-            # md_kwargs = {
-            # "smiles_list": ["O","C"],
-            # "con_list": [0,0], "WF_name1":"Test_run1","WF_name2":"Test_run2",  "name_list":["water","methane1"], "cons":0, "type_list":["Solvent","Solute1"], "dir":"/mnt/gpfs2_4m/scratch/sla296/test_run/output_of_runs", "solvent_name1":["water"], "solute_name1":["methane"],"solvent_name2":["wa2ter"], "solute_name2":["ethane"], "x1":10, "y1":10, "z1":10, "conmatrix1":["0.1"], "den1":"10", "MM1":"10", "x2":10, "y2":10, "z2":10, "conmatrix2":["0.1"], "den2":"10", "MM2":"18.012","num_systems":"1", "populate_name":"test","key_dic":key_dic}
             all_ids = {"test_md_fw": populate_md_wf(**md_kwargs)}
             sys.exit()
 
@@ -627,7 +613,7 @@ class GUI:
             all_md_data = loadfn(args.filename)
             all_ids = {}
             for mol_name, md_kwargs in all_md_data.items():
-                all_ids[mol_name] = populate_md_wf(path="/project/cmri235_uksr/shasanka_conda_boss/d3tales_fw/parameters/md_gaus_parameter_file.json",**md_kwargs)
+                all_ids[mol_name] = populate_md_wf(path=None,**md_kwargs)
 
 
 GUI()

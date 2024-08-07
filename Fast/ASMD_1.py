@@ -39,7 +39,7 @@ class ASMD:
         self.current_dir = meta_dir
         self.input_dir = os.path.join(self.current_dir,f"InputGrofiles{key}")
         self.output_dir =  os.path.join(self.current_dir,f"Output{key}")
-        self.mdp_dir = MDP_Location if MDP_Location else os.path.join(self.current_dir,f"InputGrofiles{key}","MDP")
+        self.mdp_dir = os.path.join(self.current_dir,f"InputGrofiles{key}","MDP")
         self.topology_file = os.path.join(self.input_dir,"topol.top")
         self.initial_coordinates =os.path.join(self.input_dir,"solvated.gro")
         self.xtc_file = os.path.join(self.output_dir,f"production.xtc")
@@ -228,6 +228,7 @@ class ASMD:
         else:
             print(f"The given value x = {x} is not within 10% accuracy of the mean density y = {mean_density:.2f}.")
             return False
+
 
     # def denProd(self,density):
     #     x = density  # Replace with your given density value

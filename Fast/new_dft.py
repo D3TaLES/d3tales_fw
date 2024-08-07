@@ -72,5 +72,5 @@ def get_charge(name, ch, smiles, direc=None, mul=None):
         print(esp_charges.tolist())
         for i in esp_charges.tolist():
             file.write(f"{str(i)}\n")
-    return None #returns an np array
+    return None
 

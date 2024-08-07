@@ -116,7 +116,7 @@ class TitrationChargeScaler(FiretaskBase):
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
         self.solvent = self.solvent_name[0]
         self.solute_name = self.get("solute_name") or fw_spec.get("solute_name")
-        titrate.titration(self.titration_matrix, self.key, self.dir, self.solvent, self.solute_name, self.initial_system, self.path_inital)
+        titrate.titration(self.titration_matrix, self.key, self.dir, self.solvent, self.solute_name,self.path_inital, intial=self.initial_system )
 
 
         return FWAction(update_spec={})
@@ -307,7 +307,6 @@ class Graph_plotter(FiretaskBase):
                 for t in iteams.split(","):
                     if len(t) !=0:
                         Average_simulation_density.append(t)
-
 
         Average_simulation_density_dic={i:j for i,j in zip(titration_list,Average_simulation_density) }
         plotter.TitrationPlotter( Average_simulation_density_dic, key)
