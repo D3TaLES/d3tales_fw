@@ -99,9 +99,12 @@ def d3tales_md_wf(param_file=None, **kwargs):
         #         folder.append(fo(name=names,parents=d,**kwargs))
 
         if kwargs.get("inital_sys") == False:
-            for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
-                                         ):
-                ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=meta_dir,parents=folder, **kwargs))
+            for typ, name, smiles, charge in zip(kwargs.get("type_list"), kwargs.get("name_list"),
+                                                kwargs.get("smiles_list"),
+                                                kwargs.get("charge_list")):
+                ligpargen_fws.append(
+                    Ligpargen_FW(name=name, smiles=smiles, con=int(charge), Type=typ, di=meta_dir, parents=folder,
+                                 **kwargs))
                 for i in range(number_of_systems):
                     if str((i + 1)) in name:
                         name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"
@@ -127,7 +130,8 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=meta_dir,
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[i], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[i], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path"),
+                multi=kwargs.get(f'multiplicity{i + 1}')
             )
 
             fw_em_key = f"fw_em{i + 1}"
@@ -224,9 +228,9 @@ def d3tales_md_wf(param_file=None, **kwargs):
 
 
         if kwargs.get("inital_sys") == False:
-            for typ, name, smiles in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list")
-                                         ):
-                ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=0, Type=typ, di=meta_dir,parents=folder, **kwargs))
+            for typ, name, smiles,charge in zip(kwargs.get("type_list"), kwargs.get("name_list"), kwargs.get("smiles_list"),
+                     kwargs.get("charge_list") ):
+                ligpargen_fws.append(Ligpargen_FW(name=name, smiles=smiles, con=int(charge), Type=typ, di=meta_dir,parents=folder, **kwargs))
                 for i in range(number_of_systems):
                     if str((i + 1)) in name:
                         name_dic[f"names{i + 1}"] = name_dic[f"names{i + 1}"] + f"_{name}"

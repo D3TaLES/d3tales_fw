@@ -1,13 +1,9 @@
-import sys
 import tkinter as tk
 from tkinter import ttk
 import argparse
 import random
-from atomate.utils.utils import env_chk
-from pathlib import Path
 from fireworks import LaunchPad
 import datetime as dat
-from monty.serialization import dumpfn, loadfn
 from d3tales_fw.workflows.wf_writer import *
 from d3tales_fw.workflows.envwf import meta_dir
 
@@ -146,6 +142,7 @@ class GUI:
             raise(ValueError("titration inputs are not valid"))
 
         for i in range(int(self.numsys.get())):
+            offset=14
             global number
             global Tnumber
             number = int(self.numsys.get())
@@ -200,55 +197,60 @@ class GUI:
 
             self.molarMass = tk.Entry(self.frame, fg="black", bg="white", width=50)
             self.molarlabel = tk.Label(self.frame, text=f"Molarmass{i + 1} of Solvents")
-
+            self.multiplicity = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.multiplicity_lable = tk.Label(self.frame, text=f"Multiplicity{i + 1} for DFT")
             self.chargeCheck = tk.Checkbutton(self.frame, text=f"Charge on the Solutes{i + 1}", variable=self.chargeV)
             self.chargeMatrix = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
             self.chargeEntry = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
-            self.system.grid(row=10 + (13 * i), column=0, padx=50)
-            self.labelSolvent.grid(row=11 + (13 * i), column=0)
-            self.Solname.grid(row=11 + (13 * i), column=1)
+            self.system.grid(row=10 + (offset * i), column=0, padx=50)
+            self.labelSolvent.grid(row=11 + (offset * i), column=0)
+            self.Solname.grid(row=11 + (offset * i), column=1)
             self.entries[f"solventname{i + 1}"] = self.Solname
 
-            self.lableSolventSmiles.grid(row=12 + (13 * i), column=0)
-            self.SolventSmiles.grid(row=12 + (13 * i), column=1)
+            self.lableSolventSmiles.grid(row=12 + (offset * i), column=0)
+            self.SolventSmiles.grid(row=12 + (offset * i), column=1)
             self.entries[f"solvetsmiles{i + 1}"] = self.SolventSmiles
 
-            self.labelSolute.grid(row=13+ (13 * i), column=0)
-            self.SoluteName.grid(row=13 + (13 * i), column=1)
+            self.labelSolute.grid(row=13+ (offset * i), column=0)
+            self.SoluteName.grid(row=13 + (offset * i), column=1)
             self.entries[f"solutename{i + 1}"] = self.SoluteName
 
-            self.labelSoluteSmiles.grid(row=14 + (13 * i), column=0)
-            self.SoluteSmiles.grid(row=14 + (13 * i), column=1)
+            self.labelSoluteSmiles.grid(row=14 + (offset * i), column=0)
+            self.SoluteSmiles.grid(row=14 + (offset * i), column=1)
             self.entries[f"solutesmiles{i + 1}"] = self.SoluteSmiles
 
-            self.labelConcentration.grid(row=15 + (13 * i), column=0)
-            self.Concentrations.grid(row=15 + (13 * i), column=1)
+            self.labelConcentration.grid(row=15 + (offset * i), column=0)
+            self.Concentrations.grid(row=15 + (offset * i), column=1)
             self.entries[f"concentration{i + 1}"] = self.Concentrations
 
-            self.labelDensity.grid(row=16 + (13 * i), column=0)
-            self.Density.grid(row=16 + (13 * i), column=1)
+            self.labelDensity.grid(row=16 + (offset * i), column=0)
+            self.Density.grid(row=16 + (offset * i), column=1)
             self.entries[f"Density{i + 1}"] = self.Density
 
-            self.xdimLabel.grid(row=17 + (13 * i), column=0)
+            self.xdimLabel.grid(row=17 + (offset * i), column=0)
             self.xdim.grid(row=17 + (13 * i), column=1)
             self.entries[f"xdim{i + 1}"] = self.xdim
 
-            self.ydimLabel.grid(row=18 + (13 * i), column=0)
-            self.ydim.grid(row=18 + (13 * i), column=1)
+            self.ydimLabel.grid(row=18 + (offset * i), column=0)
+            self.ydim.grid(row=18 + (offset * i), column=1)
             self.entries[f"ydim{i + 1}"] = self.ydim
 
-            self.zdimLabel.grid(row=19 + (13 * i), column=0)
-            self.zdim.grid(row=19 + (13 * i), column=1)
+            self.zdimLabel.grid(row=19 + (offset * i), column=0)
+            self.zdim.grid(row=19 + (offset * i), column=1)
             self.entries[f"zdim{i + 1}"] = self.zdim
 
-            self.chargeCheck.grid(row=20 + (13 * i), column=0)
-            self.chargeMatrix.grid(row=20+ (13 * i), column=1)
+            self.chargeCheck.grid(row=20 + (offset * i), column=0)
+            self.chargeMatrix.grid(row=20+ (offset * i), column=1)
             self.entries[f"charges{i + 1}"] = self.chargeMatrix
 
-            self.molarMass.grid(row=21 + (13 * i), column=1)
-            self.molarlabel.grid(row=21 + (13 * i), column=0)
+            self.multiplicity.grid(row=21+ (offset * i), column=1)
+            self.multiplicity_lable.grid(row=21+ (offset * i), column=0)
+            self.entries[f"multiplicity{i + 1}"] = self.multiplicity
+
+            self.molarMass.grid(row=22 + (offset * i), column=1)
+            self.molarlabel.grid(row=22 + (offset * i), column=0)
             self.entries[f"molarmass{i + 1}"] = self.molarMass
 
         return
@@ -258,6 +260,7 @@ class GUI:
 
     def make(self):
         global number
+        offset=14
         number = int(self.numsys.get())
         self.button = tk.Button(self.frame,
                                 text="Submit",
@@ -303,61 +306,66 @@ class GUI:
             self.labelSoluteSmiles = tk.Label(self.frame,
                                               text=f"Solute SMILES{i + 1} code(separate with commas): ".ljust(20))
 
-            self.system = tk.Label(self.frame, text=f"System_{i + 1}-----------------------------------------------")
+            self.system = tk.Label(self.frame, text=f"System_{i + 1}-----------------------------------")
 
             self.chargeV = tk.IntVar()
 
             self.molarMass = tk.Entry(self.frame, fg="black", bg="white", width=50)
             self.molarlabel = tk.Label(self.frame, text=f"Molarmass{i + 1} of Solvents")
-
+            self.multiplicity = tk.Entry(self.frame, fg="black", bg="white", width=50)
+            self.multiplicity_lable = tk.Label(self.frame, text=f"Multiplicity{i + 1} for DFT")
             self.chargeCheck = tk.Checkbutton(self.frame, text=f"Charge on the Solutes{i + 1}", variable=self.chargeV)
             self.chargeMatrix = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
             self.chargeEntry = tk.Entry(self.frame, fg="black", bg="white", width=50)
 
-            self.system.grid(row=5 + (13 * i), column=0, padx=50)
-            self.labelSolvent.grid(row=6 + (13 * i), column=0)
-            self.Solname.grid(row=6 + (13 * i), column=1)
+            self.system.grid(row=10 + (offset * i), column=0, padx=50)
+            self.labelSolvent.grid(row=11 + (offset * i), column=0)
+            self.Solname.grid(row=11 + (offset * i), column=1)
             self.entries[f"solventname{i + 1}"] = self.Solname
 
-            self.lableSolventSmiles.grid(row=7 + (13 * i), column=0)
-            self.SolventSmiles.grid(row=7 + (13 * i), column=1)
+            self.lableSolventSmiles.grid(row=12 + (offset * i), column=0)
+            self.SolventSmiles.grid(row=12 + (offset * i), column=1)
             self.entries[f"solvetsmiles{i + 1}"] = self.SolventSmiles
 
-            self.labelSolute.grid(row=8 + (13 * i), column=0)
-            self.SoluteName.grid(row=8 + (13 * i), column=1)
+            self.labelSolute.grid(row=13 + (offset * i), column=0)
+            self.SoluteName.grid(row=13 + (offset * i), column=1)
             self.entries[f"solutename{i + 1}"] = self.SoluteName
 
-            self.labelSoluteSmiles.grid(row=9 + (13 * i), column=0)
-            self.SoluteSmiles.grid(row=9 + (13 * i), column=1)
+            self.labelSoluteSmiles.grid(row=14 + (offset * i), column=0)
+            self.SoluteSmiles.grid(row=14 + (offset * i), column=1)
             self.entries[f"solutesmiles{i + 1}"] = self.SoluteSmiles
 
-            self.labelConcentration.grid(row=10 + (13 * i), column=0)
-            self.Concentrations.grid(row=10 + (13 * i), column=1)
+            self.labelConcentration.grid(row=15 + (offset * i), column=0)
+            self.Concentrations.grid(row=15 + (offset * i), column=1)
             self.entries[f"concentration{i + 1}"] = self.Concentrations
 
-            self.labelDensity.grid(row=12 + (13 * i), column=0)
-            self.Density.grid(row=12 + (13 * i), column=1)
+            self.labelDensity.grid(row=16 + (offset * i), column=0)
+            self.Density.grid(row=16 + (offset * i), column=1)
             self.entries[f"Density{i + 1}"] = self.Density
 
-            self.xdimLabel.grid(row=13 + (13 * i), column=0)
-            self.xdim.grid(row=13 + (13 * i), column=1)
+            self.xdimLabel.grid(row=17 + (offset * i), column=0)
+            self.xdim.grid(row=17 + (13 * i), column=1)
             self.entries[f"xdim{i + 1}"] = self.xdim
 
-            self.ydimLabel.grid(row=14 + (13 * i), column=0)
-            self.ydim.grid(row=14 + (13 * i), column=1)
+            self.ydimLabel.grid(row=18 + (offset * i), column=0)
+            self.ydim.grid(row=18 + (offset * i), column=1)
             self.entries[f"ydim{i + 1}"] = self.ydim
 
-            self.zdimLabel.grid(row=15 + (13 * i), column=0)
-            self.zdim.grid(row=15 + (13 * i), column=1)
+            self.zdimLabel.grid(row=19 + (offset * i), column=0)
+            self.zdim.grid(row=19 + (offset * i), column=1)
             self.entries[f"zdim{i + 1}"] = self.zdim
 
-            self.chargeCheck.grid(row=16 + (13 * i), column=0)
-            self.chargeMatrix.grid(row=16 + (13 * i), column=1)
+            self.chargeCheck.grid(row=20 + (offset * i), column=0)
+            self.chargeMatrix.grid(row=20 + (offset * i), column=1)
             self.entries[f"charges{i + 1}"] = self.chargeMatrix
 
-            self.molarMass.grid(row=17 + (13 * i), column=1)
-            self.molarlabel.grid(row=17 + (13 * i), column=0)
+            self.multiplicity.grid(row=21 + (offset * i), column=1)
+            self.multiplicity_lable.grid(row=21 + (offset * i), column=0)
+            self.entries[f"multiplicity{i + 1}"] = self.multiplicity
+
+            self.molarMass.grid(row=22 + (offset * i), column=1)
+            self.molarlabel.grid(row=22 + (offset * i), column=0)
             self.entries[f"molarmass{i + 1}"] = self.molarMass
 
 
@@ -548,11 +556,12 @@ class GUI:
                 md_kwargs[f'y{_ + 1}'] = float(self.entries[f'ydim{_ + 1}'].get().strip())
                 md_kwargs[f'z{_ + 1}'] = float(self.entries[f'zdim{_ + 1}'].get().strip())
             for _ in range(number):
-                conamt = []
-                preprocessd = self.entries[f'concentration{_ + 1}'].get().split(",")
-                for iteams in preprocessd:
-                    conamt.append(iteams.strip())
+                spliter = lambda x: [i.strip() for i in x.split(",")]
+                conamt = spliter(self.entries[f'concentration{_ + 1}'].get())
+                multi_mat=spliter( self.entries[f'multiplicity{_ + 1}'].get())
+                md_kwargs[f'multiplicity{_ + 1}'] = ['1'] + multi_mat
                 md_kwargs[f'conmatrix{_ + 1}'] = conamt
+
             index = 0
             for j in self.systemNamemat:
 
@@ -571,11 +580,12 @@ class GUI:
                 md_kwargs[f'solute_smiles{index + 1}'] = solutemat
                 print(index,solutemat,solventmat)
                 index +=1
+            spliter= lambda x: [i.strip() for i in x.split(',')]
             self.charge = []
-
             for i in range(number):
-                self.charge.append(
-                    self.entries[f"charges{i + 1}"].get() if len(self.entries[f"charges{i + 1}"].get()) != 0 else 0)
+                le= len(self.entries[f"charges{i + 1}"].get())
+                number_of_molecules=len(self.smilesMatrix)
+                self.charge.extend(['0']+[j for j in spliter( self.entries[f"charges{i + 1}"].get())] if le != 0 else ['0' for _ in range(number_of_molecules)])
             md_kwargs["charge_list"] = self.charge
             print(md_kwargs)
 

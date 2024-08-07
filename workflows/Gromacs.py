@@ -41,6 +41,7 @@ class Ligpargen(FiretaskBase):
         self.type = self.get("Type") or fw_spec.get("TYPE","")
         self.own = self.get("own") or fw_spec.get("own")
         self.own_path= self.get("own_path") or fw_spec.get("own_path")
+        self.mult= self.get("mult") or fw_spec.get("mult")
 
         l.lig(self.smiles, self.names ,self.names[:3] + f"_{self.type}", self.charge, self.dir,self.own, self.own_path)
 
@@ -64,6 +65,8 @@ class MDPrep(FiretaskBase):
         self.dir = self.get("dir") or fw_spec.get("dir")
         self.titration = self.get("titration_constant")
         self.charge = self.get("charge") or fw_spec.get("charge")
+        if not self.charge:
+            raise Exception("no charge found")
         self.solvent_name = self.get("solvent_name") or fw_spec.get("solvent_name")
         self.Solname = self.solvent_name[0]
         self.solute_smiles= self.get("solute_smiles")
@@ -73,6 +76,7 @@ class MDPrep(FiretaskBase):
         self.ydim = float(self.get("y") or fw_spec.get("y"))
         self.zdim = float(self.get("z") or fw_spec.get("z"))
         self.conmatrix = self.get("conmatrix") or fw_spec.get("conmatrix")
+        self.multipicity=self.get("multi") or None
         key = self.get("key")
         if self.conmatrix == None:
             print("did not work")
@@ -91,11 +95,11 @@ class MDPrep(FiretaskBase):
             print(smiles)
             print(names)
             i = 0
-            for iteams, name in zip(smiles,names):
+            for iteams, name,mul in zip(smiles,names,self.multipicity):
                 if i >=1:
-                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,0,self.titration)
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,0,self.titration,mult=mul )
                 else:
-                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,self.charge, self.titration)
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,self.charge, self.titration, mult=mul)
                 i+=1
         gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key, self.initial_system, self.path_inital)
         return FWAction(update_spec={})

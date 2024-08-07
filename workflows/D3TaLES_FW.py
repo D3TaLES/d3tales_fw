@@ -106,15 +106,15 @@ class InitializeMD(Firework):
 
 
 class Ligpargen_FW(Firework):
-    def __init__(self, name=None,  priority=None,  smiles=None, con=None,Type=None, di=None,parents=None,**kwargs):
+    def __init__(self, name=None,  priority=None,  smiles=None, con=None,Type=None, di=None,parents=None,mult=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority, 'smiles':smiles, 'name':name, 'charge':con, "Type":Type} if priority else {'_category': 'gromacs','smiles':smiles, 'name':name, 'charge':con, "Type":Type, "dir":di, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
         t = [Ligpargen(name=name,smile=smiles, charge=con,Type=Type,**kwargs)]
         super(Ligpargen_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 
 class Pack_FW(Firework):
-    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[],solvent_smiles=[],solute_smiles=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,titration_constant=1, intial=False, own_path=None,**kwargs):
+    def __init__(self,name=None, parents=None, priority=None, solute_name=[], solvent_name=[],solvent_smiles=[],solute_smiles=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,titration_constant=1, intial=False, own_path=None,multi=None,**kwargs):
         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [MDPrep(solute_name=solute_name, solvent_name=solvent_name, x=x,y=y,z=z,di=di,conmatrix=conmatrix,den=den,key=key,solvent_smiles=solvent_smiles,solute_smiles=solute_smiles, titration_constant=titration_constant, inital_sys=intial, own_path=own_path)] ## this is passed for self, self.get() gets this
+        t = [MDPrep(solute_name=solute_name, solvent_name=solvent_name, x=x,y=y,z=z,di=di,conmatrix=conmatrix,den=den,key=key,solvent_smiles=solvent_smiles,solute_smiles=solute_smiles, titration_constant=titration_constant, inital_sys=intial, own_path=own_path, multi=multi)] ## this is passed for self, self.get() gets this
         super(Pack_FW, self).__init__(t, parents=parents, spec=spec, name=name)
 class Titrate(Firework):
     def __init__(self, name=None, parents=None, priority=None,  solute_name=[], solvent_name=[], solvent_smiles=[], solute_smiles=[], x=None, y=None, z=None, di=None, conmatrix=None, den=None, key=None, titration_list=None, intial=False, own_path=None,**kwargs):
@@ -196,8 +196,8 @@ class Plotter(Firework):
         t = [Graph_plotter(This_key=key,**kwargs)] ## this is passed for self, self.get() gets this
         super(Plotter, self).__init__(t, parents=parents, spec=spec, name=f"plotter{key}")
 
-class fo(Firework):
-    def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
-        spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"name":name, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
-        t = [DFT_FOLDER_maker(name=name,**kwargs)] ## this is passed for self, self.get() gets this
-        super(fo, self).__init__(t, parents=parents, spec=spec, name=f"DFT_reorg")
+# class fo(Firework):
+#     def __init__(self,name=None, parents=None, priority=None, name_tag='',solute_name=[], solvent_name=[], x=None,y=None,z=None, di=None,conmatrix=None,den=None,key=None,**kwargs):
+#         spec = {'_category': 'processing', '_priority': priority,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"dir":di, **kwargs} if priority else {'_category': 'gromacs', "dir":di,"solute_name":solute_name, "solvent_name":solvent_name, "x":x,"y":y,"z":z,"conmatrix":conmatrix,"den":den,"name":name, **kwargs} ## this is passed in as fw_spec when you do fw_spec.get() this is retrived
+#         t = [DFT_FOLDER_maker(name=name,**kwargs)] ## this is passed for self, self.get() gets this
+#         super(fo, self).__init__(t, parents=parents, spec=spec, name=f"DFT_reorg")
