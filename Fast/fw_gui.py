@@ -559,6 +559,14 @@ class GUI:
                 spliter = lambda x: [i.strip() for i in x.split(",")]
                 conamt = spliter(self.entries[f'concentration{_ + 1}'].get())
                 multi_mat=spliter( self.entries[f'multiplicity{_ + 1}'].get())
+                le = len(self.entries[f"charges{_ + 1}"].get())
+                number_of_molecules = len(self.smilesMatrix)
+                self.charge=[]
+                self.charge.extend(
+                    ['0'] + [j for j in spliter(self.entries[f"charges{_ + 1}"].get())] if le != 0 else ['0' for _ in
+                                                                                                         range(
+                                                                                                             number_of_molecules)])
+                md_kwargs[f"charge{_+1}"] = self.charge
                 md_kwargs[f'multiplicity{_ + 1}'] = ['1'] + multi_mat
                 md_kwargs[f'conmatrix{_ + 1}'] = conamt
 

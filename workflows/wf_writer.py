@@ -131,7 +131,7 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 di=meta_dir,
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
                 den=kwargs.get(f"den{i + 1}"), key=key_mat[i], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path"),
-                multi=kwargs.get(f'multiplicity{i + 1}')
+                multi=kwargs.get(f'multiplicity{i + 1}'), charge=kwargs.get(f'charge{i+1}')
             )
 
             fw_em_key = f"fw_em{i + 1}"
@@ -246,8 +246,8 @@ def d3tales_md_wf(param_file=None, **kwargs):
         for i in range(outer_system):
             Index_key_to_pull= i* number_of_titrations
             fw_pack_key = f"fw_pack{i + 1}"
-            fire_workdic[fw_pack_key] = Pack_FW (
-                name=name_dic[f"names{Index_key_to_pull + 1}"] + 'pack',
+            fire_workdic[fw_pack_key] = Pack_FW(
+                name=name_dic[f"names{i + 1}"] + 'pack',
                 parents=ligpargen_fws,
                 solute_name=kwargs.get(f"solute_name{i + 1}"),
                 solvent_name=kwargs.get(f"solvent_name{i + 1}"),
@@ -258,7 +258,9 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 z=kwargs.get(f"z{i + 1}"),
                 di=meta_dir,
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
-                den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
+                den=kwargs.get(f"den{i + 1}"), key=key_mat[i], intial=kwargs.get("inital_sys"),
+                own_path=kwargs.get("own_path"),
+                multi=kwargs.get(f'multiplicity{i + 1}'), charge=kwargs.get(f'charge{i + 1}')
             )
             matrix_of_titration.append( Titrate(
                 name=name_dic[f"names{Index_key_to_pull + 1}"] + 'Titrate',
@@ -274,9 +276,9 @@ def d3tales_md_wf(param_file=None, **kwargs):
                 conmatrix=kwargs.get(f"conmatrix{i + 1}"),
                 den=kwargs.get(f"den{i + 1}"), key=key_mat[Index_key_to_pull], titration_list=kwargs.get("titartion_list") , intial= kwargs.get("inital_sys"), own_path=kwargs.get("own_path")
             )   )
-            print(f'in the workflow this is waht is ebing passed for titration list{kwargs.get("titartion_list")}')
+            print(f'in the workflow this is what is being passed for titration list{kwargs.get("titartion_list")}')
         densities=[kwargs.get(f"den{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
-        print(f"waht is passed in as  density {densities[0]}")
+        print(f"what is passed in as  density {densities[0]}")
         molarmasses=[kwargs.get(f"MM{i + 1}") for i in range(outer_system) for j in range(number_of_titrations)]
 
         for i in range(number_of_systems):

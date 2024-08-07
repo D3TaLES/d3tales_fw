@@ -95,11 +95,11 @@ class MDPrep(FiretaskBase):
             print(smiles)
             print(names)
             i = 0
-            for iteams, name,mul in zip(smiles,names,self.multipicity):
+            for iteams, name,mul,charge in zip(smiles,names,self.multipicity, self.charge):
                 if i >=1:
-                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,0,self.titration,mult=mul )
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,charge,self.titration,mult=mul )
                 else:
-                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,self.charge, self.titration, mult=mul)
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,charge, self.titration, mult=mul)
                 i+=1
         gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key, self.initial_system, self.path_inital)
         return FWAction(update_spec={})
