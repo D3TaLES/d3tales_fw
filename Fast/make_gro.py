@@ -14,16 +14,12 @@ class gro:
         self.solvent = solvent[:3]
         self.key=key
         self.command12 = f'cp -r {MDP_Location} {os.path.join(self.dir,f"InputGrofiles{self.key}")}'
-
         self.solute = solute
         self.solvent2 = solvent2
         self.initla_system = initla_system
         self.path_to_file = path_to_file
         if self.initla_system:
             self.initial()
-
-
-
         else:
 
             print(f"in the gro solutes: {self.solute}")
@@ -52,31 +48,31 @@ class gro:
 
             subprocess.run(command6, shell=True, check=True)
 
-        if len(self.solvent2) != 0:
-            subprocess.run(command8, shell=True, check=True)
+            if len(self.solvent2) != 0:
+                subprocess.run(command8, shell=True, check=True)
 
-            subprocess.run(command10, shell=True, check=True)
+                subprocess.run(command10, shell=True, check=True)
 
-        for i in range(len(self.solute)):
-            com1 = f"mv {os.path.join(self.dir, f'{self.solute[i].strip()[:3]}_Solute{1}', f'{self.solute[i].strip()[:3]}_Solute{1}.pdb')} {os.path.join(self.dir, f'InputGrofiles{key}')}"
+            for i in range(len(self.solute)):
+                com1 = f"mv {os.path.join(self.dir, f'{self.solute[i].strip()[:3]}_Solute{1}', f'{self.solute[i].strip()[:3]}_Solute{1}.pdb')} {os.path.join(self.dir, f'InputGrofiles{key}')}"
 
-            com2 = f'rm -r {os.path.join(self.dir, f"{self.solute[i].strip()[:3]}_Solute{1}")}'
+                com2 = f'rm -r {os.path.join(self.dir, f"{self.solute[i].strip()[:3]}_Solute{1}")}'
 
-            subprocess.run(com1, shell=True, check=True)
+                subprocess.run(com1, shell=True, check=True)
 
-            subprocess.run(com2, shell=True, check=True)
+                subprocess.run(com2, shell=True, check=True)
 
-        g.reorg(self.solvent + "_Solvent", os.path.join(self.dir, f"InputGrofiles{key}"), key)
+            g.reorg(self.solvent + "_Solvent", os.path.join(self.dir, f"InputGrofiles{key}"), key)
 
-        if len(self.solvent2) != 0:
-            g.reorg(self.solvent2 + "_Solvent2", os.path.join(self.dir, f"InputGrofiles{key}"))
+            if len(self.solvent2) != 0:
+                g.reorg(self.solvent2 + "_Solvent2", os.path.join(self.dir, f"InputGrofiles{key}"))
 
-        for j in range(len(self.solute)):
-            print(f'ran solute{j + 1}')
+            for j in range(len(self.solute)):
+                print(f'ran solute{j + 1}')
 
-            g.reorg(self.solute[j].strip()[:3] + f"_Solute{j + 1}", os.path.join(self.dir, f"InputGrofiles{key}"), key)
+                g.reorg(self.solute[j].strip()[:3] + f"_Solute{j + 1}", os.path.join(self.dir, f"InputGrofiles{key}"), key)
 
-        subprocess.run(self.command12, shell=True, check=True)
+            subprocess.run(self.command12, shell=True, check=True)
 
         print("Starting the simulation")
 
