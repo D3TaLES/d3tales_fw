@@ -90,7 +90,7 @@ class gro:
 
             subprocess.run(self.command12, shell=True, check=True)
 
-        move_the_initial_system = f"cp {os.path.join(self.path_to_file, 'solvated.gro')} {os.path.join(self.dir, f'InputGrofiles{self.key}')}"
+        move_the_initial_system = f"cp {os.path.join(self.path_to_file, f'{self.fullname_solvent}_{self.solute[0]}.gro')} {os.path.join(self.dir, f'InputGrofiles{self.key}', 'solvated.gro')}"
 
         move_topol = f"cp {os.path.join(self.path_to_file, 'topol.top')} {os.path.join(self.dir, f'InputGrofiles{self.key}')}"
 

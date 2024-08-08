@@ -58,6 +58,8 @@ class MDPrep(FiretaskBase):
 
     def run_task(self, fw_spec):
         self.initial_system= self["inital_sys"]
+        self.own=self.get("own_path") or fw_spec.get("own_path")
+        self.is_own= True if len(self.own.strip())!=0 else False
         print(self.initial_system)
         print(self["inital_sys"])
         print(self.get("inital_sys"))
@@ -97,9 +99,9 @@ class MDPrep(FiretaskBase):
             i = 0
             for iteams, name,mul,charge in zip(smiles,names,self.multipicity, self.charge):
                 if i >=1:
-                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,1,self.dir,charge,self.titration,mult=mul )
+                        transfer.trans(f"{name[:3]}_Solute1",iteams,key,self.is_own,self.dir,charge,self.titration,mult=mul )
                 else:
-                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,1,self.dir,charge, self.titration, mult=mul)
+                        transfer.trans(f"{name[:3]}_Solvent",iteams,key,self.is_own,self.dir,charge, self.titration, mult=mul)
                 i+=1
         gro.gro(self.Solname, self.solute_name, '', self.dir, self.xdim, self.ydim, self.zdim, key, self.initial_system, self.path_inital)
         return FWAction(update_spec={})

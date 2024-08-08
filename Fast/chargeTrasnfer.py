@@ -2,19 +2,19 @@ import subprocess
 from d3tales_fw.Fast.new_dft import run_on_terminla
 import os
 class trans:
-    def __init__(self,name,smiles,key,re,di,charg,Titration, mult=None):
-        charges = run_on_terminla(name, charg, smiles,direc=di,mul=mult)
-        if len(charges) ==0:
-           raise Exception("Unable to get the charges")
+    def __init__(self,name,smiles,key,own,di,charg,Titration, mult=None):
+        if not own:
+            charges = run_on_terminla(name, charg, smiles,direc=di,mul=mult)
+            if len(charges) == 0:
+                raise Exception("Unable to get the charges")
         self.name = name
         self.titrat=Titration
-
         self.dir = di
         self.smiles = smiles
         self.file_to_make = os.path.join(self.dir, f"InputGrofiles{key}", f"{name}f.itp")
         self.orignal_gro_outputfile = os.path.join(self.dir, name, f"{name}.gmx.itp")
         chagreMatrix = []
-        if re == 1:
+        if not own:
             print("it is ran")
 
             subprocess.run(f"touch {self.file_to_make}", shell=True)
@@ -45,6 +45,6 @@ class trans:
                 for line in gmx_lines:
                     itp.writelines(line)
             print("Itp file is made")
-        else:
+        if own:
             print("else is ran")
             subprocess.run(f"mv {self.orignal_gro_outputfile} {self.file_to_make}",shell=True)
