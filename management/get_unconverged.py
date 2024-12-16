@@ -1,7 +1,10 @@
+import subprocess
+
 from tqdm import tqdm
 from d3tales_api.D3database.d3database import D3Database
 
-SPECIAL_KW = "Submission"  # PUGREST.ServerBusy not successfully submitted ValidationError FileNotFound RESTAPI
+SPECIAL_KW = ""  # JSON connection Submission PUGREST.ServerBusy
+EXECUTE = True
 RUN_MCC = False
 RERUN = False or RUN_MCC or SPECIAL_KW
 MULTIPLICITY = None
@@ -66,10 +69,12 @@ if __name__ == "__main__":
                         fireworks_db.coll.find_one({"fw_id": fw_id}, {"spec.identifier": True}).get("spec", {}).get(
                             "identifier"))
     fizzled_ids = set(fizzled_ids)
-    if RERUN:
-        print('lpad rerun_fws -i ', ','.join(map(str, fizzled_ids)))
-    else:
-        print('lpad defuse_fws -i ', ','.join(map(str, fizzled_ids)))
+    fw_cmd = 'lpad {} -i {}'.format("rerun_fws" if RERUN else "defuse_fws", ','.join(map(str, fizzled_ids)))
+    print(fw_cmd)
+    if EXECUTE:
+        print("Executing command `{}`...".format(fw_cmd[:10]))
+        subprocess.call(fw_cmd, shell=True)
+
 
     if PRINT_IDS:
         print(','.join(map(str, fizzled_ids)))

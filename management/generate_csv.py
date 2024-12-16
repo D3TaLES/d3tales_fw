@@ -54,31 +54,17 @@ def get_value(x, display_conditions: dict = DISPLAY_CONDITIONS, solv=None):
             if display:
                 return prop_item.get("value", prop_item.get("excitations", [[None]])[0][0])
         return None
+    if isinstance(x, dict):
+        return x.get("value", x.get("excitations", [[None]])[0][0])
     return x
 
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Generate a CSV file containing given properties (default: smiles) for all D3TaLES molecules.')
-    parser.add_argument('-f', '--filename', type=str, help='filepath for a CSV file to which to save the data',
-                        default='structure_data/d3tales.csv')
-    parser.add_argument('-p', '--collect_properties', type=str, help='properties to include in CSV',
-                        default=ALL_PROPERTIES)
-    parser.add_argument('-ids', '--ids_filename', type=str,
-                        help='filepath for JSON file containing ids (as keys) to search')
-    parser.add_argument('-std', '--standard_deviations', type=int, default=3,
-                        help='the number of standard deviations to keep. If 0, not std. dev. filter will be applied')
-    parser.add_argument('-pub', '--public', action='store_true', help='save only public data to csv')
-    args = parser.parse_args()
-
-    # Generate query
-    collect_properties = args.collect_properties.split(',')
-    projection = {p: 1 for p in collect_properties}
-
+def generate_csv(collect_properties, out_file="database.csv", ids_filename=None, public=True, standard_deviations=True,
+                 std_props=mol_props):
     # Database search
     frontend_db = FrontDB(collection_name="base")
-    if args.ids_filename:
-        with open(args.ids_filename) as f:
+    projection = {p: 1 for p in collect_properties}
+    if ids_filename:
+        with open(ids_filename) as f:
             ids_data = json.load(f)
         ids = list(ids_data.keys())
         cursor = frontend_db.coll.find({'_id': {"$in": ids}}, {projection: 1}).limit(LIMIT)
@@ -89,26 +75,51 @@ if __name__ == "__main__":
     master_data = pd.DataFrame.from_records(cursor)
     master_data.set_index('_id', inplace=True)
     print("PULLED DATA SHAPE: ", master_data.shape)
-    print(master_data.head())
     prop_paths = {
         p.replace('mol_info.', "").replace('species_characterization.', "").replace('mol_characterization.', ""): p for
         p in collect_properties}
+    columns = []
     for prop_name, prop_path in prop_paths.items():
-        master_data[prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
-        master_data[prop_name] = master_data[prop_name].apply(lambda x: get_value(x, solv=None))
+        prop_df = pd.DataFrame()
+        prop_df[prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
+        prop_df[prop_name] = prop_df[prop_name].apply(lambda x: get_value(x, solv=None))
         if prop_name in SPECIES_SOLV_CHAR:
-            master_data["solv_" + prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
-            master_data["solv_" + prop_name] = master_data["solv_" + prop_name].apply(lambda x: get_value(x, solv=SOLVENT))
+            prop_df["solv_" + prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
+            prop_df["solv_" + prop_name] = prop_df["solv_" + prop_name].apply(lambda x: get_value(x, solv=SOLVENT))
+        columns.append(prop_df)
+    final_data = pd.concat(columns, axis=1)
 
-    final_data = master_data.drop(columns=["mol_info", "species_characterization", "mol_characterization"])
     final_data.dropna(axis=1, how="all", inplace=True)
-    if args.public:
+    if public:
         final_data.public.fillna(False, inplace=True)
         final_data = final_data[final_data.public]
-    if args.standard_deviations:
-        numeric_cols = final_data.select_dtypes(include=[np.number]).columns
-        final_data = final_data[((final_data[numeric_cols] - final_data.mean())/final_data.std(ddof=0)).fillna(0).abs().le(args.standard_deviations).all(axis=1)]
-    final_data.to_csv(args.filename)
-    print(final_data.head())
+    final_data.to_csv(out_file.replace(".csv", "_raw.csv"))
+    if standard_deviations:
+        numeric_data = final_data[[c for c in final_data.select_dtypes(include=[np.number]).columns if c in std_props]]
+        normal_rows = ((numeric_data - numeric_data.mean()) / numeric_data.std(ddof=0)).fillna(0).abs().le(standard_deviations).all(axis=1)
+        final_data = final_data[normal_rows]
+    final_data.to_csv(out_file)
     print("FINAL DATA SHAPE: ", master_data.shape)
-    print("Success! D3TaLES molecules and {} property were saved to {}".format(",".join(list(final_data.columns)), args.filename))
+    return final_data
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Generate a CSV file containing given properties (default: smiles) for all D3TaLES molecules.')
+    parser.add_argument('-f', '--filename', type=str, help='filepath for a CSV file to which to save the data',
+                        default='structure_data/d3tales.csv')
+    
+    parser.add_argument('-p', '--collect_properties', type=str, help='properties to include in CSV',
+                        default=ALL_PROPERTIES)
+    parser.add_argument('-ids', '--ids_filename', type=str,
+                        help='filepath for JSON file containing ids (as keys) to search')
+    parser.add_argument('-std', '--standard_deviations', type=int, default=3,
+                        help='the number of standard deviations to keep. If 0, not std. dev. filter will be applied')
+    parser.add_argument('-pub', '--public', action='store_true', help='save only public data to csv')
+    args = parser.parse_args()
+
+    # Generate query CSV
+    coll_properties = args.collect_properties.split(',')
+    final_data_df = generate_csv(coll_properties, out_file=args.filename, standard_deviations=args.standard_deviations,
+                                 ids_filename=args.ids_filename, std_props=mol_props[:-1], public=args.public)
+    print("Success! D3TaLES molecules and {} property were saved to {}".format(",".join(list(final_data_df.columns)), args.filename))
