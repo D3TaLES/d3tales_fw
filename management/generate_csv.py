@@ -17,9 +17,9 @@ mol_props = ["hole_reorganization_energy", "electron_reorganization_energy", "re
              "adiabatic_electron_affinity", "oxidation_potential", "reduction_potential", "rmsd_groundState_cation1",
              "rmsd_cation1_cation2", "rmsd_groundState_anion1", "rmsd_anion1_anion2", "omega"]
 mol_solv_props = ["oxidation_potential", "reduction_potential"]
-species_props = ["charge", "globular_volume", "radical_stability_score", "homo_lumo_gap", "dipole_moment",
+species_props = ["charge", "globular_volume", "homo_lumo_gap", "dipole_moment",  # "radical_stability_score",
                  "solvation_energy", "homo", "lumo", "singlet_states", "triplet_states"]
-species_solv_props = ["globular_volume", "radical_stability_score", "homo_lumo_gap", "dipole_moment",
+species_solv_props = ["globular_volume", "homo_lumo_gap", "dipole_moment",  # "radical_stability_score",
                       "solvation_energy", "homo", "lumo"]
 species = ["groundState", "cation1", "cation2", "anion1", "anion2"]
 
@@ -41,7 +41,7 @@ def rgetkeys(_dict, keys, **kwargs):
     return functools.reduce(_getkey, [_dict] + keys.split('.'))
 
 
-def get_value(x, display_conditions: dict = DISPLAY_CONDITIONS, solv=None):
+def get_value(x, display_conditions: dict = DISPLAY_CONDITIONS, solv=None, value_kw="value"):
     display_conditions['solvent'] = [solv]
     if isinstance(x, list):
         for prop_item in x:
@@ -52,11 +52,12 @@ def get_value(x, display_conditions: dict = DISPLAY_CONDITIONS, solv=None):
                     display = False
                     break
             if display:
-                return prop_item.get("value", prop_item.get("excitations", [[None]])[0][0])
+                return prop_item.get(value_kw, prop_item.get("excitations", [[None]])[0][0])
         return None
     if isinstance(x, dict):
-        return x.get("value", x.get("excitations", [[None]])[0][0])
+        return x.get(value_kw, x.get("excitations", [[None]])[0][0])
     return x
+
 
 def generate_csv(collect_properties, out_file="database.csv", ids_filename=None, public=True, standard_deviations=True,
                  std_props=mol_props):
@@ -67,7 +68,7 @@ def generate_csv(collect_properties, out_file="database.csv", ids_filename=None,
         with open(ids_filename) as f:
             ids_data = json.load(f)
         ids = list(ids_data.keys())
-        cursor = frontend_db.coll.find({'_id': {"$in": ids}}, {projection: 1}).limit(LIMIT)
+        cursor = frontend_db.coll.find({'_id': {"$in": ids}}, projection).limit(LIMIT)
     else:
         cursor = frontend_db.coll.find({}, projection).limit(LIMIT)
 
@@ -81,8 +82,9 @@ def generate_csv(collect_properties, out_file="database.csv", ids_filename=None,
     columns = []
     for prop_name, prop_path in prop_paths.items():
         prop_df = pd.DataFrame()
+        value_kw = "sites" if "geometry" in prop_name else "value"
         prop_df[prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
-        prop_df[prop_name] = prop_df[prop_name].apply(lambda x: get_value(x, solv=None))
+        prop_df[prop_name] = prop_df[prop_name].apply(lambda x: get_value(x, solv=None, value_kw=value_kw))
         if prop_name in SPECIES_SOLV_CHAR:
             prop_df["solv_" + prop_name] = master_data.apply(lambda x: rgetkeys(x.to_dict(), prop_path), axis=1)
             prop_df["solv_" + prop_name] = prop_df["solv_" + prop_name].apply(lambda x: get_value(x, solv=SOLVENT))
@@ -100,6 +102,7 @@ def generate_csv(collect_properties, out_file="database.csv", ids_filename=None,
         final_data = final_data[normal_rows]
     final_data.to_csv(out_file)
     print("FINAL DATA SHAPE: ", master_data.shape)
+    print("FINAL COUNT: ", final_data.count())
     return final_data
 
 
