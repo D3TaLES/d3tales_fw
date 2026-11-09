@@ -1,7 +1,7 @@
 import os
 import argparse
 from d3tales_api.D3database.restapi import RESTAPI
-from d3tales_api.D3database.d3database import FrontDB
+from d3tales_api.D3database.d3database import D3Database
 
 calc_loc_dict = {
     "tddft": "tddft/energy",
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.write:
-        frontend_db = FrontDB(collection_name="submission")
+        frontend_db = D3Database(database="ui", collection_name="submission")
         if args.hf:
             unprocessed_cursor = frontend_db.coll.find({"data_type": "gaussian", "metadata.calculation_type": {"$regex": "solv_.*"}})
         elif args.solv:

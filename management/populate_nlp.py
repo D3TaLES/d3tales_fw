@@ -6,7 +6,7 @@ from monty.serialization import loadfn, dumpfn
 from d3tales_api.D3database.d3database import *
 from d3tales_api.Processors.back2front import *
 from d3tales_api.Processors.d3tales_parser import *
-from d3tales_fw.management.populate_lpad import populate_d3tales_lpad
+from d3tales_fw.management.populate_lpad import populate_lpad
 
 parser = argparse.ArgumentParser(description='Parse and push data from NLP parsing and submit calculations for extracted molecules ')
 parser.add_argument('filename', metavar='filename', type=str, help='filepath for a JSON nlp data file', default=False)
@@ -36,7 +36,7 @@ for doi, prop_data in all_nlp_data.items():
     if args.no_calculations:
         fw_ids = ["" for _ in mol_ids]
     else:
-        fw_ids = populate_d3tales_lpad(ids_list=mol_ids, priority=args.priority, wf_tag="nlp_")
+        fw_ids = populate_lpad(ids_list=mol_ids, priority=args.priority, wf_tag="nlp_")
 
     all_ids.update(zip(mol_ids, fw_ids))
     break

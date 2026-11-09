@@ -1,13 +1,14 @@
 import argparse
 from pathlib import Path
 from fireworks import LaunchPad
+from d3tales_api.Workflows.wf_writer import molDisc_wf
 from d3tales_api.Workflows.wf_writer import *
 from d3tales_api.Workflows.ParamSet import GausParamSet
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-def populate_d3tales_lpad(
+def populate_lpad(
         filename=None,
         file_of_ids=False,  # norm: False
         ids_list=None,  # norm: None (must be None for json to be read)
@@ -84,9 +85,14 @@ if __name__ == "__main__":
                                                                             'contains molecule IDs (not SMILES) to submit')
     args = parser.parse_args()
 
+    KWARGS = dict(
+        workflow_function=molDisc_wf,
+        default_origin="Ganapathysubramanian"
+    )
+
     if args.id_list:
-        populate_d3tales_lpad(ids_list=args.filename.split(","), priority=args.priority)
+        populate_lpad(ids_list=args.filename.split(","), priority=args.priority, **KWARGS)
     elif args.id_list_file:
-        populate_d3tales_lpad(filename=args.filename, file_of_ids=True, priority=args.priority)
+        populate_lpad(filename=args.filename, file_of_ids=True, priority=args.priority, **KWARGS)
     else:
-        populate_d3tales_lpad(filename=args.filename, priority=args.priority)
+        populate_lpad(filename=args.filename, priority=args.priority, **KWARGS)

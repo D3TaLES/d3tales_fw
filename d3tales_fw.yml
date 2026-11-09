@@ -1,0 +1,22 @@
+name: fw_workflow
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python>=3.9,<3.13
+  - pip
+
+  - pip:
+      - pymongo
+      - tqdm
+      - FireWorks
+      - d3tales_api
+      - numpy
+      - pandas
+      - monty
+      - rdkit
+      - pymatgen
+      - interruptingcow
+      - paramiko
+      - joblib
